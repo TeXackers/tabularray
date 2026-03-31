@@ -71,4 +71,24 @@
 \end{tblr}
 \ENDTEST
 
+\bigskip\hrule\bigskip
+
+\BEGINTEST{unused child classes and ids} % issue #636
+\begin{tblr}{
+  hline{1,Z},
+  cell{missing,Missing} = {cmd=\fbox},
+  row{missingh,Missingh} = {bg=azure7},
+  column{missingv,Missingv} = {fg=red3}
+}
+  1 & 2 & 3 & \SetChild{class*=foo} 4 & 5 & 6 & 7 & 8 \\
+  2 & 2 & \SetChild{classh=bar} 3 & 4 & 5 & 6 & 7 & 8 \\
+  3 & \SetChild{classv=baz} 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+  \SetChild{class=qux} 4 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+  5 & 2 & 3 & 4 & \SetChild{class=foo}5 & 6 & 7 & 8 \\
+  6 & 2 & 3 & 4 & 5 & \SetChild{classh=bar}6 & 7 & 8 \\
+  7 & 2 & 3 & 4 & 5 & 6 & \SetChild{classv=baz}7 & 8 \\
+  8 & 2 & 3 & 4 & 5 & 6 & 7 & \SetChild{class*=qux} 8 \\
+\end{tblr}
+\ENDTEST
+
 \end{document}

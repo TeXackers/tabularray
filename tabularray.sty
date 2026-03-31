@@ -1414,17 +1414,40 @@
   }
 \cs_generate_variant:Nn \__tblr_child_parse:nn { ne }
 
+\msg_new:nnn { tabularray } { unknown-child-class }
+  { Child ~ selector ~ (class) ~ #1 ~ is ~ not ~ used ~ in ~ any ~ cell, ~ consider ~ removing ~ its ~ associated ~ styling ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_run_selector:n #1
   {
-    \tl_rescan:ne { \cctab_select:N \c_code_cctab }
-      { \c_backslash_str __tblr_child_selector_ #1 }
-    \scan_stop: % for selectors with only optional arguments
+    % #1 can be of the form odd[4] or every[2]{4}{-3}, but cs_if_exists needs only the macro name
+    % therefore we use the fact that child selectors can only be alphabetic
+    \regex_extract_once:nnN { ^([a-zA-Z]+) } { #1 } \l_tmpa_seq
+    \exp_args:Nx \cs_if_exist:cTF {__tblr_child_selector_ \seq_item:Nn \l_tmpa_seq {1}}
+    {
+      \tl_rescan:ne { \cctab_select:N \c_code_cctab }
+        { \c_backslash_str __tblr_child_selector_ #1 }
+      \scan_stop: % for selectors with only optional arguments
+    }
+    {
+      \msg_warning:nnn {tabularray} {unknown-child-class} {#1}
+    }
   }
+
+\msg_new:nnn { tabularray } { unknown-child-id }
+  { Child ~ indexer ~ (id) ~ #1 ~ is ~ not ~ used ~ in ~ any ~ cell, ~ consider ~ removing ~ its ~ associated ~ styling ~ \msg_line_context:}
 
 \cs_new_protected:Npn \__tblr_child_run_indexer:n #1
   {
     \tl_rescan:ne { \cctab_select:N \c_code_cctab }
-      { \c_backslash_str __tblr_child_indexer_ #1 }
+      {
+        \cs_if_exist:cTF {__tblr_child_indexer_ #1}
+          {
+            \c_backslash_str __tblr_child_indexer_ #1
+          }
+          {
+            \msg_warning:nnn {tabularray} {unknown-child-id} {#1}
+          }
+      }
     \scan_stop: % for indexers with only optional arguments
   }
 \cs_generate_variant:Nn \__tblr_child_run_indexer:n { V }
@@ -1809,6 +1832,7 @@
         \exp_args:Nne
         \NewTblrChildIndexer {##1}
           {
+            % \l__tblr_child_id_##1_tl is guaranteed to exist since we map over the id list
             \tl_set:Nn \exp_not:N \lTblrChildIndexTl
               { \use:c { l__tblr_child_id_##1_tl } }
           }

@@ -21,5 +21,5 @@ Contribution to the Code
 
 - After editing the source code, run `l3build check` to compile test files.
 
-- Then run `texlua buildend.lua` to compare MD5 checksums for test outputs.
+- Then run `ppmcheckpdf check` to compare MD5 checksums for test outputs.
 
