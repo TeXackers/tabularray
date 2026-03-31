@@ -1747,9 +1747,15 @@
 \clist_new:N \l__tblr_child_id_clist
 \clist_new:N \l__tblr_child_class_clist
 
+\msg_new:nnn { tabularray } { id-double-defined }
+    { Multiple ~ definitions ~ of ~ child ~ indexer ~ (id) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (class) ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_id:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1}
+      {
+        \msg_warning:nnn {tabularray} {id-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1}
         \tl_clear_new:c { l__tblr_child_id_#1_tl }
@@ -1757,18 +1763,32 @@
     \tl_set:ce { l__tblr_child_id_#1_tl }
       { { \int_use:N \c@rownum } { \int_use:N \c@colnum } }
   }
+
+\msg_new:nnn { tabularray } { idh-double-defined }
+    { Multiple ~ definitions ~ of ~ horizontal ~ child ~ indexer ~ (idh) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (classh) ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_idh:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1h}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1h}
+      {
+        \msg_warning:nnn {tabularray} {idh-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1h}
         \tl_clear_new:c { l__tblr_child_id_#1h_tl }
       }
     \tl_set:ce { l__tblr_child_id_#1h_tl } { \int_use:N \c@rownum }
   }
+
+\msg_new:nnn { tabularray } { idv-double-defined }
+    { Multiple ~ definitions ~ of ~ vertical ~ child ~ indexer ~ (idv) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (classv) ~  \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_idv:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1v}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1v}
+      {
+        \msg_warning:nnn {tabularray} {idv-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1v}
         \tl_clear_new:c { l__tblr_child_id_#1v_tl }
