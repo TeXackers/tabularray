@@ -2,6 +2,12 @@ name: Run benchmark tests in TeX Live
 
 on: push
 
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
+
 jobs:
   run-ubuntu:
     runs-on: ubuntu-latest
