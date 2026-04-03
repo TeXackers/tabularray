@@ -1,7 +1,10 @@
 \documentclass{article}
 \usepackage[b5paper,margin=1.5cm]{geometry}
 \usepackage{float,ninecolors}
-\usepackage{l3benchmark}
+% for historic texlive in which l3benchmark was integrated into l3kernel yet
+\ifcsname benchmark:n\endcsname\else
+  \usepackage{l3benchmark}
+\fi
 \usepackage{tabularray}
 \UseTblrLibrary{amsmath,booktabs,counter,diagbox,functional,siunitx,varwidth}
 \ExplSyntaxOn
