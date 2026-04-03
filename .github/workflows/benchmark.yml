@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [2022, 2023, 2024]
+        # support at most four TeX Live releases, see doc sec 8.1 "The future"
+        version: [2023, 2024, 2025, 2026]
     steps:
     - uses: actions/checkout@v6
     - name: Install TeX Live
