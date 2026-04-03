@@ -1,6 +1,9 @@
 name: Run benchmark tests in TeX Live
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 permissions:
   # deployments permission to deploy GitHub pages website
