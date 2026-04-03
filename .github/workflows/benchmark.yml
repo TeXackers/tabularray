@@ -9,7 +9,7 @@ jobs:
       matrix:
         version: [2022, 2023, 2024]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install TeX Live
       uses: TeX-Live/setup-texlive-action@v4
       with:
