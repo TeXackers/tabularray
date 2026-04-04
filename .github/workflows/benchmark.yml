@@ -1,15 +1,25 @@
 name: Run benchmark tests in TeX Live
 
-on: push
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  # deployments permission to deploy GitHub pages website
+  deployments: write
+  # contents permission to update benchmark contents in gh-pages branch
+  contents: write
 
 jobs:
   run-ubuntu:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [2022, 2023, 2024]
+        # support at most four TeX Live releases, see doc sec 8.1 "The future"
+        version: [2023, 2024, 2025, 2026]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install TeX Live
       uses: TeX-Live/setup-texlive-action@v4
       with:
