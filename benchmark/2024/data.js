@@ -1,6 +1,6 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1764219203411,
-  "repoUrl": "https://github.com/lvjr/tabularray",
+  "lastUpdate": 1775338565248,
+  "repoUrl": "https://github.com/TeXackers/tabularray",
   "entries": {
     "Tabularray Benchmark in TeX Live 2024": [
       {
@@ -7140,6 +7140,48 @@ window.BENCHMARK_DATA = {
             "value": 0.28032608486615,
             "unit": "ratio",
             "extra": "current time : previous time = 1.6125411987305 : 5.7523765563965"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "pearatlatex@gmail.com",
+            "name": "peaR",
+            "username": "peaR-red"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "86bdf8faa6ced2584ad4340f5d825f2e0727e9d7",
+          "message": "Merge pull request #639 from muzimuzhi/ci/fix-benchmark-tests\n\nFix benchmark generation",
+          "timestamp": "2026-04-05T05:33:02+08:00",
+          "tree_id": "71dde4da5ff912e257232cfd8112d94b3bbb0dcd",
+          "url": "https://github.com/TeXackers/tabularray/commit/86bdf8faa6ced2584ad4340f5d825f2e0727e9d7"
+        },
+        "date": 1775338564104,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "compile tabularray with pdflatex",
+            "value": 0.2166342572864,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0122947692871 : 4.6728286743164"
+          },
+          {
+            "name": "compile tabularray with xelatex",
+            "value": 0.21859449541581,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0307464599609 : 4.7153358459473"
+          },
+          {
+            "name": "compile tabularray with lualatex",
+            "value": 0.27830445417113,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.5877380371094 : 5.7050399780273"
           }
         ]
       }
