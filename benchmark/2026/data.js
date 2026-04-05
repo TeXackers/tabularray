@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1775338556253,
+  "lastUpdate": 1775368560569,
   "repoUrl": "https://github.com/TeXackers/tabularray",
   "entries": {
     "Tabularray Benchmark in TeX Live 2026": [
@@ -42,6 +42,48 @@ window.BENCHMARK_DATA = {
             "value": 0.99784928487508,
             "unit": "ratio",
             "extra": "current time : previous time = 1.5681076049805 : 1.5714874267578"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "73948299+plante3@users.noreply.github.com",
+            "name": "plante",
+            "username": "plante3"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6e57339096bd6b77800240e7dfe2a7aa35fe6c3",
+          "message": "Merge pull request #640 from muzimuzhi/chore/gh-pages-links\n\nchore: update GitHub Pages links",
+          "timestamp": "2026-04-05T13:54:51+08:00",
+          "tree_id": "0cb390fda2f453707d85f60aeb52ef16075cb321",
+          "url": "https://github.com/TeXackers/tabularray/commit/c6e57339096bd6b77800240e7dfe2a7aa35fe6c3"
+        },
+        "date": 1775368560131,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "compile tabularray with pdflatex",
+            "value": 0.98465165839171,
+            "unit": "ratio",
+            "extra": "current time : previous time = 0.99407958984375 : 1.0095748901367"
+          },
+          {
+            "name": "compile tabularray with xelatex",
+            "value": 0.99626129874275,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0002479553223 : 1.0040016174316"
+          },
+          {
+            "name": "compile tabularray with lualatex",
+            "value": 1.0038446934872,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.6035804748535 : 1.5974388122559"
           }
         ]
       }
