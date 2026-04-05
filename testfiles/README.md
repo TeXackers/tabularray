@@ -18,11 +18,11 @@
 
 | Test file   | What it tests |
 | :---        | :---          |
-| `color-001` | `bg`, `fg`, `font` and `measure` options for cells |
-| `color-002` | `bg` options for rows and columns |
-| `color-003` | `bg` and `hspan` options for multicolumn cells |
-| `color-004` | `bg`, `vspan` and `valign` options for multirow cells  |
-| `color-005` | `bg` option for both multirow and multicolumn cells |
+| `color-001` | `bgcolor`, `fgcolor`, `font` and `measure` options for cells |
+| `color-002` | `bgcolor` options for rows and columns |
+| `color-003` | `bgcolor` and `hspan` options for multicolumn cells |
+| `color-004` | `bgcolor`, `vspan` and `valign` options for multirow cells  |
+| `color-005` | `bgcolor` option for both multirow and multicolumn cells |
 
 # Test files for extra interfaces
 
