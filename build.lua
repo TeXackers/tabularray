@@ -1,7 +1,7 @@
 
 module = "tabularray"
 
-sourcefiles = {"tabularray.sty"}
+sourcefiles = {"tabularray-dev.sty"}
 
 -- all files that match checksuppfiles in the supportdir are moved to build/test folder
 supportdir = "./testfiles"
