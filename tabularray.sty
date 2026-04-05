@@ -1414,17 +1414,40 @@
   }
 \cs_generate_variant:Nn \__tblr_child_parse:nn { ne }
 
+\msg_new:nnn { tabularray } { unknown-child-class }
+  { Child ~ selector ~ (class) ~ #1 ~ is ~ not ~ used ~ in ~ any ~ cell, ~ consider ~ removing ~ its ~ associated ~ styling ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_run_selector:n #1
   {
-    \tl_rescan:ne { \cctab_select:N \c_code_cctab }
-      { \c_backslash_str __tblr_child_selector_ #1 }
-    \scan_stop: % for selectors with only optional arguments
+    % #1 can be of the form odd[4] or every[2]{4}{-3}, but cs_if_exists needs only the macro name
+    % therefore we use the fact that child selectors can only be alphabetic
+    \regex_extract_once:nnN { ^([a-zA-Z]+) } { #1 } \l_tmpa_seq
+    \exp_args:Nx \cs_if_exist:cTF {__tblr_child_selector_ \seq_item:Nn \l_tmpa_seq {1}}
+    {
+      \tl_rescan:ne { \cctab_select:N \c_code_cctab }
+        { \c_backslash_str __tblr_child_selector_ #1 }
+      \scan_stop: % for selectors with only optional arguments
+    }
+    {
+      \msg_warning:nnn {tabularray} {unknown-child-class} {#1}
+    }
   }
+
+\msg_new:nnn { tabularray } { unknown-child-id }
+  { Child ~ indexer ~ (id) ~ #1 ~ is ~ not ~ used ~ in ~ any ~ cell, ~ consider ~ removing ~ its ~ associated ~ styling ~ \msg_line_context:}
 
 \cs_new_protected:Npn \__tblr_child_run_indexer:n #1
   {
     \tl_rescan:ne { \cctab_select:N \c_code_cctab }
-      { \c_backslash_str __tblr_child_indexer_ #1 }
+      {
+        \cs_if_exist:cTF {__tblr_child_indexer_ #1}
+          {
+            \c_backslash_str __tblr_child_indexer_ #1
+          }
+          {
+            \msg_warning:nnn {tabularray} {unknown-child-id} {#1}
+          }
+      }
     \scan_stop: % for indexers with only optional arguments
   }
 \cs_generate_variant:Nn \__tblr_child_run_indexer:n { V }
@@ -1724,9 +1747,15 @@
 \clist_new:N \l__tblr_child_id_clist
 \clist_new:N \l__tblr_child_class_clist
 
+\msg_new:nnn { tabularray } { id-double-defined }
+    { Multiple ~ definitions ~ of ~ child ~ indexer ~ (id) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (class) ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_id:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1}
+      {
+        \msg_warning:nnn {tabularray} {id-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1}
         \tl_clear_new:c { l__tblr_child_id_#1_tl }
@@ -1734,18 +1763,32 @@
     \tl_set:ce { l__tblr_child_id_#1_tl }
       { { \int_use:N \c@rownum } { \int_use:N \c@colnum } }
   }
+
+\msg_new:nnn { tabularray } { idh-double-defined }
+    { Multiple ~ definitions ~ of ~ horizontal ~ child ~ indexer ~ (idh) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (classh) ~ \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_idh:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1h}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1h}
+      {
+        \msg_warning:nnn {tabularray} {idh-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1h}
         \tl_clear_new:c { l__tblr_child_id_#1h_tl }
       }
     \tl_set:ce { l__tblr_child_id_#1h_tl } { \int_use:N \c@rownum }
   }
+
+\msg_new:nnn { tabularray } { idv-double-defined }
+    { Multiple ~ definitions ~ of ~ vertical ~ child ~ indexer ~ (idv) ~ #1, ~ only ~ the ~ last ~ one ~ applies. ~ Consider ~ using ~ a ~ child ~ selector ~ (classv) ~  \msg_line_context:}
+
 \cs_new_protected:Npn \__tblr_child_add_idv:n #1
   {
-    \clist_if_in:NnF \l__tblr_child_id_clist {#1v}
+    \clist_if_in:NnTF \l__tblr_child_id_clist {#1v}
+      {
+        \msg_warning:nnn {tabularray} {idv-double-defined} {#1}
+      }
       {
         \clist_put_right:Nn \l__tblr_child_id_clist {#1v}
         \tl_clear_new:c { l__tblr_child_id_#1v_tl }
@@ -1809,6 +1852,7 @@
         \exp_args:Nne
         \NewTblrChildIndexer {##1}
           {
+            % \l__tblr_child_id_##1_tl is guaranteed to exist since we map over the id list
             \tl_set:Nn \exp_not:N \lTblrChildIndexTl
               { \use:c { l__tblr_child_id_##1_tl } }
           }
