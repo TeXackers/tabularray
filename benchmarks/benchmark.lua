@@ -118,10 +118,10 @@ local function bmRun(name)
   if isoldfirst then
     fileDelete("tabularray.sty")
     bmTestSome(oldtime, name)
-    fileCopy("../tabularray.sty", "tabularray.sty")
+    fileCopy("../tabularray-dev.sty", "tabularray.sty")
     bmTestSome(newtime, name)
   else
-    fileCopy("../tabularray.sty", "tabularray.sty")
+    fileCopy("../tabularray-dev.sty", "tabularray.sty")
     bmTestSome(newtime, name)
     fileDelete("tabularray.sty")
     bmTestSome(oldtime, name)
