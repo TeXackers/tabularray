@@ -1,12 +1,16 @@
 # The LaTeX3 package `tabularray`
 
 ```
-Caption     : Typeset tabulars and arrays with LaTeX3
-Author      : Jianrui Lyu <tolvjr@163.com>
-CTAN Page   : https://ctan.org/pkg/tabularray
-Repository  : https://github.com/lvjr/tabularray
-Repository  : https://bitbucket.org/lvjr/tabularray
-License     : The LaTeX Project Public License 1.3c
+Caption             : Typeset tabulars and arrays with LaTeX3
+Original Author     : Jianrui Lyu <tolvjr@163.com>
+Maintainers         : peaR-red
+                    ; ankaa3908
+                    ; plante
+                    ; ponte-vecchio
+CTAN Page           : https://ctan.org/pkg/tabularray
+Repository          : https://github.com/TeXackers/tabularray
+Repository          : https://bitbucket.org/lvjr/tabularray
+License             : The LaTeX Project Public License 1.3c
 ```
 
 ## 1\. Introduction
@@ -25,7 +29,7 @@ and the styles of the table can be completely set in key-value way.
 ## 2\. Contributing
 
 To make the upcoming releases more stable, you are very welcome to test the latest package file in the repository.
-To test it, you only need to download [`tabularray.sty`](https://github.com/lvjr/tabularray/raw/main/tabularray.sty)
+To test it, you only need to download [`tabularray-dev.sty`](https://github.com/lvjr/tabularray/raw/main/tabularray.sty)
 and put it into the folder of your TeX documents.
 
 If you want to make a contribution to `tabularray` package, you can get necessary information from [CONTRIBUTING.md](https://github.com/lvjr/tabularray/blob/main/CONTRIBUTING.md) file.
