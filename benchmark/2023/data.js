@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1775338529128,
+  "lastUpdate": 1775368616745,
   "repoUrl": "https://github.com/TeXackers/tabularray",
   "entries": {
     "Tabularray Benchmark in TeX Live 2023": [
@@ -7182,6 +7182,48 @@ window.BENCHMARK_DATA = {
             "value": 0.26854279874827,
             "unit": "ratio",
             "extra": "current time : previous time = 1.1192359924316 : 4.1678123474121"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "73948299+plante3@users.noreply.github.com",
+            "name": "plante",
+            "username": "plante3"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6e57339096bd6b77800240e7dfe2a7aa35fe6c3",
+          "message": "Merge pull request #640 from muzimuzhi/chore/gh-pages-links\n\nchore: update GitHub Pages links",
+          "timestamp": "2026-04-05T13:54:51+08:00",
+          "tree_id": "0cb390fda2f453707d85f60aeb52ef16075cb321",
+          "url": "https://github.com/TeXackers/tabularray/commit/c6e57339096bd6b77800240e7dfe2a7aa35fe6c3"
+        },
+        "date": 1775368616296,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "compile tabularray with pdflatex",
+            "value": 0.21494912491359,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0331954956055 : 4.806697845459"
+          },
+          {
+            "name": "compile tabularray with xelatex",
+            "value": 0.21767461765074,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0361366271973 : 4.7600250244141"
+          },
+          {
+            "name": "compile tabularray with lualatex",
+            "value": 0.27891489384714,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.5740203857422 : 5.6433715820312"
           }
         ]
       }
