@@ -5159,66 +5159,144 @@
 \dim_new:N \l__tblr_hfuzz_dim
 \dim_set:Nn \l__tblr_hfuzz_dim { 0.1pt }
 
-%% If all columns have negative coefficients and small natural widths,
-%% \l__tblr_column_coefficient_prop will be empty after one or more rounds.
 %% We reset @row-height, etc for \linewidth graphics in X columns (issue #80)
 \cs_new_protected:Npn \__tblr_adjust_extendable_column_width:
   {
     \prop_clear:N \l__tblr_positive_coef_prop
     \prop_clear:N \l__tblr_negative_coef_prop
+    \int_zero:N \l_tmpb_int
     \prop_map_inline:Nn \l__tblr_column_coefficient_prop
       {
+        \int_incr:N \l_tmpb_int
         \fp_compare:nNnTF { ##2 } > { 0 }
           { \prop_put:Nnn \l__tblr_positive_coef_prop { ##1 } { ##2 } }
           { \prop_put:Nnn \l__tblr_negative_coef_prop { ##1 } { ##2 } }
       }
-    \prop_map_inline:Nn \l__tblr_negative_coef_prop
+
+    \bool_set_true:N \l_tmpa_bool
+    \bool_while_do:Nn \l_tmpa_bool
       {
-        \tl_set:Ne \l__tblr_nat_tl
-          { \prop_item:Nn \l__tblr_column_natural_width_prop { ##1 } }
-        \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_nat_tl }
-        \dim_sub:Nn \l__tblr_column_target_dim { \l__tblr_nat_tl }
+        \bool_set_false:N \l_tmpa_bool
+        \dim_zero:N \l_tmpa_dim
+        \prop_map_inline:Nn \l__tblr_positive_coef_prop
+          { \dim_add:Nn \l_tmpa_dim { ##2 pt } }
+        \prop_map_inline:Nn \l__tblr_negative_coef_prop
+          { \dim_add:Nn \l_tmpa_dim { \dim_abs:n { ##2 pt } } }
+
+        \dim_compare:nNnT { \l_tmpa_dim } > { 0pt }
+          {
+            \tl_set:Ne \l__tblr_unit_tl
+              { \dim_ratio:nn { \l__tblr_column_target_dim } { \l_tmpa_dim } }
+
+            \prop_map_inline:Nn \l__tblr_positive_coef_prop
+              {
+                \tl_set:Ne \l__tblr_min_tl
+                  { \prop_item:Nn \l__tblr_column_min_width_prop { ##1 } }
+                \tl_if_empty:NT \l__tblr_min_tl { \tl_set:Nn \l__tblr_min_tl { 0pt } }
+                
+                \dim_set:Nn \l_tmpb_dim { \dim_eval:n { ##2 pt * \l__tblr_unit_tl } }
+                \dim_compare:nNnT { \l_tmpb_dim } < { \l__tblr_min_tl }
+                  {
+                    \bool_set_true:N \l_tmpa_bool
+                    \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_min_tl }
+                    \dim_sub:Nn \l__tblr_column_target_dim { \l__tblr_min_tl }
+                    \prop_remove:Nn \l__tblr_positive_coef_prop { ##1 }
+                    \int_decr:N \l_tmpb_int
+                    \prop_map_break:
+                  }
+              }
+
+            \bool_if:NF \l_tmpa_bool
+              {
+                \prop_map_inline:Nn \l__tblr_negative_coef_prop
+                  {
+                    \tl_set:Ne \l__tblr_min_tl
+                      { \prop_item:Nn \l__tblr_column_min_width_prop { ##1 } }
+                    \tl_if_empty:NT \l__tblr_min_tl { \tl_set:Nn \l__tblr_min_tl { 0pt } }
+                    \tl_set:Ne \l__tblr_nat_tl
+                      { \prop_item:Nn \l__tblr_column_natural_width_prop { ##1 } }
+                    
+                    \dim_set:Nn \l_tmpb_dim { \dim_eval:n { \dim_abs:n { ##2 pt } * \l__tblr_unit_tl } }
+                    
+                    \dim_compare:nNnTF { \l_tmpb_dim } < { \l__tblr_min_tl }
+                      {
+                        \bool_set_true:N \l_tmpa_bool
+                        \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_min_tl }
+                        \dim_sub:Nn \l__tblr_column_target_dim { \l__tblr_min_tl }
+                        \prop_remove:Nn \l__tblr_negative_coef_prop { ##1 }
+                        \int_decr:N \l_tmpb_int
+                        \prop_map_break:
+                      }
+                      {
+                        \dim_compare:nNnT { \l_tmpb_dim } > { \l__tblr_nat_tl }
+                          {
+                            \bool_set_true:N \l_tmpa_bool
+                            \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_nat_tl }
+                            \dim_sub:Nn \l__tblr_column_target_dim { \l__tblr_nat_tl }
+                            \prop_remove:Nn \l__tblr_negative_coef_prop { ##1 }
+                            \int_decr:N \l_tmpb_int
+                            \prop_map_break:
+                          }
+                      }
+                  }
+              }
+          }
       }
-    \prop_if_empty:NF \l__tblr_positive_coef_prop
+
+    \dim_compare:nNnTF { \l__tblr_column_target_dim } > { \l__tblr_hfuzz_dim }
       {
-        \dim_set:Nn \l_tmpa_dim { \l__tblr_column_target_dim }
-        \dim_zero:N \l_tmpb_dim
+        \int_compare:nNnT { \l_tmpb_int } = { 0 }
+          {
+            \dim_zero:N \l_tmpa_dim
+            \prop_map_inline:Nn \l__tblr_column_natural_width_prop
+              { \dim_add:Nn \l_tmpa_dim { ##2 } }
+            \tl_set:Ne \l__tblr_unit_tl
+              { \dim_ratio:nn { \l__tblr_column_target_dim } { \l_tmpa_dim } }
+            \prop_map_inline:Nn \l__tblr_column_natural_width_prop
+              {
+                \tl_set:Ne \l_tmpb_tl { \dim_eval:n { ##2 * \l__tblr_unit_tl } }
+                \tl_set:Ne \l__tblr_cur_tl { \__tblr_data_item:nen { column } { ##1 } { width } }
+                \__tblr_data_gput:nene { column } { ##1 } { width } { \dim_eval:n { \l__tblr_cur_tl + \l_tmpb_tl } }
+              }
+          }
+      }
+      { }
+    
+    \dim_zero:N \l_tmpa_dim
+    \prop_map_inline:Nn \l__tblr_positive_coef_prop
+      { \dim_add:Nn \l_tmpa_dim { ##2 pt } }
+    \prop_map_inline:Nn \l__tblr_negative_coef_prop
+      { \dim_add:Nn \l_tmpa_dim { \dim_abs:n { ##2 pt } } }
+
+    \dim_compare:nNnT { \l_tmpa_dim } > { 0pt }
+      {
+        \tl_set:Ne \l__tblr_unit_tl
+          { \dim_ratio:nn { \l__tblr_column_target_dim } { \l_tmpa_dim } }
+          
         \prop_map_inline:Nn \l__tblr_positive_coef_prop
           {
-            \tl_set:Ne \l_tmpa_tl
-              { \prop_item:Nn \l__tblr_column_min_width_prop { ##1 } }
-            \tl_if_empty:NT \l_tmpa_tl
-              { \tl_set:Nn \l_tmpa_tl { 0pt } }
-            \dim_add:Nn \l_tmpb_dim { \l_tmpa_tl }
+            \tl_set:Ne \l__tblr_final_tl
+              { \dim_eval:n { ##2 pt * \l__tblr_unit_tl } }
+            \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_final_tl }
           }
-        \dim_compare:nNnTF { \l_tmpa_dim } < { \l_tmpb_dim }
+        \prop_map_inline:Nn \l__tblr_negative_coef_prop
           {
-            \prop_map_inline:Nn \l__tblr_positive_coef_prop
-              {
-                \tl_set:Ne \l_tmpa_tl
-                  { \prop_item:Nn \l__tblr_column_min_width_prop { ##1 } }
-                \tl_if_empty:NT \l_tmpa_tl
-                  { \tl_set:Nn \l_tmpa_tl { 0pt } }
-                \__tblr_data_gput:nene { column } { ##1 } { width }
-                  { \l_tmpa_tl }
-              }
-          }
-          {
-            \dim_zero:N \l_tmpb_dim
-            \prop_map_inline:Nn \l__tblr_positive_coef_prop
-              { \dim_add:Nn \l_tmpb_dim { ##2 pt } }
-            \tl_set:Ne \l__tblr_unit_tl
-              { \dim_ratio:nn { \l_tmpa_dim } { \l_tmpb_dim } }
-            \prop_map_inline:Nn \l__tblr_positive_coef_prop
-              {
-                \tl_set:Ne \l__tblr_final_tl
-                  { \dim_eval:n { ##2 pt * \l__tblr_unit_tl } }
-                \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_final_tl }
-              }
+            \tl_set:Ne \l__tblr_final_tl
+              { \dim_eval:n { \dim_abs:n { ##2 pt } * \l__tblr_unit_tl } }
+            \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_final_tl }
           }
       }
+      
     \int_step_inline:nn { \c@colcount }
       { \__tblr_data_gput:nnnn { column } { ##1 } { @col-width } { 0pt } }
+    \int_step_inline:nn { \c@rowcount }
+      {
+        \__tblr_data_gput:nnnn { row } { ##1 } { @row-height } { 0pt }
+        \__tblr_data_gput:nnnn { row } { ##1 } { @row-head } { 0pt }
+        \__tblr_data_gput:nnnn { row } { ##1 } { @row-foot } { 0pt }
+        \__tblr_data_gput:nnnn { row } { ##1 } { @row-upper } { 0pt }
+        \__tblr_data_gput:nnnn { row } { ##1 } { @row-lower } { 0pt }
+      }
     \__tblr_calculate_cell_sizes:
   }
 
