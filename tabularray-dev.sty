@@ -5,6 +5,7 @@
 %%% Maintainers      : Ankaa
 %%%                  ; peaR-red
 %%%                  ; plante
+%%%                  ; ponte-vecchio
 %%% CTAN Page        : https://ctan.org/pkg/tabularray
 %%% Repository       : https://github.com/TeXackers/tabularray
 %%% License          : The LaTeX Project Public License 1.3c
@@ -5121,6 +5122,7 @@
 \prop_new:N \l__tblr_column_natural_width_prop
 \prop_new:N \l__tblr_column_computed_width_prop
 \prop_new:N \l__tblr_column_min_width_prop
+\prop_new:N \l__tblr_col_item_even_prop
 
 \msg_new:nnn { tabularray } { table-width-too-small }
   { Table ~ width ~ is ~ too ~ small, ~ need ~ #1 ~ more! }
@@ -5215,7 +5217,6 @@
           { \prop_put:Nnn \l__tblr_positive_coef_prop { ##1 } { ##2 } }
           { \prop_put:Nnn \l__tblr_negative_coef_prop { ##1 } { ##2 } }
       }
-
     \bool_set_true:N \l_tmpa_bool
     \bool_while_do:Nn \l_tmpa_bool
       {
@@ -5225,7 +5226,6 @@
           { \dim_add:Nn \l_tmpa_dim { ##2 pt } }
         \prop_map_inline:Nn \l__tblr_negative_coef_prop
           { \dim_add:Nn \l_tmpa_dim { \dim_abs:n { ##2 pt } } }
-
         \dim_compare:nNnT { \l_tmpa_dim } > { 0pt }
           {
             \tl_set:Ne \l__tblr_unit_tl
@@ -5248,7 +5248,6 @@
                     \prop_map_break:
                   }
               }
-
             \bool_if:NF \l_tmpa_bool
               {
                 \prop_map_inline:Nn \l__tblr_negative_coef_prop
@@ -5285,7 +5284,6 @@
               }
           }
       }
-
     \dim_compare:nNnTF { \l__tblr_column_target_dim } > { \l__tblr_hfuzz_dim }
       {
         \int_compare:nNnT { \l_tmpb_int } = { 0 }
@@ -5304,13 +5302,11 @@
           }
       }
       { }
-    
     \dim_zero:N \l_tmpa_dim
     \prop_map_inline:Nn \l__tblr_positive_coef_prop
       { \dim_add:Nn \l_tmpa_dim { ##2 pt } }
     \prop_map_inline:Nn \l__tblr_negative_coef_prop
       { \dim_add:Nn \l_tmpa_dim { \dim_abs:n { ##2 pt } } }
-
     \dim_compare:nNnT { \l_tmpa_dim } > { 0pt }
       {
         \tl_set:Ne \l__tblr_unit_tl
@@ -5329,7 +5325,6 @@
             \__tblr_data_gput:nene { column } { ##1 } { width } { \l__tblr_final_tl }
           }
       }
-      
     \int_step_inline:nn { \c@colcount }
       { \__tblr_data_gput:nnnn { column } { ##1 } { @col-width } { 0pt } }
     \int_step_inline:nn { \c@rowcount }
@@ -5341,79 +5336,6 @@
         \__tblr_data_gput:nnnn { row } { ##1 } { @row-lower } { 0pt }
       }
     \__tblr_calculate_cell_sizes:
-  }
-
-%% We use dimen register, since the coefficient may be a decimal number
-\cs_new_protected:Npn \__tblr_adjust_extendable_column_width_once:
-  {
-    \dim_zero:N \l_tmpa_dim
-    \prop_map_inline:Nn \l__tblr_column_coefficient_prop
-      {
-        \dim_add:Nn \l_tmpa_dim { \dim_abs:n { ##2 pt } }
-      }
-    \tl_set:Ne \l__tblr_w_tl
-      { \dim_ratio:nn { \l__tblr_column_target_dim } { \l_tmpa_dim } }
-    \dim_zero:N \l__tblr_column_target_dim
-    \prop_map_inline:Nn \l__tblr_column_coefficient_prop
-      {
-        \tl_set:Ne \l__tblr_a_tl
-          { \dim_eval:n { \dim_abs:n { ##2 pt } * \l__tblr_w_tl } }
-        \dim_compare:nNnTF { ##2 pt } > { 0pt }
-          {
-            \tl_set:Ne \l__tblr_min_tl
-              { \prop_item:Nn \l__tblr_column_min_width_prop { ##1 } }
-            \tl_set:Ne \l__tblr_cur_tl
-              { \prop_item:Nn \l__tblr_column_computed_width_prop { ##1 } }
-            \dim_compare:nNnTF { \l__tblr_a_tl + \l__tblr_cur_tl } < { \l__tblr_min_tl }
-              {
-                \prop_put:Nne \l__tblr_column_computed_width_prop
-                  { ##1 } { \l__tblr_min_tl }
-                \dim_add:Nn \l__tblr_column_target_dim
-                  { \l__tblr_min_tl - \l__tblr_cur_tl - \l__tblr_a_tl }
-                \prop_remove:Nn \l__tblr_column_coefficient_prop { ##1 }
-              }
-              {
-                \__tblr_add_dimen_value:Nnn
-                  \l__tblr_column_computed_width_prop { ##1 } { \l__tblr_a_tl }
-              }
-          }
-          {
-            \tl_set:Ne \l__tblr_b_tl
-              { \prop_item:Nn \l__tblr_column_natural_width_prop { ##1 } }
-            \tl_set:Ne \l__tblr_c_tl
-              { \prop_item:Nn \l__tblr_column_computed_width_prop { ##1 } }
-            \dim_compare:nNnTF { \l__tblr_a_tl + \l__tblr_c_tl } > { \l__tblr_b_tl }
-              {
-                \prop_put:Nne \l__tblr_column_computed_width_prop
-                  { ##1 } { \l__tblr_b_tl }
-                \dim_add:Nn \l__tblr_column_target_dim
-                  { \l__tblr_a_tl + \l__tblr_c_tl - \l__tblr_b_tl }
-                \prop_remove:Nn \l__tblr_column_coefficient_prop { ##1 }
-              }
-              {
-                \__tblr_add_dimen_value:Nnn
-                  \l__tblr_column_computed_width_prop { ##1 } { \l__tblr_a_tl }
-              }
-          }
-      }
-    \LogTblrTracing { target }
-  }
-
-\cs_new_protected:Npn \__tblr_adjust_extendable_column_width_negative:
-  {
-    \dim_zero:N \l_tmpa_dim
-    \prop_map_inline:Nn \l__tblr_column_natural_width_prop
-      { \dim_add:Nn \l_tmpa_dim { ##2 } }
-    \tl_set:Ne \l_tmpa_tl
-      { \dim_ratio:nn { \l__tblr_column_target_dim } { \l_tmpa_dim } }
-    \dim_zero:N \l__tblr_column_target_dim
-    \prop_map_inline:Nn \l__tblr_column_natural_width_prop
-      {
-        \tl_set:Ne \l_tmpb_tl { \dim_eval:n { ##2 * \l_tmpa_tl } }
-        \__tblr_add_dimen_value:Nnn
-          \l__tblr_column_computed_width_prop { ##1 } { \l_tmpb_tl }
-      }
-    \LogTblrTracing { target }
   }
 
 %%% --------------------------------------------------------
@@ -5642,6 +5564,7 @@
         \prop_put:Nee \l__tblr_column_min_width_prop
           { \l__tblr_j_tl } { \l__tblr_min_tl }
       }
+    \prop_set_eq:NN \l__tblr_col_item_even_prop \l__tblr_col_item_skip_size_prop
     \str_if_eq:enTF
       { \__tblr_prop_item:ne { inner } { hspan } }
       { even }
@@ -5657,6 +5580,10 @@
           \l__tblr_col_item_skip_size_prop
           \l__tblr_col_span_size_prop
       }
+    \__tblr_distribute_span_sizes_even:eNN
+      { \int_use:N \c@colcount }
+      \l__tblr_col_item_even_prop
+      \l__tblr_col_span_size_prop
     \int_step_variable:nNn { \c@colcount } \l__tblr_j_tl
       {
         \tl_set:Ne \l__tblr_co_tl
@@ -5670,8 +5597,17 @@
       }
     \int_step_variable:nNn { \c@colcount } \l__tblr_j_tl
       {
-        \tl_set:Ne \l__tblr_min_tl
-          { \prop_item:Ne \l__tblr_col_item_skip_size_prop { item[\l__tblr_j_tl] } }
+        \tl_set:Ne \l__tblr_co_tl
+          { \__tblr_data_item:nen { column } { \l__tblr_j_tl } { coefficient } }
+        \fp_compare:nNnTF { \l__tblr_co_tl } > { 0 }
+          {
+            \tl_set:Ne \l__tblr_min_tl
+              { \prop_item:Ne \l__tblr_col_item_even_prop { item[\l__tblr_j_tl] } }
+          }
+          {
+            \tl_set:Ne \l__tblr_min_tl
+              { \prop_item:Ne \l__tblr_col_item_skip_size_prop { item[\l__tblr_j_tl] } }
+          }
         \prop_put:Nee \l__tblr_column_min_width_prop
           { \l__tblr_j_tl } { \l__tblr_min_tl }
       }
