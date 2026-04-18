@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1775368615098,
+  "lastUpdate": 1776494008426,
   "repoUrl": "https://github.com/TeXackers/tabularray",
   "entries": {
     "Tabularray Benchmark in TeX Live 2024": [
@@ -7224,6 +7224,48 @@ window.BENCHMARK_DATA = {
             "value": 0.27298166123131,
             "unit": "ratio",
             "extra": "current time : previous time = 1.5655822753906 : 5.7351188659668"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ihaugewuid@p.monash.edu",
+            "name": "Leothelion",
+            "username": "ponte-vecchio"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "14b16d0924957c45d5f637b09ff1e703db57c889",
+          "message": "Update issue templates",
+          "timestamp": "2026-04-18T16:30:20+10:00",
+          "tree_id": "254cffeb9b76f34f1f56863fb6d9ed5f32d0fe56",
+          "url": "https://github.com/TeXackers/tabularray/commit/14b16d0924957c45d5f637b09ff1e703db57c889"
+        },
+        "date": 1776494007683,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "compile tabularray with pdflatex",
+            "value": 0.21551408559552,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.0106086730957 : 4.6892929077148"
+          },
+          {
+            "name": "compile tabularray with xelatex",
+            "value": 0.21749520031026,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.033275604248 : 4.7507972717285"
+          },
+          {
+            "name": "compile tabularray with lualatex",
+            "value": 0.28051627459438,
+            "unit": "ratio",
+            "extra": "current time : previous time = 1.6125640869141 : 5.7485580444336"
           }
         ]
       }
