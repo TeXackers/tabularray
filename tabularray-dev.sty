@@ -6346,14 +6346,14 @@
     \TblrOverlap
       {
         \__tblr_hyper_link:nn {#1}
-          { \textsuperscript { \UseTblrFont { note-tag } #1 } }
+          { \textsuperscript { \sffamily \UseTblrFont { note-tag } #1 } }
       }
   }
 
 \DeclareTblrTemplate { note-tag } { empty } { }
 \DeclareTblrTemplate { note-tag } { normal }
   {
-    \textsuperscript { \UseTblrFont { note-tag } \InsertTblrNoteTag }
+    \textsuperscript { \sffamily \UseTblrFont { note-tag } \InsertTblrNoteTag }
   }
 \SetTblrTemplate { note-tag } { normal }
 
