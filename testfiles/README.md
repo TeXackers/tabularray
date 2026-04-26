@@ -48,30 +48,30 @@
 
 | Test file     | What it tests |
 | :---          | :---          |
-| `library-001` | `booktabs` library and `\toprule`, `\midrule`, `\bottomrule` |
-| `library-002` | `diagbox` library |
-| `library-003` | `siunitx` library and table format |
-| `library-004` | `siunitx` library and table alignment |
-| `library-005` | `booktabs` library and trim options and extra commands |
-| `library-006` | `counter` library |
-| `library-007` | `siunitx` library and `s` column |
-| `library-008` | `amsmath` library and its environments |
-| `library-009` | `siunitx` library and multiline cells |
-| `library-010` | `functional` library |
-| `library-011` | `siunitx` library and `guard` option |
-| `library-012` | `nameref` library |
-| `library-013` | `zref` library |
-| `library-014` | `amsmath` library and `delimiter` option |
-| `library-015` | load the same library twice |
-| `library-016` | `tikz` library for normal cells (#29) |
-| `library-017` | `tikz` library for multispan cells (#29) |
-| `library-018` | `tikz` library for corner nodes (#29) |
-| `library-019` | load libraries in external files (#532) |
-| `library-020` | `functional` library: evaluate inner specs (#106, #270) |
-| `library-021` | `tikz` library: onepage long table (#29) |
-| `library-022` | `tikz`: multipage table and `\ExpTblrChildClass` (#29, #381) |
-| `library-023` | hyperlinks and nested tblr tables (#620) |
-| `library-024` | `measure=vbox` and `\mathcolor` work together (#603) |
+| `library-amsmath-01` | `amsmath` library and its environments |
+| `library-amsmath-02` | `amsmath` library and `delimiter` option |
+| `library-booktabs-01` | `booktabs` library and `\toprule`, `\midrule`, `\bottomrule` |
+| `library-booktabs-02` | `booktabs` library and trim options and extra commands |
+| `library-counter-01` | `counter` library |
+| `library-diagbox-01` | `diagbox` library |
+| `library-functional-01` | `functional` library |
+| `library-functional-02` | `functional` library: evaluate inner specs (#106, #270) |
+| `library-nameref-01` | `nameref` library |
+| `library-siunitx-01` | `siunitx` library and table format |
+| `library-siunitx-02` | `siunitx` library and table alignment |
+| `library-siunitx-03` | `siunitx` library and `s` column |
+| `library-siunitx-04` | `siunitx` library and multiline cells |
+| `library-siunitx-05` | `siunitx` library and `guard` option |
+| `library-siunitx-06` | load the same library twice with `siunitx` |
+| `library-siunitx-07` | load libraries in external files (#532) with `siunitx` |
+| `library-tikz-01` | `tikz` library for normal cells (#29) |
+| `library-tikz-02` | `tikz` library for multispan cells (#29) |
+| `library-tikz-03` | `tikz` library for corner nodes (#29) |
+| `library-tikz-04` | `tikz` library: onepage long table (#29) |
+| `library-tikz-05` | `tikz`: multipage table and `\ExpTblrChildClass` (#29, #381) |
+| `library-varwidth-01` | `varwidth`: hyperlinks and nested tblr tables (#620) |
+| `library-varwidth-02` | `varwidth`: `measure=vbox` and `\mathcolor` work together (#603) |
+| `library-zref-01` | `zref` library |
 
 # Test files for long tables
 

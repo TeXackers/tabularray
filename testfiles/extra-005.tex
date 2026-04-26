@@ -2,8 +2,6 @@
 
 \input{regression-test}
 
-\usepackage{xcolor}
-
 \setlength{\parindent}{0pt}
 
 \begin{document}
@@ -17,8 +15,8 @@
 \begin{tblr}{
   hline{1,Z},
   cell{Foo,foo,Qux,qux} = {cmd=\fbox},
-  row{Barh,barh,Quxh,quxh} = {bg=azure7},
-  column{Bazv,bazv,Quxv,quxv} = {fg=red3}
+  row{Barh,barh,Quxh,quxh} = {bg=cyan},
+  column{Bazv,bazv,Quxv,quxv} = {fg=red}
 }
   1 & 2 & 3 & \SetChild{id=Foo} 4 & 5 & 6 & 7 & 8 \\
   2 & 2 & \SetChild{idh=Bar} 3 & 4 & 5 & 6 & 7 & 8 \\
@@ -37,8 +35,8 @@
 \begin{tblr}{
   hline{1,Z},
   cell{Foo,Qux} = {cmd=\fbox},
-  row{Barh,Quxh} = {bg=azure7},
-  column{Bazv,Quxv} = {fg=red3}
+  row{Barh,Quxh} = {bg=cyan},
+  column{Bazv,Quxv} = {fg=red}
 }
   1 & 2 & 3 & \SetChild{id=Foo} 4 & 5 & 6 & 7 & 8 \\
   2 & 2 & \SetChild{idh=Bar} 3 & 4 & 5 & 6 & 7 & 8 \\
@@ -57,8 +55,8 @@
 \begin{tblr}{
   hline{1,Z},
   cell{foo,qux} = {cmd=\fbox},
-  row{barh,quxh} = {bg=azure7},
-  column{bazv,quxv} = {fg=red3}
+  row{barh,quxh} = {bg=cyan},
+  column{bazv,quxv} = {fg=red}
 }
   1 & 2 & 3 & \SetChild{class*=foo} 4 & 5 & 6 & 7 & 8 \\
   2 & 2 & \SetChild{classh=bar} 3 & 4 & 5 & 6 & 7 & 8 \\
@@ -77,8 +75,8 @@
 \begin{tblr}{
   hline{1,Z},
   cell{missing,Missing} = {cmd=\fbox},
-  row{missingh,Missingh} = {bg=azure7},
-  column{missingv,Missingv} = {fg=red3}
+  row{missingh,Missingh} = {bg=cyan},
+  column{missingv,Missingv} = {fg=red}
 }
   1 & 2 & 3 & \SetChild{class*=foo} 4 & 5 & 6 & 7 & 8 \\
   2 & 2 & \SetChild{classh=bar} 3 & 4 & 5 & 6 & 7 & 8 \\

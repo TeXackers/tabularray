@@ -2,8 +2,6 @@
 
 \input{regression-test}
 
-\usepackage{ninecolors}
-
 \setlength\parindent{0pt}
 
 \begin{document}
@@ -14,11 +12,11 @@
 \BEGINTEST{empty text}
 \setlength\lTblrDefaultHruleWidthDim{3pt}%
 \setlength\lTblrDefaultVruleWidthDim{2pt}%
-\renewcommand\lTblrDefaultHruleColorTl{blue3}%
-\renewcommand\lTblrDefaultVruleColorTl{red3}%
+\renewcommand\lTblrDefaultHruleColorTl{blue}%
+\renewcommand\lTblrDefaultVruleColorTl{red}%
 \begin{tblr}{
-  hlines, hline{2} = {wd=1pt, fg=cyan3},
-  vlines, vline{2} = {wd=1pt, fg=green3}
+  hlines, hline{2} = {wd=1pt, fg=cyan},
+  vlines, vline{2} = {wd=1pt, fg=green!90!black}
 }
   Alpha   & Beta  & Gamma  \\
   Epsilon & Zeta  & Eta    \\
