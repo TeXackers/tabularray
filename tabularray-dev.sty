@@ -37,8 +37,6 @@
   \msg_error:nn { tabularray } { latex-too-old }
 }
 
-\AddToHook {package/xcolor/after} [tabularray] { \RequirePackage{ninecolors} }
-
 %% There is a hyperref bug that NoHyper environment could not be nested.
 %% See issue #620 and https://github.com/latex3/hyperref/issues/397
 \newenvironment{tblrNoHyper}{}{}
@@ -175,6 +173,8 @@
 \box_new:N \l__tblr_c_box % for cell box
 \box_new:N \l__tblr_d_box
 
+%% Also need to add dependency for xcolor
+\RequirePackage{xcolor}
 
 %% Some commands for horizontal alignment
 \cs_new_eq:NN \__tblr_halign_command_j: \TblrAlignBoth
