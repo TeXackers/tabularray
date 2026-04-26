@@ -2,8 +2,6 @@
 
 \input{regression-test}
 
-\usepackage{xcolor}
-
 \setlength{\parindent}{0pt}
 
 \ExplSyntaxOn
@@ -26,9 +24,9 @@
 \BEGINTEST{child tuples: diagonal selection} % issue #381
 \begin{tblr}{
   hline{1,Z},
-  cell{{2}{4},{7}{3}} = {bg=blue7},
-  cell{{1}{1}-{4}{4},{5}{8}-{8}{5}} = {bg=red7},
-  cell{{4}{3}-{1}{1},{6}{5}-{4}{8}} = {bg=green7},
+  cell{{2}{4},{7}{3}} = {bg=blue},
+  cell{{1}{1}-{4}{4},{5}{8}-{8}{5}} = {bg=red},
+  cell{{4}{3}-{1}{1},{6}{5}-{4}{8}} = {bg=green!90!black},
 }
   1	& 2	& 3	& 4	& 5	& 6	& 7 & 8 \\
   2	& 2	& 3	& 4	& 5	& 6	& 7 & 8 \\
@@ -46,7 +44,7 @@
 \BEGINTEST{child tuples: indexers and selectors} % issue #381
 \begin{tblr}{
   hline{1,Z},
-  cell{{7}{6},Hello,{8}{7},world,{6}{8}} = {bg=yellow7},
+  cell{{7}{6},Hello,{8}{7},world,{6}{8}} = {bg=yellow},
 }
   1	& 2	& 3	& 4	& 5	& 6	& 7 & 8 \\
   2	& 2	& 3	& 4	& 5	& 6	& 7 & 8 \\

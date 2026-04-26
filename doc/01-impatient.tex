@@ -1,0 +1,182 @@
+\chapter{Tabularray for the Impatient}
+\section{Conceptualisation}
+Specification of tabular typesetting in \pkg{tabularray} is conceptualised as two components: \vrb{inner, outer}.
+The \vrb{inner} specification refers to any and all specification that is directly related to the table itself, including column and row specifications. These are supplied within the \arg{inner spec} argument in a key--value format.
+Whereas, the \vrb{outer} specification refers to all elements of typesetting that are not directly related to the table itself, but rather to the environment in which the table is placed. These are supplied within the \oarg{outer spec} as an optional argument, also in a key--value format.
+
+Based on this conceptualisation, \pkg{tabularray} provides the following environments for tabular typesetting: \tsobj[env]{tblr,tallblr,longtblr}. 
+
+\begin{codedescribe}[env]{tblr,tallblr,longtblr}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{\arg{inner spec}\}
+    \quad\ldots
+    \tsmacro{\end{tblr}}{}
+    % \bigskip
+    % \tsobj[code]{\begin{talltblr}}\oarg{outer spec}\arg{inner spec}
+    % \quad\ldots
+    % \tsmacro{\end{talltblr}}{}
+    % \bigskip
+    % \tsobj[code]{\begin{longtblr}}\oarg{outer spec}\arg{inner spec}
+    % \quad\ldots
+    % \tsmacro{\end{longtblr}}{}
+    \end{codesyntax}
+\end{codedescribe}
+
+The feature comparison is typeset in 
+
+\begin{table}[!hbtp]
+\centering
+\begin{talltblr}[
+  caption = {Feature matrix of the \pkg{tabularray} environments},
+  label = {comparison-of-tblr},
+  entry = {Comparison of tblr, tallblr and longtblr environments},
+  note{a} = {\footnotesize Whether the environment can be placed inside a float, such as \env{table}.}
+]{
+  columns = {c},
+  row{1} = {preto={\bfseries}},
+  process = \YNColour
+}
+  \hline
+  & Caption/label & Float\TblrNote{a} & Pagebreak\\
+  \hline
+  \env{tblr} & No & No & No\\
+  \env{tallblr} & Yes & Yes & No\\
+  \env{longtblr} & Yes & No & Yes\\
+  \hline
+\end{talltblr}
+\end{table}
+
+\section{Specifications of the Inner Components}\label{impatient:inner}
+\subsection{Column and Row Specifications}
+To specify columns and rows in \pkg{tabularray}, \key{columns,rows} keys may be used. As the names suggest, \key{columns,rows} represent global specifications that apply to all columns/rows of a given \env{tblr}; whereas \key{column, row} represent specifications that apply to a specific column/row, which may be useful in customisation.
+
+\begin{codedescribe}[keys]{column, columns, row, rows}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}\tsobj[oarg]{outer spec}\{
+    \quad\keyval{columns}{kwargs},
+    \quad\keyval{rows}{kwargs},
+    \quad\ldots
+    \}
+    \quad\ldots
+    \tsmacro{\end{tblr}}{}
+    \end{codesyntax}
+  \begin{describelist*}{keys}
+    \deschead{Positioning \& Dimensions}\label{colrow:positioning}
+    \describe{halign}
+      {Horizontal alignment: \val{l, c, r, j} (Default: \val{j})}
+    \describe{valign}
+      {Vertical alignment: \val{t, m, b, f} (Default: \val{t})}
+    \describe{ht}
+      {Height of the row. \vrb{row} only}
+    \describe{wd}
+      {Width of the column. \vrb{column} only}
+    \deschead{Colour and Font}\label{colrow:colour}
+    \describe{bg}
+      {Colour of the background of the column/row}
+    \describe{fg}
+      {Colour of the text in the column/row}
+    \describe{font}
+      {Font of the text in the column/row}
+    \describe{mode}
+      {Mode in which the text will be typeset: \val{math, imath, dmath, text} (Default: \val{text})}
+    \describe{\$}
+      {Alias to \keyval{mode}{math, imath}, i.e. inline math mode}
+    \describe{\$\$}
+      {Alias to \keyval{mode}{dmath}, i.e. display math mode}
+    \deschead{Utilities}
+    \describe{cmd}{Control sequence to execute for every cell's text}
+    \describe{preto}{Material to insert \emph{before} the text of every cell.}
+    \describe{appto}{Material to insert \emph{after} the text of every cell.}
+    \begin{tsremark}
+      If you supply values for \key{preto, appto} in both \key{columns} and \key{rows}, the order in which they are typeset will be determined by the order in which you specify the keys.
+      For example, \vrb{columns={preto=+, appto=!}, rows={preto=X, appto=Z}} will yield ``\tsobj[code, no index]{X+text!Z}'', whereas \vrb{rows={preto=X, appto=Z}, columns={preto=+, appto=!}} will yield ``\tsobj[code, no index]{+XtextZ!}''.
+    \end{tsremark}
+    \begin{tsremark}
+      \key{preto} may also be used for font purposes, but \key{font} always comes before \key{preto}---which may have its use.\footnotemark[2]
+    \end{tsremark}
+  \end{describelist*}
+\end{codedescribe}
+\footnotetext[1]{The values of these keys may be supplied without need to specify the key itself. For example, \vrb{l, t, 5cm, red} will be understood as \vrb{halign=l, valign=t, wd=5cm, bg=red}.}
+\footnotetext[2]{The key difference is that \key{font} executes \tsobj[code]{\selectfont} after.}
+\clearpage
+\begin{codedescribe}{}
+  \begin{describelist*}{keys}
+    \deschead{Spacing -- Rows}\label{colrow:rowspacing}
+    \describe{rowsep}{Vertical space above and below the row (Default: \val{2pt}) \vrb{row} only}
+    \describe{rowsep+}{Vertical space above and below the row, added to the value of \tsobj[keys]{rowsep} (Default: none). \vrb{row} only}
+    \describe{abovesep}{Vertical space above the row (Default: \val{2pt}) \vrb{row} only}
+    \describe{abovesep+}{Vertical space above the row, added to the value of \tsobj[keys]{abovesep} (Default: none). \vrb{row} only}
+    \describe{belowsep}{Vertical space below the row (Default: \val{2pt}) \vrb{row} only}
+    \describe{belowsep+}{Vertical space below the row, added to the value of \tsobj[keys]{belowsep} (Default: none). \vrb{row} only}
+    \deschead{Spacing -- Columns}\label{colrow:colspacing}
+    \describe{colsep}{Horizontal space before and after the column (Default: \val{6pt}). \vrb{column} only}
+    \describe{colsep+}{Horizontal space before and after the column, added to the value of \tsobj[keys]{colsep} (Default: none). \vrb{column} only}
+    \describe{leftsep}{Horizontal space before the column (Default: \val{6pt}). \vrb{column} only}
+    \describe{leftsep+}{Horizontal space before the column, added to the value of \tsobj[keys]{leftsep} (Default: none). \vrb{column} only}
+    \describe{rightsep}{Horizontal space after the column (Default: \val{6pt}). \vrb{column} only}
+    \describe{rightsep+}{Horizontal space after the column, added to the value of \tsobj[keys]{rightsep} (Default: none). \vrb{column} only}
+  \end{describelist*}
+  \begin{tsremark}
+      Setting values via \key{rowsep, rowsep+} is equivalent to that of using \key{abovesep, belowsep} (or that of \key{abovesep+, belowsep+}) with the same value. That is, \vrb{rowsep=3pt} will be the same as \vrb{abovesep=3pt, belowsep=3pt}. The same applies to the column spacing keys.
+    \end{tsremark}
+\end{codedescribe}
+
+\section{[Practice] The Q-type}
+% 5x4 positioning table
+\begin{codestore}[st = Q-positioning]
+\begin{tblr}{
+    colspec = {|  X[j] | X[l] | X[c] | X[r] |},
+    rowspec = {| h{5em} | t{5em} | m{5em} | b{5em} | f{5em} |}
+}
+    {Justified head} & {Left\\ head} & {Centre\\ head} & {Right\\ head} \\
+    {Justified top} & {Left\\ top} & {Centre\\ top} & {Right\\ top} \\
+    {Justified middle} & {Left\\ middle} & {Centre\\ middle} & {Right\\ middle} \\
+    {Justified bottom} & {Left\\ bottom} & {Centre\\ bottom} & {Right\\ bottom} \\
+    {Justified\\ foot} & {Left\\ foot} & {Centre\\ foot} & {Right\\ foot}
+\end{tblr}
+\end{codestore}
+
+
+% explain
+\begin{codedescribe}[code, update = 2026A]{Q[ ... ]}
+Unlike column specifications known in a typical \LaTeX\ fashion, the \tsverb{Q}-type in \pkg{tabularray} is a generic, flexible placeholder type that can act as any column/row type, as well as accommodating an array of features including dimensions, spanning, colouring and so on.
+% In fact, the \tsverb{Q} type can become a more generalised version of the \tsobj[oarg]{p, m, b} types in \env*{tabular,tabularx}.
+The \tsverb{Q} type takes the following \emph{optional} arguments:
+\begin{describelist*}{oarg}
+    \describe{column}{\arg{coltype}, Column type of the cell (default: \tsobj[keys]{j}, see below)}
+    \describe{row}{\arg{rowtype}, Row type of the cell (default: \tsobj[keys]{t}, see below)}
+    \describe{colour}{=\arg{colour name}, Background colour of the cell (default: none)}
+
+    Other keyword arguments include:
+    \describe{co}{=\arg{int}, Number of columns to span (default: 1)}
+    \describe{wd}{=\arg{dim}, Width of the cell, cannot be used with \tsobj[oarg]{ht}. (default: natural width)}
+    \describe{ht}{=\arg{dim}, Height of the cell, cannot be used with \tsobj[oarg]{wd}. (default: natural height)}
+    \describe{si}{=\arg{kwargs}, pass arguments to }
+\end{describelist*}
+
+
+The \arg{column}, for example, can be any combination of:
+
+\begin{describelist}{keys}
+    \describe{j}{Justified column (default), alias for \tsobj[keys]{Q[j]}}
+    \describe{l}{Left-aligned column, alias for \tsobj[keys]{Q[l]}}
+    \describe{c}{Centre-aligned column, alias for \tsobj[keys]{Q[c]}}
+    \describe{r}{Right-aligned column, alias for \tsobj[keys]{Q[r]}}
+    \describe{X[\arg{coltype}]}{Stretchable column type with the specified \arg{coltype} above i.e. \tsmeta{l, c, r, j}, alias for \tsverb[keys]{Q[co = 1, 1]}}
+\end{describelist}
+
+Likewise, the \arg{row} can entail the following:
+\begin{describelist}{keys}
+    \describe{h\{\arg{dim}\}}{``head''-aligned}
+    \describe{t\{\arg{dim}\}}{Top-aligned (default)}
+    \describe{m\{\arg{dim}\}}{Middle-aligned}
+    \describe{b\{\arg{dim}\}}{Bottom-aligned}
+    \describe{f\{\arg{dim}\}}{``foot''-aligned}
+\end{describelist}
+\end{codedescribe}
+
+The following table visualises the combinations of the above keys for the \arg{column} and \arg{row} arguments of the \tsverb{Q} type:
+\begin{center}
+\tsdemo*[tblr]{Q-positioning}
+\end{center}
+\clearpage

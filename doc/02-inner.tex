@@ -1,0 +1,87 @@
+\chapter{Specifications of the Inner Components with Examples}
+As highlighted briefly in \ref{impatient:inner}, the \vrb{inner} specification refers to any and all specification that is directly related to the table itself, including column and row specifications. These are supplied within the \arg{inner spec} argument in a key--value format.
+
+In this chapter, we show applied examples of the inner specifications. Note that \pkg{tabularray} provides a wide range of options to achieve the same thing---then it is up to the user to choose the most intuitive and efficient way for them to achieve the desired result.
+
+While it is our intention to provide a comprehensive guide to showcase the inner specifications, the examples delineated here are thus not intended to be exhaustive, but rather to provide a general overview of the inner specifications and their applications.
+
+\section{Column-wise Options}
+\begin{codedescribe}[
+  marg,
+  new=2021F,
+  update=2021G,
+  update=2021L
+]{columns}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}\tsobj[oarg]{outer spec}\{
+      \quad\keyval{columns}{kwargs}
+      \quad\ldots
+    \}
+    \quad\ldots
+    \tsmacro{\end{tblr}}{}
+  \end{codesyntax}
+
+\key{columns} is the most intuitive key, and a familiar concept for those who have experience with \LaTeX's \env[no index]{tabular}. It generally represents the global column-wise specification for all columns in a given \env{tblr}.
+\end{codedescribe}
+
+\begin{codedescribe}[
+  key,
+  new=2021L
+]{halign}
+\begin{codesyntax}
+\end{codesyntax}
+  The \key{halign} key represents the horizontal alignment of the cell content. It accepts four values: \val{j, l, c, r}, which represent justified, left-aligned, centered and right-aligned content, respectively. The default value is \val{j}.
+  \begin{tsremark}
+    Values of this key can be supplied without the key.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+  value,
+  new=2021L
+]{l,c,r}
+  \val{l,c,r} represent left-aligned, centred and right-aligned cell content, respectively, and behave the same as that of \LaTeX's \env[no index]{tabular}.
+  \begin{tsremark}
+    All of these keys can be supplied without the \key{halign}. \vrb{columns={l}} is equivalent to \vrb{columns={halign=l}}.
+  \end{tsremark}
+
+  \begin{codestore}[st=columns:lcr]
+    \begin{tblr}{
+      columns = {l}
+    }
+      Asrâr-e azal râ na to dâni-o na man\\
+      Win harf-e mu’amma na to khâni-o na man\\
+      Hast az pas-e pare guftegu-ye man-o-to\\
+      Chun parde baroftad na to mâni-o na man
+    \end{tblr}\end{codestore}
+  \begin{center}
+  \tsdemo*[tblr]{columns:lcr}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+  value,
+  new=2021N
+]{j}
+  \val{j} represents justified cell content. This is the default value for \key{halign}.
+  \begin{tsremark}
+    Values of this key can be supplied without the key, such that \vrb{j} is equivalent to \keyval{halign}{j}.
+  \end{tsremark}
+
+  \begin{codestore}[st=columns:j]
+    \begin{tblr}{
+      hlines, vlines,
+      columns = {8em} % `j' already implied by default
+    }
+      Asrâr-e azal râ na to dâni-o na man\\
+      Win harf-e mu’amma na to khâni-o na man\\
+      Hast az pas-e pare guftegu-ye man-o-to\\
+      Chun parde baroftad na to mâni-o na man
+    \end{tblr}\end{codestore}
+  \begin{center}
+  \tsdemo*[tblr]{columns:j}
+  \end{center}
+  \begin{tsremark}
+    Observe the ugly justification of Khayyam's beautiful quatrain.
+  \end{tsremark}
+\end{codedescribe}

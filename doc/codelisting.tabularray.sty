@@ -1,0 +1,48 @@
+%%
+%% Tabularray Code Listing Style Definition
+%% Author: Jevgeni H. <@ponte-vecchio>
+%% Version: 2026A
+%%
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+\RequirePackage{codelisting}
+
+\newcodekey{tblr}{
+  ruleht = 0,
+  codeprefix = {},
+  resultprefix = {},
+  bckgndcolor = yellow!10!white,
+  stringstyle = \color{red},
+  commentstyle = \color{darkgreen},
+  texcsstyle = \color{magenta},
+  keywdstyle = \color{cyan},
+  keywd = {
+    tblr,
+    talltblr,
+    longtblr,
+    column,
+    columns,
+    colspec,
+    row,
+    rows,
+    rowspec,
+    hlines,vlines,hline,vline
+  },
+  keywd = [2]{
+    halign, valign, wd, ht,
+    colsep, colsep+, leftsep, leftsep+, rightsep, rightsep+,
+    rowsep, rowsep+, abovesep, abovesep+, belowsep, belowsep+,
+    bg, fg, font, cmd, preto, appto,
+    hlines,vlines,hline,vline,
+    Q,X,{|},\$\$, \$
+  }
+}
+\setlistcolorscheme{
+  bckgnd = grey,
+  string = darkgreen,
+  comment = darkgrey,
+  texcs = magenta,
+  keywd = cyan,
+  rule = pink,
+  number = magenta
+}

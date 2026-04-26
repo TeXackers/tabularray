@@ -37,8 +37,6 @@
   \msg_error:nn { tabularray } { latex-too-old }
 }
 
-\AddToHook {package/xcolor/after} [tabularray] { \RequirePackage{ninecolors} }
-
 %% There is a hyperref bug that NoHyper environment could not be nested.
 %% See issue #620 and https://github.com/latex3/hyperref/issues/397
 \newenvironment{tblrNoHyper}{}{}
@@ -175,6 +173,8 @@
 \box_new:N \l__tblr_c_box % for cell box
 \box_new:N \l__tblr_d_box
 
+%% Also need to add dependency for xcolor
+\RequirePackage{xcolor}
 
 %% Some commands for horizontal alignment
 \cs_new_eq:NN \__tblr_halign_command_j: \TblrAlignBoth
@@ -4280,13 +4280,21 @@
 
 \cs_new_protected:Npn \__tblr_outer_gput_note:nn #1 #2
   {
-    \__tblr_prop_gput:nnn { note } {#1} {#2}
+    \IfValueTF {#1}{
+      \__tblr_prop_gput:nnn { note } {#1} {#2}
+    }{
+      \__tblr_prop_gput:nnn { note } { } {#2}
+    }
   }
 \cs_generate_variant:Nn \__tblr_outer_gput_note:nn { Vn }
 
 \cs_new_protected:Npn \__tblr_outer_gput_remark:nn #1 #2
   {
-    \__tblr_prop_gput:nnn { remark } {#1} {#2}
+    \IfValueTF {#1}{
+      \__tblr_prop_gput:nnn { remark } {#1} {#2}
+    }{
+      \__tblr_prop_gput:nnn { remark } {} {#2}
+    }
   }
 \cs_generate_variant:Nn \__tblr_outer_gput_remark:nn { Vn }
 
@@ -6339,7 +6347,184 @@
   }
 \SetTblrTemplate { note-border } { empty }
 
-\cs_set_eq:NN \TblrOverlap \rlap
+\cs_set_eq:NN \TblrOverlap \relax
+\cs_new:Npn \TblrNoteSize { \footnotesize }
+\cs_new:Npn \TblrNoteTagPosition { \textsuperscript }
+
+%---
+\newcounter { tabularnote }
+\int_new:N \g__tblr_tabularnote_int
+\cs_set:Npn \theHtabularnote { \int_use:N \g__tblr_tabularnote_int }
+\seq_new:N \g__tblr_notes_seq
+\seq_new:N \g__tblr_notes_in_caption_seq
+\tl_new:N \g__tblr_tabularnote_tl
+\seq_new:N \l__tblr_notes_labels_seq
+\newcounter { tblr_draft }
+\cs_new_protected:Npn \__tblr_notes_format:n #1
+  {
+    \setcounter { tblr_draft } { #1 }
+    \__tblr_notes_style:n { tblr_draft }
+  }
+\cs_new:Npn \__tblr_notes_style:n #1 { \textit { \alph { #1 } } }
+\cs_new:Npn \__tblr_notes_label_in_tabular:n #1 { \textsuperscript { #1 } }
+\cs_new:Npn \__tblr_notes_label_in_list:n #1 { \textsuperscript { #1 } }
+\cs_set:Npn \thetabularnote { { \__tblr_notes_style:n { tabularnote } } }
+\bool_new:N \l__tblr_in_env_bool
+\AtBeginDocument
+  {
+    \IfPackageLoadedTF { enumitem }
+      {
+        \newlist { tabularnotes } { enumerate } { 1 }
+        \setlist [ tabularnotes ]
+          {
+            topsep = \c_zero_dim ,
+            noitemsep ,
+            leftmargin = * ,
+            align = left ,
+            labelsep = \c_zero_dim ,
+            label =
+              \__tblr_notes_label_in_list:n { \__tblr_notes_style:n { tabularnotesi } } ,
+          }
+        \newlist { tabularnotes* } { enumerate* } { 1 }
+        \setlist [ tabularnotes* ]
+          {
+            afterlabel = \nobreak ,
+            itemjoin = \quad ,
+            label =
+              \__tblr_notes_label_in_list:n { \__tblr_notes_style:n { tabularnotes*i } }
+          }
+        \NewDocumentCommand { \tabularnote } { o m }
+          {
+            \bool_lazy_or:nnT \l__tblr_in_env_bool { \cs_if_exist_p:N \@captype }
+              {
+                \bool_lazy_and:nnTF \l__tblr_in_env_bool  { ! \l__tblr_tabular_bool }
+                  { \__tblr_error:n { tabularnote~forbidden } }
+                  {
+                    \bool_if:NTF \l__tblr_in_caption_bool
+                      {
+                        \tl_if_novalue:nTF { #1 }
+                          { \__tblr_tabularnote_caption:nn { #1 } }
+                          { \__tblr_tabularnote_caption:nn { \exp_not:n { #1 } } }
+                      }
+                      {
+                        \tl_if_novalue:nTF { #1 }
+                          { \__tblr_tabularnote:nn { #1 } }
+                          { \__tblr_tabularnote:nn { \exp_not:n { #1 } } }
+                      }
+                    { #2 }
+                  }
+              }
+          }
+      }
+      {
+        \NewDocumentCommand \tabularnote { o m }
+          { \__tblr_err_enumitem_not_loaded: }
+      }
+  }
+\cs_new_protected:Npn \__tblr_err_enumitem_not_loaded:
+  {
+    \__tblr_error_or_warning:n { enumitem~not~loaded }
+    \cs_gset:Npn \__tblr_err_enumitem_not_loaded: { }
+  }
+\cs_new_protected:Npn \__tblr_test_first_novalue:nnn #1 #2 #3
+  { \tl_if_novalue:nT { #1 } { #3 } }
+\cs_new_protected:Npn \__tblr_tabularnote:nn #1 #2
+  {
+    \int_zero:N \l_tmpa_int
+    \bool_if:NT \l__tblr_notes_detect_duplicates_bool
+      {
+        \int_zero:N \l_tmpb_int
+        \seq_map_indexed_inline:Nn \g__tblr_notes_seq
+          {
+            \__tblr_test_first_novalue:nnn ##2 { \int_incr:N \l_tmpb_int }
+            \tl_if_eq:nnT { { #1 } { #2 } } { ##2 }
+              {
+                \tl_if_novalue:nTF { #1 }
+                  { \int_set_eq:NN \l_tmpa_int \l_tmpb_int }
+                  { \int_set:Nn \l_tmpa_int { ##1 }  }
+                \seq_map_break:
+              }
+          }
+        \int_if_zero:nF \l_tmpa_int
+          { \int_add:Nn \l_tmpa_int { \g__tblr_notes_caption_int } }
+      }
+    \int_if_zero:nT \l_tmpa_int
+      {
+        \seq_gput_right:Nn \g__tblr_notes_seq { { #1 } { #2 } }
+        \tl_if_novalue:nT { #1 } { \int_gincr:N \c@tabularnote }
+      }
+    \seq_put_right:Ne \l__tblr_notes_labels_seq
+      {
+        \tl_if_novalue:nTF { #1 }
+          {
+            \__tblr_notes_format:n
+              {
+                \int_eval:n
+                  {
+                    \int_if_zero:nTF \l_tmpa_int
+                      \c@tabularnote
+                      \l_tmpa_int
+                  }
+              }
+          }
+          { #1 }
+     }
+    \peek_meaning:NF \tabularnote
+      {
+        \hbox_set:Nn \l_tmpa_box
+          {
+            \__tblr_notes_label_in_tabular:n
+              { \seq_use:Nn \l__tblr_notes_labels_seq { , } }
+          }
+        \int_gdecr:N \c@tabularnote
+        \int_set_eq:NN \l_tmpa_int \c@tabularnote
+        \int_gincr:N \g__tblr_tabularnote_int
+        \refstepcounter { tabularnote }
+        \int_compare:nNnT \l_tmpa_int = \c@tabularnote
+          { \int_gincr:N \c@tabularnote }
+        \seq_clear:N \l__tblr_notes_labels_seq
+        \bool_lazy_or:nnTF
+          { \str_if_eq_p:ee c \l__tblr_hpos_cell_tl }
+          { \str_if_eq_p:ee r \l__tblr_hpos_cell_tl }
+          {
+            \hbox_overlap_right:n { \box_use:N \l_tmpa_box }
+            \skip_horizontal:n { \box_wd:N \l_tmpa_box }
+          }
+          { \box_use:N \l_tmpa_box }
+      }
+  }
+\cs_new_protected:Npn \__tblr_tabularnote_caption:nn #1 #2
+  {
+    \bool_if:NTF \g__tblr_caption_finished_bool
+      {
+        \int_compare:nNnT \c@tabularnote = \g__tblr_notes_caption_int
+          { \int_gzero:N \c@tabularnote }
+        \seq_if_in:NnF \g__tblr_notes_in_caption_seq { { #1 } { #2 } }
+          { \__tblr_error:n { Identical~notes~in~caption } }
+      }
+      {
+        \seq_if_in:NnTF \g__tblr_notes_in_caption_seq { { #1 } { #2 } }
+          {
+            \bool_gset_true:N \g__tblr_caption_finished_bool
+            \int_gset_eq:NN \g__tblr_notes_caption_int \c@tabularnote
+            \int_gzero:N \c@tabularnote
+          }
+          { \seq_gput_right:Nn \g__tblr_notes_in_caption_seq { { #1 } { #2 } } }
+      }
+    \tl_if_novalue:nT { #1 } { \int_gincr:N \c@tabularnote }
+    \seq_put_right:Ne \l__tblr_notes_labels_seq
+      {
+        \tl_if_novalue:nTF { #1 }
+          { \__tblr_notes_format:n { \int_use:N \c@tabularnote } }
+          { #1 }
+      }
+    \peek_meaning:NF \tabularnote
+      {
+        \__tblr_notes_label_in_tabular:n { \seq_use:Nn \l__tblr_notes_labels_seq { , } }
+        \seq_clear:N \l__tblr_notes_labels_seq
+      }
+  }
+%---
 
 \NewDocumentCommand \TblrNote { m }
   {
@@ -6347,14 +6532,14 @@
     \TblrOverlap
       {
         \__tblr_hyper_link:nn {#1}
-          { \textsuperscript { \sffamily \UseTblrFont { note-tag } #1 } }
+          { \TblrNoteTagPosition { \UseTblrFont { note-tag } #1 } }
       }
   }
 
 \DeclareTblrTemplate { note-tag } { empty } { }
 \DeclareTblrTemplate { note-tag } { normal }
   {
-    \textsuperscript { \sffamily \UseTblrFont { note-tag } \InsertTblrNoteTag }
+    \TblrNoteTagPosition { \UseTblrFont { note-tag } \InsertTblrNoteTag }
   }
 \SetTblrTemplate { note-tag } { normal }
 
@@ -6369,7 +6554,7 @@
 \SetTblrTemplate { note-sep } { normal }
 
 \DeclareTblrTemplate { note-text } { empty } { }
-\DeclareTblrTemplate { note-text } { normal } { \InsertTblrNoteText }
+\DeclareTblrTemplate { note-text } { normal } { \TblrNoteSize\InsertTblrNoteText }
 \SetTblrTemplate { note-text } { normal }
 
 \DeclareTblrTemplate { note } { empty } { }
@@ -6387,20 +6572,12 @@
   }
 \DeclareTblrTemplate { note } { normal }
   {
-    \UseTblrAlign { note }
-    \UseTblrIndent { note }
     \MapTblrNotes
       {
-        \hangindent = 0.7em
-        \hangafter = 1
-        \UseTblrHang { note }
-        \leavevmode
-        \hbox_to_wd:nn { \the\hangindent }
-          {
-            \UseTblrTemplate { note-tag } { default }
-            \UseTblrTemplate { note-target } { default }
-            \hfil
-          }
+        \noindent
+        \UseTblrTemplate { note-tag } { default }
+        \UseTblrTemplate { note-target } { default }
+        \UseTblrTemplate { note-sep } { default }
         \UseTblrTemplate { note-text } { default }
         \par
       }
@@ -6426,20 +6603,23 @@
 %%% --------------------------------------------------------
 %%> \section{Table remarks templates}
 %%% --------------------------------------------------------
-
+\cs_set_eq:NN \TblrRemarkSize \TblrNoteSize
 \DeclareTblrTemplate { remark-tag } { empty } { }
 \DeclareTblrTemplate { remark-tag } { normal }
   {
-    \itshape \UseTblrFont { remark-tag } \InsertTblrRemarkTag
+    \TblrRemarkSize \UseTblrFont { remark-tag } \InsertTblrRemarkTag
   }
 \SetTblrTemplate { remark-tag } { normal }
 
 \DeclareTblrTemplate { remark-sep } { empty } { }
-\DeclareTblrTemplate { remark-sep } { normal } { : \space }
+\DeclareTblrTemplate { remark-sep } { normal }
+  {
+    \TblrRemarkSize \UseTblrFont { remark-tag } .~ 
+  }
 \SetTblrTemplate { remark-sep } { normal }
 
 \DeclareTblrTemplate { remark-text } { empty } { }
-\DeclareTblrTemplate { remark-text } { normal } { \InsertTblrRemarkText }
+\DeclareTblrTemplate { remark-text } { normal } { \TblrRemarkSize\InsertTblrRemarkText }
 \SetTblrTemplate { remark-text } { normal }
 
 \DeclareTblrTemplate { remark } { empty } { }
@@ -6460,7 +6640,7 @@
     \UseTblrIndent { remark }
     \MapTblrRemarks
       {
-        \hangindent = 0.7em
+        \hangindent = \dimexpr1em\relax
         \hangafter = 1
         \UseTblrHang { remark }
         \leavevmode

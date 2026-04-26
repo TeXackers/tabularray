@@ -2,7 +2,6 @@
 
 \input{regression-test}
 
-\usepackage{xcolor}
 \UseTblrLibrary{varwidth}
 \SetTblrInner[tblr]{measure=hbox}
 
@@ -16,9 +15,9 @@
 \hline
 \SetCell{b,r,orange}Onej   &  Two  & Three \\
 \hline\hline\hline
-Four  & \SetCell{teal}Five  &   Six \\
+Four  & \SetCell{blue}Five  &   Six \\
 \hline\hline
-\SetCell{lime}Seven & Eight &  Nine \\
+\SetCell{green}Seven & Eight &  Nine \\
 \hline
 \end{tblr}
 \qquad
@@ -26,9 +25,9 @@ Four  & \SetCell{teal}Five  &   Six \\
 \hline
 \SetCell{f,r,orange}Onej   &  Two  & Three \\
 \hline\hline\hline
-Four  & \SetCell{teal}Five  &   Six \\
+Four  & \SetCell{blue}Five  &   Six \\
 \hline\hline
-\SetCell{lime}Seven & Eight &  Nine \\
+\SetCell{green}Seven & Eight &  Nine \\
 \hline
 \end{tblr}
 \ENDTEST
@@ -39,8 +38,8 @@ Four  & \SetCell{teal}Five  &   Six \\
 \BEGINTEST{cell foreground and font with measure=hbox}
 \begin{tblr}{
  colspec  = {lcr},
- row{odd} = {bg=azure9},
- row{1}   = {c,bg=azure3,fg=white,font=\sffamily},
+ row{odd} = {bg=blue},
+ row{1}   = {c,bg=red,fg=white,font=\sffamily},
  measure  = hbox,
 }
  Alpha & Beta    & Gamma \\
@@ -57,8 +56,8 @@ Four  & \SetCell{teal}Five  &   Six \\
 \BEGINTEST{cell foreground and font with measure=vbox}
 \begin{tblr}{
  colspec  = {lcr},
- row{odd} = {bg=azure9},
- row{1}   = {c,bg=azure3,fg=white,font=\sffamily},
+ row{odd} = {bg=blue},
+ row{1}   = {c,bg=red,fg=white,font=\sffamily},
  measure  = vbox,
 }
  Alpha & Beta    & Gamma \\
@@ -75,8 +74,8 @@ Four  & \SetCell{teal}Five  &   Six \\
 \BEGINTEST{overwrite cell foreground}
 \begin{tblr}{
   hlines, vlines,
-  cells	= {fg=white,bg=gray5},
-  cell{2}{2} = {fg=green8,bg=blue2},
+  cells	= {fg=white,bg=gray},
+  cell{2}{2} = {fg=green,bg=blue},
 }
   A & B \\
   C & D \\

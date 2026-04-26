@@ -1,0 +1,51 @@
+\documentclass[12pt, oneside]{TabularrayDoc}
+
+
+\usepackage{tabularray}
+\UseTblrLibrary{functional}
+\IgnoreSpacesOn
+\prgNewFunction \YNColour {} {
+	\intStepOneInline {1} {\arabic{rowcount}} {
+		\intStepOneInline {1} {\arabic{colcount}} {
+			\strCase {\cellGetText {##1} {####1}} {
+				{No} {\cellSetStyle {##1} {####1} {fg=red!66!magenta}}
+				{Yes} {\cellSetStyle {##1} {####1} {fg=navy!66!cyan}}
+			}
+		}
+	}
+}
+\IgnoreSpacesOff
+
+% https://github.com/TeXackers/tabularray/issues/198
+\renewcommand\TblrOverlap[1]{#1}
+
+\usepackage{xindex}
+\makeindex
+\usepackage[hypertexnames=false]{hyperref}
+
+\begin{document}
+\frontmatter
+\begin{titlingpage}
+\tstitle{
+  author={%
+    Leothelion\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}, primary author of the documentation},
+    Author\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}}
+  },
+  date={2026A (\tsdate)},
+  title={{\ttfamily tabularray}: A Practitioner's Guide}
+}
+\begin{tsabstract}
+  This document serves as a practitioner's guide to the \pkg{tabularray} package, which provides a powerful and flexible interface for typesetting tables in \LaTeX. The guide is structured into two main sections: conceptualisation and practice. The conceptualisation section delves into the underlying principles and design philosophy of the package, while the practice section offers hands-on examples and explanations of key features, with a focus on the versatile Q-type for table cell specification.
+\end{tsabstract}
+\end{titlingpage}
+
+\tableofcontents\cleardoublepage
+
+\mainmatter
+\input{01-impatient.tex}
+\input{02-inner.tex}
+
+\backmatter
+\cleardoublepage
+\printindex
+\end{document}

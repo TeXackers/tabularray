@@ -62,9 +62,9 @@
 \NewDocumentCommand\VV{m}{\texttt{\fakeverb{#1}}} % value
 \NewDocumentCommand\KV{m}{\texttt{\fakeverb{#1}}} % key and value
 \NewDocumentCommand\CC{m}{\texttt{\fakeverb{#1}}} % command
-\NewDocumentCommand\EE{m}{\texttt{\fakeverb{#1}}} % environment
+\NewDocumentCommand\env{m}{\texttt{\fakeverb{#1}}} % environment
 \NewDocumentCommand\LL{m}{\texttt{\fakeverb{#1}}} % library
-\NewDocumentCommand\PP{m}{\texttt{\fakeverb{#1}}} % package
+\NewDocumentCommand\pkg{m}{\texttt{\fakeverb{#1}}} % package
 \NewDocumentCommand\FF{m}{\texttt{\fakeverb{#1}}} % file
 \NewDocumentCommand\NN{m}{\texttt{\fakeverb{#1}}} % tikz node
 \NewDocumentCommand\KP{m}{\texttt{\fakeverb{#1}}} % key path
@@ -190,18 +190,18 @@
 
 \chapter{Overview of Features}
 
-Before using \PP{tabularray} package, it is better to know how to typeset simple text and
-math tables with traditional \EE{tabular}, \EE{tabularx} and \EE{array} environments,
-because we will compare \EE{tblr} environment from \PP{tabularray} package with these
+Before using \pkg{tabularray} package, it is better to know how to typeset simple text and
+math tables with traditional \env{tabular}, \env{tabularx} and \env{array} environments,
+because we will compare \env{tblr} environment from \pkg{tabularray} package with these
 environments. You may read web pages on LaTeX tables on
 \href{https://www.learnlatex.org/en/lesson-08}{LearnLaTeX} and
 \href{https://www.overleaf.com/learn/latex/Tables}{Overleaf} first.
 
 \section{Vertical space}
 
-After loading \PP{tabularray} package in the preamble,
-we can use \EE{tblr} environments to typeset tabulars and arrays.
-The name \EE{tblr} is short for \PP{tabularray} or \VV{top-bottom-left-right}.
+After loading \pkg{tabularray} package in the preamble,
+we can use \env{tblr} environments to typeset tabulars and arrays.
+The name \env{tblr} is short for \pkg{tabularray} or \VV{top-bottom-left-right}.
 The following is our first example:
 
 \begin{demo}
@@ -228,7 +228,7 @@ The following is our first example:
 \end{tblr}
 \end{demohigh}
 
-You may notice that there is extra space above and below the table rows with \EE{tblr} environment.
+You may notice that there is extra space above and below the table rows with \env{tblr} environment.
 This space makes the table look better.
 If you don't like it, you could use \CC{\SetTblrInner} command:
 
@@ -267,11 +267,11 @@ $\begin{tblr}{rrr}
 \end{tblr}$
 \end{demohigh}
 
-Note that you can use \EE{tblr} in both text and math modes.
+Note that you can use \env{tblr} in both text and math modes.
 
 \section{Multiline cells}
 
-It's quite easy to write multiline cells without fixing the column width in \EE{tblr} environments:
+It's quite easy to write multiline cells without fixing the column width in \env{tblr} environments:
 just enclose the cell text with braces and use \CC{\\\\} to break lines:
 
 \begin{demohigh}
@@ -288,7 +288,7 @@ just enclose the cell text with braces and use \CC{\\\\} to break lines:
 
 From time to time,
 you may want to specify the horizontal and vertical alignment of cells at the same time.
-\PP{Tabularray} package provides a \Q{Q} column for this
+\pkg{Tabularray} package provides a \Q{Q} column for this
 (In fact, \Q{Q} column is the only primitive column,
 other columns are defined as \Q{Q} columns with some options):
 
@@ -303,7 +303,7 @@ other columns are defined as \Q{Q} columns with some options):
 Note that you can use more meaningful \K{t} instead of \K{p} for top baseline alignment.
 For some users who are familiar with word processors,
 these \K{t} and \K{b} columns are counter-intuitive.
-In \PP{tabularray} package, there are another two column types \K{h} and \K{f},
+In \pkg{tabularray} package, there are another two column types \K{h} and \K{f},
 which will align cell text at the head and the foot, respectively:
 
 \begin{demohigh}
@@ -319,7 +319,7 @@ which will align cell text at the head and the foot, respectively:
 \section{Multirow cells}
 
 The above \K{h} and \K{f} alignments are necessary
-when we write multirow cells with \CC{\SetCell} command in \PP{tabularray}.
+when we write multirow cells with \CC{\SetCell} command in \pkg{tabularray}.
 
 \begin{demo}
 \begin{tabular}{|l|l|l|l|}
@@ -345,9 +345,9 @@ when we write multirow cells with \CC{\SetCell} command in \PP{tabularray}.
 \end{tblr}
 \end{demohigh}
 
-Note that you don't need to load \PP{multirow} package first,
-since \PP{tabularray} doesn't depend on it.
-Furthermore, \PP{tabularray} will always typeset decent multirow cells.
+Note that you don't need to load \pkg{multirow} package first,
+since \pkg{tabularray} doesn't depend on it.
+Furthermore, \pkg{tabularray} will always typeset decent multirow cells.
 First, it will set correct vertical middle alignment,
 even though some rows have large height:
 
@@ -417,7 +417,7 @@ It was a hard job to typeset cells with multiple rows and multiple columns. For 
 \end{tabular}
 \end{demo}
 
-With \PP{tabularray} package, you can set spanned cells with \CC{\SetCell} command:
+With \pkg{tabularray} package, you can set spanned cells with \CC{\SetCell} command:
 within the optional argument of \CC{\SetCell} command,
 option \K{r} is for rowspan number, and \K{c} for colspan number;
 within the mandatory argument of it, horizontal and vertical alignment options are accepted.
@@ -442,7 +442,7 @@ On the contrary,
 using \CC{\multirow} command, the omitted cells \emph{must not} be removed.
 \CC{\SetCell} command behaves the same as \CC{\multirow} command in this aspect.
 
-With \EE{tblr} environment, any \CC{\hline} segments inside a spanned cell will be ignored,
+With \env{tblr} environment, any \CC{\hline} segments inside a spanned cell will be ignored,
 therefore we're free to use \CC{\hline} in the above example.
 Also, any omitted cell will definitely be ignored when typesetting,
 no matter it's empty or not.
@@ -465,9 +465,9 @@ which will help us to locate cells when the tables are rather complex:
 
 \section{Column types}
 
-\PP{Tabularray} package supports all normal column types, as well as
+\pkg{Tabularray} package supports all normal column types, as well as
 the extendable \Q{X} column type,
-which first occurred in \PP{tabularx} package and was largely improved by \PP{tabu} package:
+which first occurred in \pkg{tabularx} package and was largely improved by \pkg{tabu} package:
 
 \begin{demohigh}
 \begin{tblr}{|X[2,l]|X[3,l]|X[1,r]|X[r]|}
@@ -500,7 +500,7 @@ To change the width, we have to first put all column specifications into \KV{col
 \end{demohigh}
 
 You can define new column types with \CC{\NewTblrColumnType} command.
-For example, in \PP{tabularray} package,
+For example, in \pkg{tabularray} package,
 \Q{b} and \Q{X} columns are defined as special \Q{Q} columns:
 \begin{codehigh}
 \NewTblrColumnType{b}[1]{Q[b,wd=#1]}
@@ -547,8 +547,8 @@ Seven & Eight &  Nine \\
 
 \section{Colorful tables}
 
-To add colors to your tables, you need to load \PP{xcolor} package first.
-\PP{Tabularray} package will also load
+To add colors to your tables, you need to load \pkg{xcolor} package first.
+\pkg{Tabularray} package will also load
 \href{https://ctan.org/pkg/ninecolors}{\texttt{ninecolors}} package for proper color contrast.
 First you can specify background option for \Q{Q} rows/columns inside \K{rowspec}/\K{colspec}:
 
@@ -612,10 +612,10 @@ Hlines and vlines can also have colors:
 
 \section{Old and new interfaces}
 
-With \PP{tabularray} package, you can change the styles of tables via old interfaces or new interfaces.
+With \pkg{tabularray} package, you can change the styles of tables via old interfaces or new interfaces.
 
 The old interfaces consist of some table commands inside the table contents.
-Same as \EE{tabular} and \EE{array} environments,
+Same as \env{tabular} and \env{array} environments,
 all table commands \emph{must} be put at the beginning of the cell text.
 Also, new table commands \emph{must} be defined with \CC{\NewTblrTableCommand}.
 
@@ -1345,7 +1345,7 @@ The following example demonstrates the usages of \KK{$} and \KK{$$} keys:
 
 \subsection{Column types}
 
-The \PP{tabularray} package has only one type of primitive column: the \Q{Q} column.
+The \pkg{tabularray} package has only one type of primitive column: the \Q{Q} column.
 Other types of columns are defined as \Q{Q} columns with some keys.
 
 \begin{codehigh}
@@ -1373,7 +1373,7 @@ It can have an optional argument when it's defined.
 
 \subsection{Row types}
 
-The \PP{tabularray} package has only one type of primitive row: the \Q{Q} row.
+The \pkg{tabularray} package has only one type of primitive row: the \Q{Q} row.
 Other types of rows are defined as \Q{Q} rows with some keys.
 
 \begin{codehigh}
@@ -1401,7 +1401,7 @@ It can have an optional argument when it's defined.
 \chapter{Extra Interfaces}
 \label{chap:extra}
 
-In general, \EE{tblr} environment accepts both inner and outer specifications:
+In general, \env{tblr} environment accepts both inner and outer specifications:
 
 \begin{codehigh}
 \begin{tblr}[<outer specs>]{<inner specs>}
@@ -1410,10 +1410,10 @@ In general, \EE{tblr} environment accepts both inner and outer specifications:
 \end{codehigh}
 
 \textbf{Inner specifications} are all specifications written in the \underline{mandatory} argument
-of \EE{tblr} environment, which include new interfaces described in Chapter \ref{chap:basic}.
+of \env{tblr} environment, which include new interfaces described in Chapter \ref{chap:basic}.
 
 \textbf{Outer specifications} are all specifications written in the \underline{optional} argument
-of \EE{tblr} environment, most of which are used for long tables (see Chapter \ref{chap:long}).
+of \env{tblr} environment, most of which are used for long tables (see Chapter \ref{chap:long}).
 
 You can use \CC{\SetTblrInner} and \CC{\SetTblrOuter} commands
 to set default inner and outer specifications of tables, respectively (see Section \ref{sec:default}).
@@ -1494,7 +1494,7 @@ The following example uses \K{rowsep} and \K{colsep} keys to set padding for all
 \subsection{Hspan and vspan algorithms}
 
 With \KV{hspan=default} or \KV{hspan=even},
-\PP{tabularray} package will compute column widths from span widths.
+\pkg{tabularray} package will compute column widths from span widths.
 But with \KV{hspan=minimal}, it will compute span widths from column widths.
 The following examples show the results from different \K{hspan} values.
 
@@ -1643,10 +1643,10 @@ Therefore the following two tables are the same:
 
 \subsection{Expand macros first}
 
-In contrast to traditional \EE{tabular} environment, \PP{tabularray} environments
+In contrast to traditional \env{tabular} environment, \pkg{tabularray} environments
 need to see every \TT{&} and \TT{\\\\} when splitting the table body.
 And you can not put cell text inside any table command defined with \CC{\NewTblrTableCommand}.
-But you could use outer key \K{expand} to make \PP{tabularray} expand
+But you could use outer key \K{expand} to make \pkg{tabularray} expand
 every occurrence of any of the specified macros \emph{once} and in the given order before splitting the table body.
 Note that you \emph{can not} expand a command defined with \CC{\NewDocumentCommand}.
 You can also use \K{expand+} if you still want to keep the macros in the current \K{expand} setting.
@@ -1697,16 +1697,16 @@ Note that you need to protect fragile commands (if any) inside them with \CC{\un
 \section{Default specifications}%
 \label{sec:default}
 
-\PP{Tabularray} package provides \CC{\SetTblrInner} and \CC{\SetTblrOuter} commands
+\pkg{Tabularray} package provides \CC{\SetTblrInner} and \CC{\SetTblrOuter} commands
 for you to change the default inner and outer specifications of tables.
 
-In general different \PP{tabularray} environments (\EE{tblr}, \EE{talltblr},
-\EE{longtblr}, etc) could have different default specifications.
+In general different \pkg{tabularray} environments (\env{tblr}, \env{talltblr},
+\env{longtblr}, etc) could have different default specifications.
 You can list the environments in the optional arguments of these two commands,
-and they only apply to \EE{tblr} environment when the optional arguments are omitted.
+and they only apply to \env{tblr} environment when the optional arguments are omitted.
 
-In the following example, the first line draws all hlines and vlines for all \EE{tblr} tables
-created afterwards, while the second line makes all \EE{tblr} tables created afterwards
+In the following example, the first line draws all hlines and vlines for all \env{tblr} tables
+created afterwards, while the second line makes all \env{tblr} tables created afterwards
 vertically align at the last row.
 
 \begin{codehigh}
@@ -1714,7 +1714,7 @@ vertically align at the last row.
 \SetTblrOuter{baseline=B}
 \end{codehigh}
 
-And the following example sets zero \K{rowsep} for all \EE{tblr} and \EE{longtblr} tables
+And the following example sets zero \K{rowsep} for all \env{tblr} and \env{longtblr} tables
 created afterwards.
 
 \begin{codehigh}
@@ -1723,7 +1723,7 @@ created afterwards.
 
 \section{New tabularray environments}
 
-You can define new \PP{tabularray} environments using \CC{\NewTblrEnviron} command:
+You can define new \pkg{tabularray} environments using \CC{\NewTblrEnviron} command:
 
 \begin{demohigh}
 \NewTblrEnviron{mytblr}
@@ -1739,7 +1739,7 @@ Text \begin{mytblr}{cccc}
 \section{New general environments}
 
 With \V{+b} argument type of \CC{\NewDocumentEnvironment} command,
-you can also define a new general environment based on \EE{tblr} environment
+you can also define a new general environment based on \env{tblr} environment
 (note that there is an extra pair of curly braces at the end):
 
 \NewDocumentEnvironment{fancytblr}{+b}{
@@ -1867,7 +1867,7 @@ Also, lengths \CC{\leftsep}, \CC{\rightsep}, \CC{\abovesep}, \CC{\belowsep} can 
 
 \section{Tracing tabularray}
 
-To trace internal data behind \EE{tblr} environment, you can use \CC{\SetTblrTracing} command.
+To trace internal data behind \env{tblr} environment, you can use \CC{\SetTblrTracing} command.
 For example, \CC{\SetTblrTracing{all}} will turn on all tracings,
 and \CC{\SetTblrTracing{none}} will turn off all tracings.
 \CC{\SetTblrTracing{+row,+column}} will only tracing row and column data.
@@ -2093,8 +2093,8 @@ Alpha   & Beta  & Gamma   \\
 \hline
 \end{longtblr}
 
-As you can see in the above example, the appearance of long tables of \PP{tabularray} package
-is similar to that of \PP{threeparttablex} packages.
+As you can see in the above example, the appearance of long tables of \pkg{tabularray} package
+is similar to that of \pkg{threeparttablex} packages.
 It supports table footnotes, but not page footnotes.
 
 \newpage
@@ -2159,11 +2159,11 @@ The source code for the above long table is shown below. It is mainly self-expla
 \end{longtblr}
 \end{codehigh}
 
-As you can see in the above code, we typeset long tables with \EE{longtblr} environment.
-And we can totally separate contents and styles of long tables with \PP{tabularray} package.
+As you can see in the above code, we typeset long tables with \env{longtblr} environment.
+And we can totally separate contents and styles of long tables with \pkg{tabularray} package.
 
 Row head and row foot consist of some lines of the table and should appear in every page.
-Their options are inner specifications and should be put in the mandatory argument of the \EE{longtblr} environment.
+Their options are inner specifications and should be put in the mandatory argument of the \env{longtblr} environment.
 In the above example, We set \KV{rowhead=2} and \KV{rowfoot=1}.
 
 \begin{spectblr}[
@@ -2175,7 +2175,7 @@ In the above example, We set \KV{rowhead=2} and \KV{rowfoot=1}.
 \end{spectblr}
 
 Table head and table foot consist of the caption, continuation text, footnotes and remarks.
-Their options are outer specifications and should be put in the optional argument of the \EE{longtblr} environment.
+Their options are outer specifications and should be put in the optional argument of the \env{longtblr} environment.
 
 \begin{spectblr}[
   caption = {Outer Specifications for Table Heads and Table Foots}
@@ -2193,20 +2193,20 @@ Their options are outer specifications and should be put in the optional argumen
   \KK{remark{<name>}} & table remark with \V{<name>} as tag & \None \\
 \end{spectblr}
 
-If you write \KV{entry=none}, \PP{tabularray} package will not add an entry in List of Tables.
-Therefore \KV{caption=text,entry=none} is similar to \CC{\caption[]{text}} in \PP{longtable}.
+If you write \KV{entry=none}, \pkg{tabularray} package will not add an entry in List of Tables.
+Therefore \KV{caption=text,entry=none} is similar to \CC{\caption[]{text}} in \pkg{longtable}.
 
-If you write \KV{label=none}, \PP{tabularray} package will not step \CO{table} counter,
+If you write \KV{label=none}, \pkg{tabularray} package will not step \CO{table} counter,
 and set the \EN{caption-tag} and \EN{caption-sep} elements (see below) to empty.
 Therefore \KV{caption=text,entry=none,label=none} is similar to \CC{\caption*{text}}
-in \PP{longtable}, except for the counter.
+in \pkg{longtable}, except for the counter.
 
 \section{Customize templates}
 
 \subsection{Overview of templates}
 
-The template system for table heads and table foots in \PP{tabularray} is largely inspired
-by \PP{beamer}, \PP{caption} and \PP{longtable} packages. For elements in Table \ref{tblr:element},
+The template system for table heads and table foots in \pkg{tabularray} is largely inspired
+by \pkg{beamer}, \pkg{caption} and \pkg{longtable} packages. For elements in Table \ref{tblr:element},
 you can use \CC{\DeclareTblrTemplate} to define and modify templates,
 and use \CC{\SetTblrTemplate} to choose default templates. In defining templates,
 you can include other templates with \CC{\UseTblrTemplate} and \CC{\ExpTblrTemplate} commands.
@@ -2266,7 +2266,7 @@ respectively. And you may contribute your translations of them to \textbf{babel}
 
 In the above code, command \CC{\DeclareTblrTemplate} defines the templates with name \TN{normal},
 and then command \CC{\SetTblrTemplate} sets the templates with name \TN{normal} as default.
-The \TN{normal} template is always defined and set as default for any element in \PP{tabularray}.
+The \TN{normal} template is always defined and set as default for any element in \pkg{tabularray}.
 Therefore you had better use another name when defining new templates.
 
 If you use \TN{default} as template name in \CC{\DeclareTblrTemplate},
@@ -2300,7 +2300,7 @@ Normally a caption consists of three parts, and their templates are defined with
 \end{codehigh}
 
 The command \CC{\InsertTblrText{caption}} inserts the value of \K{caption} key,
-which you could write in the optional argument of \EE{longtblr} environment.
+which you could write in the optional argument of \env{longtblr} environment.
 
 The \EN{caption} template normally includes three sub templates with \CC{\UseTblrTemplate} commands:
 The \EN{caption} template will be used in \EN{firsthead} template.
@@ -2347,7 +2347,7 @@ The templates for table notes can be defined like this:
 \end{codehigh}
 
 The \CC{\MapTblrNotes} command loops for all table notes,
-which are written in the optional argument of \EE{longtblr} environment.
+which are written in the optional argument of \env{longtblr} environment.
 Inside the loop, you can use \CC{\InsertTblrNoteTag} and \CC{\InsertTblrNoteText}
 commands to insert current note tag and note text, respectively.
 
@@ -2450,18 +2450,18 @@ a theme consists of some template and style settings. For example:
 \end{codehigh}
 
 After defining the theme \V{fancy}, you can use it
-by writing \KV{theme=fancy} in the optional argument of \EE{longtblr} environment.
+by writing \KV{theme=fancy} in the optional argument of \env{longtblr} environment.
 
 \section{Control page breaks}
 
-Just like \PP{longtable} package, inside \EE{longtblr} environment,
+Just like \pkg{longtable} package, inside \env{longtblr} environment,
 you can use \CC{\\\\*} or \CC{\nopagebreak} to prohibit a page break,
 and use \CC{\pagebreak} to force a page break.
 
 \section{Floatable tall tables}
 
-There is also a \EE{talltblr} environment as an alternative to \EE{threeparttable} environment.
-It can not cross multiple pages, but it can be put inside \EE{table} environment.
+There is also a \env{talltblr} environment as an alternative to \env{threeparttable} environment.
+It can not cross multiple pages, but it can be put inside \env{table} environment.
 
 \begin{demohigh}
 TEXT\begin{talltblr}[
@@ -2482,18 +2482,18 @@ TEXT\begin{talltblr}[
 \chapter{Use Some Libraries}
 \label{chap:lib}
 
-A \PP{tabularray} library could be loaded by \CC{\UseTblrLibrary} command.
+A \pkg{tabularray} library could be loaded by \CC{\UseTblrLibrary} command.
 From version 2025A, an external library \fakeverb{foo} could also be loaded
 if its filename is \FF{tblrlibfoo.sty}.
 
 \section{Library \texttt{amsmath}}
 
 With \CC{\UseTblrLibrary{amsmath}} in the preamble of the document,
-\PP{tabularray} will load \PP{amsmath} package, and define \EE{+array}, \EE{+matrix},
-\EE{+bmatrix}, \EE{+Bmatrix}, \EE{+pmatrix}, \EE{+vmatrix}, \EE{+Vmatrix} and \EE{+cases}
+\pkg{tabularray} will load \pkg{amsmath} package, and define \env{+array}, \env{+matrix},
+\env{+bmatrix}, \env{+Bmatrix}, \env{+pmatrix}, \env{+vmatrix}, \env{+Vmatrix} and \env{+cases}
 environments. Each of the environments is similar to the environment without \TT{+} prefix in its name,
-but has default \KV{rowsep=2pt} just as \EE{tblr} environment. Every environment
-except \EE{+array} accepts an optional argument, where you can write inner specifications.
+but has default \KV{rowsep=2pt} just as \env{tblr} environment. Every environment
+except \env{+array} accepts an optional argument, where you can write inner specifications.
 
 \begin{demo}
 $\begin{pmatrix}
@@ -2532,7 +2532,7 @@ $f(x)=\begin{+cases}
 \section{Library \texttt{booktabs}}
 
 With \CC{\UseTblrLibrary{booktabs}} in the preamble of the document,
-\PP{tabularray} will load \PP{booktabs} package,
+\pkg{tabularray} will load \pkg{booktabs} package,
 and define
   \CC{\toprule}, \CC{\midrule}, \CC{\bottomrule},
   \CC{\cmidrule}, \CC{\cmidrulemore}, \CC{\morecmidrules},
@@ -2557,7 +2557,7 @@ Just like \CC{\hline} and \CC{\cline} commands,
 you can also specify rule width and color by using hline keys in the optional
 argument of any of these commands.
 
-Like in \PP{booktabs}, by default
+Like in \pkg{booktabs}, by default
   width of \CC{\toprule} and \CC{\bottomrule} are determined by \CC{\heavyrulewidth},
   width of \CC{\midrule} is determined by \CC{\lightrulewidth}, and
   width of \CC{\cmidrule} and \CC{\cmidrulemore} are determined by \CC{\cmidrulewidth}, respectively.
@@ -2610,12 +2610,12 @@ Option \K{endpos} is already applied to these two commands.
 \end{tblr}
 \end{demohigh}
 
-Since \PP{booktabs} tables usually don't have vlines, the meaningful values
+Since \pkg{booktabs} tables usually don't have vlines, the meaningful values
 here are decimal numbers between \V{-1} and \V{0}.
 The default value \V{-0.8} for \V{l}, \V{r}, and \V{lr} is chosen to
-make similar result as \PP{booktabs} package does.
+make similar result as \pkg{booktabs} package does.
 
-There is also a \EE{booktabs} environment for you. With this environment,
+There is also a \env{booktabs} environment for you. With this environment,
 the default \KV{rowsep=0pt}, but extra vertical space will be added by
 \CC{\toprule}, \CC{\midrule}, \CC{\bottomrule} and \CC{\cmidrule} commands.
 The sizes of vertical space are determined by \CC{\aboverulesep} and \CC{\belowrulesep} dimensions.
@@ -2674,14 +2674,14 @@ and the other half to \K{abovesep} of current row.
 \end{booktabs}
 \end{demohigh}
 
-From version 2022A, there is a \EE{longtabs} environment
-for writing long \PP{booktabs} tables,
-and a \EE{talltabs} environment for writing tall \PP{booktabs} tables.
+From version 2022A, there is a \env{longtabs} environment
+for writing long \pkg{booktabs} tables,
+and a \env{talltabs} environment for writing tall \pkg{booktabs} tables.
 
 \section{Library \texttt{counter}}
 
 You need to load \LL{counter} library with \CC{\UseTblrLibrary{counter}},
-if you want to modify some LaTeX counters inside \PP{tabularray} tables.
+if you want to modify some LaTeX counters inside \pkg{tabularray} tables.
 
 \begin{demohigh}
 \newcounter{mycnta}
@@ -2696,8 +2696,8 @@ if you want to modify some LaTeX counters inside \PP{tabularray} tables.
 \section{Library \texttt{diagbox}}
 
 When writing \CC{\UseTblrLibrary{diagbox}} in the preamble of the document,
-\PP{tabularray} package loads \PP{diagbox} package,
-and you can use \CC{\diagbox} and \CC{\diagboxthree} commands inside \EE{tblr} environment.
+\pkg{tabularray} package loads \pkg{diagbox} package,
+and you can use \CC{\diagbox} and \CC{\diagboxthree} commands inside \env{tblr} environment.
 
 \begin{demohigh}
 \begin{tblr}{hlines,vlines}
@@ -2731,13 +2731,13 @@ $\begin{tblr}{|c|cc|}
 \section{Library \texttt{functional}}
 
 With \CC{\UseTblrLibrary{functional}} in the preamble of the document,
-\PP{tabularray} will load \href{https://ctan.org/pkg/functional}{\PP{functional}} package,
+\pkg{tabularray} will load \href{https://ctan.org/pkg/functional}{\pkg{functional}} package,
 and define outer key \K{evaluate} and inner key \K{process}.
-This library brings intuitive functional programming into \PP{tabularray} tables.
+This library brings intuitive functional programming into \pkg{tabularray} tables.
 
 \subsection{Evaluate inner specifications}
 
-With this library, \PP{tabularray} will evaluate every function
+With this library, \pkg{tabularray} will evaluate every function
 (defined with \CC{\prgNewFunction}) within inner specifications,
 replacing it with its return value, before parsing the key-value pairs. Here is an example:
 \begin{demohigh}
@@ -2750,7 +2750,7 @@ replacing it with its return value, before parsing the key-value pairs. Here is 
   Iota    & Kappa & Lambda
 \end{tblr}
 \end{demohigh}
-The \CC{\funColor} function is provided by \PP{functional} package.
+The \CC{\funColor} function is provided by \pkg{functional} package.
 And now let's see another example:
 \begin{demohigh}
 \begin{tblr}{
@@ -2808,7 +2808,7 @@ Other & Other \\
 \end{codehigh}
 
 Then you can input them with outer specification \KV{evaluate=\fileInput}.
-The \CC{\fileInput} function is provided by \PP{functional} package.
+The \CC{\fileInput} function is provided by \pkg{functional} package.
 
 \begin{demohigh}
 \begin{tblr}[evaluate=\fileInput]{hlines}
@@ -2960,7 +2960,7 @@ Now, let's set background colors of cells depending on their contents:
 \end{tblr}
 \end{demohigh}
 
-We can also use color series of \PP{xcolor} package to color table rows:
+We can also use color series of \pkg{xcolor} package to color table rows:
 
 \definecolor{lightb}{RGB}{217,224,250}
 \definecolorseries{tblrow}{rgb}{last}{lightb}{white}
@@ -3012,12 +3012,12 @@ See Section~\ref{sect:pubvar} for more details of the library.
 \section{Library \texttt{nameref}}
 
 From version 2022D, you can load \LL{nameref} library
-to make \CC{\nameref} and \EE{longtblr} work together.
+to make \CC{\nameref} and \env{longtblr} work together.
 
 \section{Library \texttt{siunitx}}
 
 When writing \CC{\UseTblrLibrary{siunitx}} in the preamble of the document,
-\PP{tabularray} package loads \PP{siunitx} package,
+\pkg{tabularray} package loads \pkg{siunitx} package,
 and defines \Q{S} column as \Q{Q} column with \K{si} key.
 
 \begin{demohigh}
@@ -3095,19 +3095,19 @@ You don't need to and are not allowed to define them again.
 With this \emph{experimental} \LL{tikz} library,%
 \footnote{The author thanks \href{https://github.com/jasperhabicht}{Jasper Habicht}
 for his contributions to this library.}
-you can draw \PP{tikz} pictures below or above (short or tall) tables.
-This library depends on and loads \PP{tabularray} library \PP{hook} and \PP{tikz} library \TT{calc}.%
-\footnote{Please have a look at this \href{https://github.com/pgf-tikz/pgf/issues/1213}{\PP{tikz} issue}
+you can draw \pkg{tikz} pictures below or above (short or tall) tables.
+This library depends on and loads \pkg{tabularray} library \pkg{hook} and \pkg{tikz} library \TT{calc}.%
+\footnote{Please have a look at this \href{https://github.com/pgf-tikz/pgf/issues/1213}{\pkg{tikz} issue}
 first if you need to write \fakeverb{\UseTblrLibrary{tikz}} in your LaTeX3 package.}
 
 To draw below/above a table,
-write some \PP{tikz} code inside \EE{tblrtikzbelow}/\EE{tblrtikzabove} environment.
+write some \pkg{tikz} code inside \env{tblrtikzbelow}/\env{tblrtikzabove} environment.
 Both of them should be put before the table, and two compilations are needed to get desired result.
 
-Inside \EE{tblrtikzbelow}/\EE{tblrtikzabove} environment, you can use these predefined nodes:
+Inside \env{tblrtikzbelow}/\env{tblrtikzabove} environment, you can use these predefined nodes:
 
 \begin{spectblr}[
-  caption = {Nodes created by \PP{tikz} library}
+  caption = {Nodes created by \pkg{tikz} library}
 ]{}
   Node Name &  Node Description \\
   table node \NN{table}  & rectangle node for the whole table \\
@@ -3155,10 +3155,10 @@ The second example below demonstrates corner nodes:
 \end{tblr}
 \end{demohigh}
 
-By \PP{tikz} intersection syntax, \fakeverb{h<i>-|v<j>} is
+By \pkg{tikz} intersection syntax, \fakeverb{h<i>-|v<j>} is
 the intersection point of \KK{hborder{<i>}} and \KK{vborder{<j>}}.
 
-It is rather complicated to add full support for drawing \PP{tikz} pictures on long tables.
+It is rather complicated to add full support for drawing \pkg{tikz} pictures on long tables.
 At present, the support is limited: only cell nodes are available for multi-page long tables.
 In writing drawing code,
 users are responsible for making sure the elements to draw are actually in current page table.
@@ -3254,11 +3254,11 @@ These public variables might come in handy: \CC{\lTblrRowHeadInt}, \CC{\lTblrRow
 
 \section{Library \texttt{varwidth}}
 
-To build a nice table, \PP{tabularray} need to measure the widths of cells.
+To build a nice table, \pkg{tabularray} need to measure the widths of cells.
 By default, it uses \CC{\hbox} to measure the sizes.
 This causes an error if a cell contains some vertical material, such as lists or display maths.
 
-With \PP{varwidth} library, \PP{tabularray} will load \PP{varwidth} package,
+With \pkg{varwidth} library, \pkg{tabularray} will load \pkg{varwidth} package,
 add a new inner specification \K{measure}, and set \KV{measure=vbox}
 so that it will use \CC{\vbox} to measure cell widths.
 
@@ -3275,7 +3275,7 @@ so that it will use \CC{\vbox} to measure cell widths.
 
 From version 2022A, you can remove extra space above and below lists,
 by adding option \KV{stretch=-1}.
-The following example also needs \PP{enumitem} package and its \K{nosep} option:
+The following example also needs \pkg{enumitem} package and its \K{nosep} option:
 
 {\centering\begin{tblr}{
   hlines,vlines,rowspec={Q[l,t]Q[l,b]},
@@ -3311,11 +3311,11 @@ The following example also needs \PP{enumitem} package and its \K{nosep} option:
 %\end{demohigh}
 
 Note that option \KV{stretch=-1} also removes struts from cells, therefore it may not work well
-in \PP{tabularray} environments with \KV{rowsep=0pt}, such as
-\EE{booktabs}/\EE{longtabs}/\EE{talltabs} environments from \LL{booktabs} library.
+in \pkg{tabularray} environments with \KV{rowsep=0pt}, such as
+\env{booktabs}/\env{longtabs}/\env{talltabs} environments from \LL{booktabs} library.
 
 From version 2025A, \KK{measure} key also accepts an \emph{experimental} \VV{vstore} value.
-With \KV{measure=vstore}, \PP{tabularray} also measures cells with \CC{\vbox},
+With \KV{measure=vstore}, \pkg{tabularray} also measures cells with \CC{\vbox},
 but it will store the boxes for later use,
 which is necessary to make \CC{\lTblrMeasuringBool} status correct.
 
@@ -3324,7 +3324,7 @@ From version 2025A, the setting of \KK{measure} key also applies to subtables.
 \section{Library \texttt{zref}}
 
 From version 2022D, you can load \LL{zref} library
-to make \CC{\zref} and \EE{longtblr} work together.
+to make \CC{\zref} and \env{longtblr} work together.
 
 \chapter{Tips and Tricks}
 
@@ -3370,15 +3370,15 @@ their alignment commands.
 \label{sec:fakeverb}
 
 Due to the limitations of TeX,
-we are not able to make \CC{\verb} command behave well inside \PP{tabularray} tables.
-As a replacement, you may use \CC{\fakeverb} command from \href{https://www.ctan.org/pkg/codehigh}{\PP{codehigh}} package.
+we are not able to make \CC{\verb} command behave well inside \pkg{tabularray} tables.
+As a replacement, you may use \CC{\fakeverb} command from \href{https://www.ctan.org/pkg/codehigh}{\pkg{codehigh}} package.
 
 The \CC{\fakeverb} command will remove the backslashes in the following control symbols before
 typesetting its content: \CC{\\\\}, \CC{\\\{}, \CC{\\\}}, \CC{\\\#}, \CC{\\\^} and \texttt{\textbackslash\textvisiblespace}, \CC{\\\%}.
 Also the argument of \CC{\fakeverb} command need to be enclosed with curly braces.
-Therefore it could be safely used inside \PP{tabularray} tables and other LaTeX commands.
+Therefore it could be safely used inside \pkg{tabularray} tables and other LaTeX commands.
 
-Here is an example of using \CC{\fakeverb} commands inside a \EE{tblr} environment:
+Here is an example of using \CC{\fakeverb} commands inside a \env{tblr} environment:
 
 \begin{demohigh}
 \begin{tblr}{hlines}
@@ -3390,15 +3390,15 @@ Here is an example of using \CC{\fakeverb} commands inside a \EE{tblr} environme
 
 In the above example, balanced curly braces and control words (such as \CC{\bfseries})
 need not to be escaped---only several special characters need to be escaped.
-Please read the documentation of \PP{codehigh} package for more details of
+Please read the documentation of \pkg{codehigh} package for more details of
 \CC{\fakeverb} commands.%
 \footnote{By the way, \CC{\EscVerb} command from
-\href{https://www.ctan.org/pkg/fvextra}{\PP{fvextra}} package is similar to
+\href{https://www.ctan.org/pkg/fvextra}{\pkg{fvextra}} package is similar to
 \CC{\fakeverb} command, but with \CC{\EscVerb} you need to escape every control word.}
 
 \section{Blank lines around cells}
 
-In \PP{tabularray} tables, there could be a blank line before a cell, after a cell,
+In \pkg{tabularray} tables, there could be a blank line before a cell, after a cell,
 or between table commands and cell text. Here is an example:
 
 \begin{demohigh}
@@ -3442,7 +3442,7 @@ and are likely to change in future releases, if necessary. Don’t use them in i
 
 \section{Experimental public key paths}
 
-In version 2025A, all \PP{tabularray} key paths were cleaned up as follows:
+In version 2025A, all \pkg{tabularray} key paths were cleaned up as follows:
 \begin{itemize}[nosep]
   \item \KP{tabularray/table/inner} (from \KP{tblr}): for inner specifications.
   \item \KP{tabularray/table/outer} (from \KP{tblr-outer}): for outer specifications.
@@ -3458,7 +3458,7 @@ In version 2025A, all \PP{tabularray} key paths were cleaned up as follows:
 An advanced user or package writer can use \CC{\DeclareKeys} and \CC{\SetKeys} commands
 (provided by LaTeX format) to declare new keys and apply key-value lists, respectively.
 
-The key paths are quite long, therefore \PP{tabularray} provides two shortcut commands
+The key paths are quite long, therefore \pkg{tabularray} provides two shortcut commands
 \CC{\DeclareTblrKeys} and \CC{\SetTblrKeys}:
 
 \begin{codehigh}
@@ -3469,7 +3469,7 @@ The key paths are quite long, therefore \PP{tabularray} provides two shortcut co
 \section{Experimental public hook names}
 \label{sect:hook}
 
-All experimental public \PP{tabularray} hook names provided by \LL{hook} library are as follows:
+All experimental public \pkg{tabularray} hook names provided by \LL{hook} library are as follows:
 \begin{itemize}[nosep]
   \item \HP{tabularray/trial/before}: hook before trial typesetting.
   \item \HP{tabularray/trial/after}: hook after trial typesetting.
@@ -3481,9 +3481,9 @@ All experimental public \PP{tabularray} hook names provided by \LL{hook} library
   \item \HP{tabularray/cell/after}: hook after typesetting a table cell.
 \end{itemize}
 An advanced user or package writer can use \CC{\AddToHook} and \CC{\AddToHookNext} commands
-(provided by LaTeX format) to inject code to \PP{tabularray} tables.
+(provided by LaTeX format) to inject code to \pkg{tabularray} tables.
 
-The hook names are quite long, therefore \PP{tabularray} provides two shortcut commands
+The hook names are quite long, therefore \pkg{tabularray} provides two shortcut commands
 \CC{\AddToTblrHook} and \CC{\AddToTblrHookNext}:
 
 %\begin{codehigh}
@@ -3505,7 +3505,7 @@ This variable can be used to change page break settings for multirow cells:
 
 This variable is always available throughout the whole typesetting process of tables:
 \begin{itemize}[nosep]
-  \item \CC{\lTblrMeasuringBool}: if \PP{tabularray} is doing trial typesetting.
+  \item \CC{\lTblrMeasuringBool}: if \pkg{tabularray} is doing trial typesetting.
 \end{itemize}
 You need to make sure \KV{measure=vstore} to make \CC{\lTblrMeasuringBool} correct.
 
@@ -3604,7 +3604,7 @@ in defining two dimensional child selectors.
 \subsection{Child ids and classes}
 
 When the table is long, it is clumsy to select children with indexes, positive or negative.
-In version 2025A, \PP{tabularray} borrows ideas of ids and classes from HTML/CSS.
+In version 2025A, \pkg{tabularray} borrows ideas of ids and classes from HTML/CSS.
 With table command \CC{\SetChild}, you can mark a hborder/vborder/row/column/cell with
 an id or class, and use it in inner specifications.
 
@@ -3681,7 +3681,7 @@ so that \CC{\SetChild} can be inserted in the middle:
 Only one \CC{\SetChild} command in each cell is supported.
 But you can create multiple ids or classes with single \CC{\SetChild} command.
 
-In drawing \PP{tikz} pictures on tables (see Section~\ref{sect:tikz}),
+In drawing \pkg{tikz} pictures on tables (see Section~\ref{sect:tikz}),
 you may want to get the value of a child id or class with \CC{\ExpTblrChildId} or \CC{\ExpTblrChildClass}.
 These two commands are fully expandable.
 
@@ -3689,8 +3689,8 @@ These two commands are fully expandable.
 
 \section{The future}
 
-As a policy, \PP{tabularray} can support at most four TeX Live releases with latest updates.
-For example, \PP{tabularray} releases published in \the\year{} could be used in TeX Live
+As a policy, \pkg{tabularray} can support at most four TeX Live releases with latest updates.
+For example, \pkg{tabularray} releases published in \the\year{} could be used in TeX Live
 \inteval{\year-3}--\the\year{} with latest updates.
 
 To make the upcoming releases more stable, you are very welcome to test the latest package file
@@ -3700,15 +3700,15 @@ and put it into the folder of your TeX documents:\newline
 
 \section{The history}
 
-The change log of \PP{tabularray} package will be updated on the wiki page:\newline
+The change log of \pkg{tabularray} package will be updated on the wiki page:\newline
 \centerline{\url{https://github.com/lvjr/tabularray/wiki/ChangeLog}}
 
-When \PP{tabularray} makes some breaking changes of \emph{stable public} interfaces in a new release,
+When \pkg{tabularray} makes some breaking changes of \emph{stable public} interfaces in a new release,
 you will be able to roll back to previous release to make your existing documents unaffected.
 
 Normally you don't know when there will be a new breaking release.
 To keep your old documents as they are, you may add the date of current release
-to the last optional argument of \CC{\usepackage} in loading \PP{tabularray},
+to the last optional argument of \CC{\usepackage} in loading \pkg{tabularray},
 such as \CC{\usepackage{tabularray}[=2024-02-16]}.
 
 \subsection{Important changes in version 2025A}
