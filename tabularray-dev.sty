@@ -4571,6 +4571,10 @@
 \tl_new:N \g__tblr_cell_valign_tl
 \tl_new:N \g__tblr_cell_middle_tl
 
+\tl_new:N \l__tblr_cell_halign_tl
+\tl_new:N \l__tblr_cell_valign_tl
+\tl_new:N \l__tblr_cell_middle_tl
+
 \tl_const:Nn \c__tblr_valign_h_tl { h }
 \tl_const:Nn \c__tblr_valign_m_tl { m }
 \tl_const:Nn \c__tblr_valign_f_tl { f }
@@ -4584,8 +4588,7 @@
 %% #1: row number; #2: column number
 \cs_new_protected:Npn \__tblr_get_cell_alignments:nn #1 #2
   {
-    \group_begin:
-    \tl_gset:Ne \g__tblr_cell_halign_tl
+    \tl_set:Ne \l__tblr_cell_halign_tl
       { \__tblr_data_item:neen { cell } {#1} {#2} { halign } }
     \tl_set:Ne \l__tblr_v_tl
       { \__tblr_data_item:neen { cell } {#1} {#2} { valign } }
@@ -4593,25 +4596,27 @@
       {
         \c__tblr_valign_t_tl
           {
-            \tl_gset:Nn \g__tblr_cell_valign_tl {m}
-            \tl_gset:Nn \g__tblr_cell_middle_tl {t}
+            \tl_set:Nn \l__tblr_cell_valign_tl {m}
+            \tl_set:Nn \l__tblr_cell_middle_tl {t}
           }
         \c__tblr_valign_m_tl
           {
-            \tl_gset:Nn \g__tblr_cell_valign_tl {m}
-            \tl_gset:Nn \g__tblr_cell_middle_tl {m}
+            \tl_set:Nn \l__tblr_cell_valign_tl {m}
+            \tl_set:Nn \l__tblr_cell_middle_tl {m}
           }
         \c__tblr_valign_b_tl
           {
-            \tl_gset:Nn \g__tblr_cell_valign_tl {m}
-            \tl_gset:Nn \g__tblr_cell_middle_tl {b}
+            \tl_set:Nn \l__tblr_cell_valign_tl {m}
+            \tl_set:Nn \l__tblr_cell_middle_tl {b}
           }
       }
       {
-        \tl_gset_eq:NN \g__tblr_cell_valign_tl \l__tblr_v_tl
-        \tl_gclear:N \g__tblr_cell_middle_tl
+        \tl_set_eq:NN
+        \l__tblr_cell_valign_tl
+        \l__tblr_v_tl
+        \tl_clear:N
+        \l__tblr_cell_middle_tl
       }
-    \group_end:
   }
 
 %% current cell dimensions
@@ -4819,7 +4824,7 @@
       {
         \begin{varwidth}[t]{\paperwidth}
           \TblrParboxRestore
-          \cs:w __tblr_halign_command_ \g__tblr_cell_halign_tl : \cs_end:
+          \cs:w __tblr_halign_command_ \l__tblr_cell_halign_tl : \cs_end:
           \__tblr_leave_vmode:
           \l__tblr_f_tl
           \l__tblr_c_tl
@@ -4901,13 +4906,13 @@
       { \box_ht:N \l_tmpb_box + \box_dp:N \l_tmpb_box }
     \dim_gset:Nn \g__tblr_cell_head_dim { \box_ht:N \l_tmpa_box }
     \dim_gset:Nn \g__tblr_cell_foot_dim { \box_dp:N \l_tmpb_box }
-    \tl_case:Nn \g__tblr_cell_valign_tl
+    \tl_case:Nn \l__tblr_cell_valign_tl
       {
         \c__tblr_valign_h_tl
           { \box_use:N \l_tmpa_box }
         \c__tblr_valign_m_tl
           {
-            \tl_case:Nn \g__tblr_cell_middle_tl
+            \tl_case:Nn \l__tblr_cell_middle_tl
               {
                 \c__tblr_middle_t_tl
                   { \box_use:N \l_tmpa_box }
@@ -4943,7 +4948,7 @@
   {
     \dim_set:Nn \tex_hsize:D { #2 }
     \TblrParboxRestore
-    \cs:w __tblr_halign_command_ \g__tblr_cell_halign_tl : \cs_end:
+    \cs:w __tblr_halign_command_ \l__tblr_cell_halign_tl : \cs_end:
     \__tblr_leave_vmode:
     #1
   }
@@ -4955,7 +4960,7 @@
 
 \cs_new_protected:Npn \__tblr_get_middle_cell_upper_lower:NNNNN #1 #2 #3 #4 #5
   {
-    \tl_case:Nn \g__tblr_cell_middle_tl
+    \tl_case:Nn \l__tblr_cell_middle_tl
       {
         \c__tblr_middle_t_tl
           {
@@ -4993,7 +4998,7 @@
       { \__tblr_data_item:neen { cell } {#1} {#2} { rowspan } }
     \int_compare:nNnT { \l__tblr_r_tl } > {1}
       {
-        \tl_case:Nn \g__tblr_cell_valign_tl
+        \tl_case:Nn \l__tblr_cell_valign_tl
           {
             \c__tblr_valign_h_tl
               {
@@ -5039,7 +5044,7 @@
     %% Note that \l__tblr_h_tl may be empty
     \tl_set:Ne \l__tblr_h_tl
       { \__tblr_data_item:nen { row } {#1} { @row-height } }
-    \tl_if_eq:NNTF \g__tblr_cell_valign_tl \c__tblr_valign_m_tl
+    \tl_if_eq:NNTF \l__tblr_cell_valign_tl \c__tblr_valign_m_tl
       {
         \tl_set:Ne \l__tblr_a_tl
           { \__tblr_data_item:nen { row } {#1} { @row-upper } }
@@ -7870,18 +7875,18 @@
     \__tblr_hook_use:n { cell/before }
     \hbox_set_to_wd:Nnn \l__tblr_a_box { \l__tblr_cell_wd_dim }
       {
-        \tl_if_eq:NnTF \g__tblr_cell_halign_tl {j}
+        \tl_if_eq:NnTF \l__tblr_cell_halign_tl {j}
           % cell width may be less than column width for j cells
           { \__tblr_get_cell_text:nn {#1} {#2} \hfil }
           {
-            \tl_if_eq:NnF \g__tblr_cell_halign_tl {l} { \hfil }
+            \tl_if_eq:NnF \l__tblr_cell_halign_tl {l} { \hfil }
             \__tblr_get_cell_text:nn {#1} {#2}
-            \tl_if_eq:NnF \g__tblr_cell_halign_tl {r} { \hfil }
+            \tl_if_eq:NnF \l__tblr_cell_halign_tl {r} { \hfil }
           }
       }
     \vbox_set_to_ht:Nnn \l__tblr_b_box { \l__tblr_cell_ht_dim }
       {
-        \tl_case:Nn \g__tblr_cell_valign_tl
+        \tl_case:Nn \l__tblr_cell_valign_tl
           {
             \c__tblr_valign_m_tl
               {
