@@ -158,6 +158,8 @@
 \int_new:N \l__tblr_c_int % for column number
 \int_new:N \l__tblr_r_int % for row number
 \dim_new:N \l__tblr_tmpa_dim
+\dim_new:N \l__tblr_tmpb_dim
+\dim_new:N \l__tblr_tmpc_dim
 \dim_new:N \l__tblr_d_dim % for depth
 \dim_new:N \l__tblr_h_dim % for height
 \dim_new:N \l__tblr_o_dim
@@ -7849,10 +7851,6 @@
 
 \msg_new:nnn { tabularray } { negative-colsep }
   { Negative ~ 'colsep' ~ makes ~ column ~ #1 ~ non-positive ~ (wd=#2). ~ The ~ table ~ may ~ appear ~ broken. }
-
-%% Dimensions to store and compare later
-\dim_new:N \l__tblr_tmpb_dim
-\dim_new:N \l__tblr_tmpc_dim
 
 \cs_new_protected:Npn \__tblr_build_vline_segment_real:nn #1 #2
   {
