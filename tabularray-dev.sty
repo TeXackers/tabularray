@@ -7594,28 +7594,28 @@
       { \__tblr_prop_item:ne { inner } { rulesep } }
     \vbox_set:Nn \l__tblr_c_box
       {
-        \tex_hbox:D to \l__tblr_col_o_wd_dim {}
+        \hbox_to_wd:nn { \dim_max:nn { 0pt } { \l__tblr_col_o_wd_dim } } {}
         \int_step_inline:nn { \l__tblr_n_tl }
           {
             \tl_set:Ne \l__tblr_h_tl
               { \__tblr_spec_item:ne { hline } { [#1](##1) / @hline-height } }
             \tl_set:Ne \l__tblr_bg_tl
               { \__tblr_spec_item:ne { hline } { [#1][#2](##1) / bg } }
-            \hrule height 0pt
-            \dim_set:Nn \l_tmpa_dim
-              { \__tblr_spec_item:ne { vline } { [#2] / @vline-width } }
-            \dim_set:Nn \l_tmpb_dim
-              { \__tblr_spec_item:ne { vline } { [\int_eval:n { #2 + 1 }] / @vline-width } }
+            \hrule height \c_zero_dim
             \dim_set:Nn \l__tblr_tmpa_dim
-              { \l__tblr_col_o_wd_dim - \l_tmpa_dim - \l_tmpb_dim }
-            \hbox_set_to_wd:Nnn \l__tblr_b_box { \l__tblr_col_o_wd_dim }
+              { \__tblr_spec_item:ne { vline } { [#2] / @vline-width } }
+            \dim_set:Nn \l__tblr_tmpb_dim
+              { \__tblr_spec_item:ne { vline } { [\int_eval:n { #2 + 1 }] / @vline-width } }
+            \dim_set:Nn \l__tblr_tmpc_dim
+              { \l__tblr_col_o_wd_dim - \l__tblr_tmpa_dim - \l__tblr_tmpb_dim }
+            \hbox_set_to_wd:Nnn \l__tblr_b_box { \dim_max:nn { \c_zero_dim } { \l__tblr_col_o_wd_dim } }
               {
                 \tl_if_empty:NF \l__tblr_bg_tl
                   {
-                    \skip_horizontal:n { \l_tmpa_dim }
+                    \skip_horizontal:n { \l__tblr_tmpa_dim }
                     \color { \l__tblr_bg_tl }
-                    \vrule width \l__tblr_tmpa_dim height \l__tblr_h_tl depth 0pt
-                    \skip_horizontal:n { -\l_tmpa_dim - \l__tblr_tmpa_dim }
+                    \vrule width \dim_max:nn { \c_zero_dim } { \l__tblr_tmpc_dim } height \l__tblr_h_tl depth \c_zero_dim
+                    \skip_horizontal:n { -\l__tblr_tmpa_dim - \dim_max:nn { \c_zero_dim } { \l__tblr_tmpc_dim } }
                   }
                 \__tblr_get_hline_left_right_skips:nnn {#1} {#2} {##1}
                 \skip_horizontal:N \l__tblr_hline_leftskip_dim
@@ -7631,7 +7631,7 @@
                 \skip_horizontal:N \l__tblr_hline_rightskip_dim
               }
             \box_set_ht:Nn \l__tblr_b_box { \l__tblr_h_tl }
-            \box_set_dp:Nn \l__tblr_b_box { 0pt }
+            \box_set_dp:Nn \l__tblr_b_box { \c_zero_dim }
             \box_use:N \l__tblr_b_box
             \skip_vertical:n { \l__tblr_s_tl }
           }
@@ -7732,11 +7732,22 @@
     \__tblr_get_row_inner_height_depth:VNNNN #1
       \l__tblr_row_ht_dim \l__tblr_row_dp_dim
       \l__tblr_row_abovesep_dim \l__tblr_row_belowsep_dim
+    \bool_lazy_or:nnT
+      { \dim_compare_p:nNn { \l__tblr_row_ht_dim } < { \c_zero_dim } }
+      { \dim_compare_p:nNn { \l__tblr_row_dp_dim } < { \c_zero_dim } }
+      {
+        \msg_warning:nneee { tabularray } { negative-rowsep }
+          {#1} { \dim_use:N \l__tblr_row_ht_dim } { \dim_use:N \l__tblr_row_dp_dim }
+      }
     \__tblr_hook_use:n { row/before }
-    \tblr_vrule_wd_ht_dp:nnn {0pt} {\l__tblr_row_ht_dim} {\l__tblr_row_dp_dim}
+    \tblr_vrule_wd_ht_dp:nnn {\c_zero_dim}
+      { \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } }
+      { \dim_max:nn { \c_zero_dim } { \l__tblr_row_dp_dim } }
     \hbox_set:Nn \l__tblr_row_vlines_box
       {
-        \tblr_vrule_wd_ht_dp:nnn {0pt} {\l__tblr_row_ht_dim} {\l__tblr_row_dp_dim}
+        \tblr_vrule_wd_ht_dp:nnn {\c_zero_dim}
+          { \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } }
+          { \dim_max:nn { \c_zero_dim } { \l__tblr_row_dp_dim } }
       }
     \int_step_variable:nNn { \c@colcount } \l__tblr_j_tl
       {
@@ -7831,6 +7842,18 @@
 %% #1: row number, #2: column number
 %% We make every vline segment intersect with first hline below
 %% to remove gaps in vlines around multirow cells
+
+%% Warnings for when negative sep values crush the cells
+\msg_new:nnn { tabularray } { negative-rowsep }
+  { Negative ~ 'rowsep' ~ makes ~ row ~ #1 ~ non-positive ~ (ht=#2,~dp=#3). ~ The ~ table ~ may ~ appear ~ broken. }
+
+\msg_new:nnn { tabularray } { negative-colsep }
+  { Negative ~ 'colsep' ~ makes ~ column ~ #1 ~ non-positive ~ (wd=#2). ~ The ~ table ~ may ~ appear ~ broken. }
+
+%% Dimensions to store and compare later
+\dim_new:N \l__tblr_tmpb_dim
+\dim_new:N \l__tblr_tmpc_dim
+
 \cs_new_protected:Npn \__tblr_build_vline_segment_real:nn #1 #2
   {
     \tl_set:Ne \l__tblr_s_tl
@@ -7843,15 +7866,21 @@
               { \__tblr_spec_item:ne { vline } { [#2](##1) / @vline-width } }
             \tl_set:Ne \l__tblr_bg_tl
               { \__tblr_spec_item:ne { vline } { [#1][#2](##1) / bg } }
-            \dim_set:Nn \l_tmpa_dim
-              { \dim_eval:n { \l__tblr_row_ht_dim + \l__tblr_row_dp_dim } }
-            \vbox_set_to_ht:Nnn \l__tblr_b_box { \l_tmpa_dim }
+            \dim_set:Nn \l__tblr_tmpa_dim
+              { 
+                \dim_eval:n 
+                  { 
+                    \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } 
+                    + \dim_max:nn { \c_zero_dim } { \l__tblr_row_dp_dim } 
+                  } 
+              }
+            \vbox_set_to_ht:Nnn \l__tblr_b_box { \l__tblr_tmpa_dim }
               {
                 \tl_if_empty:NF \l__tblr_bg_tl
                   {
                     \color { \l__tblr_bg_tl }
-                    \hrule width \l__tblr_w_tl height \l_tmpa_dim depth 0pt
-                    \skip_vertical:n { -\l_tmpa_dim }
+                    \hrule width \l__tblr_w_tl height \l__tblr_tmpa_dim depth \c_zero_dim
+                    \skip_vertical:n { -\l__tblr_tmpa_dim }
                   }
                 \tl_set:Ne \l__tblr_f_tl
                   { \__tblr_spec_item:ne { vline } { [#1][#2](##1) / fg } }
@@ -7864,8 +7893,8 @@
                 \__tblr_get_vline_above_below_skips:nnn {#1} {#2} {##1}
                 \skip_vertical:N \l__tblr_vline_aboveskip_dim
                 \__tblr_get_vline_segment_child:nnnee {#1} {#2} {##1}
-                  { \dim_eval:n { \l__tblr_row_ht_dim } }
-                  { \dim_eval:n { \l__tblr_row_dp_dim } }
+                  { \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } }
+                  { \dim_max:nn { \c_zero_dim } { \l__tblr_row_dp_dim } }
                 \skip_vertical:N \l__tblr_vline_belowskip_dim
               }
             \box_set_wd:Nn \l__tblr_b_box { \l__tblr_w_tl }
@@ -7875,8 +7904,8 @@
         \skip_horizontal:n { - \l__tblr_s_tl }
       }
     \vbox_set:Nn \l__tblr_c_box { \box_use:N \l__tblr_a_box }
-    \box_set_ht:Nn \l__tblr_c_box { \dim_use:N \l__tblr_row_ht_dim }
-    \box_set_dp:Nn \l__tblr_c_box { \dim_use:N \l__tblr_row_dp_dim }
+    \box_set_ht:Nn \l__tblr_c_box { \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } }
+    \box_set_dp:Nn \l__tblr_c_box { \dim_max:nn { \c_zero_dim } { \l__tblr_row_dp_dim } }
     \box_use:N \l__tblr_c_box
   }
 
@@ -8049,10 +8078,9 @@
     \bool_if:NT \l__tblr_html_variables_bool
       { \__tblr_expose_cell_properties:NN #1 #2 }
     \__tblr_hook_use:n { cell/before }
-    \hbox_set_to_wd:Nnn \l__tblr_a_box { \l__tblr_cell_wd_dim }
+    \hbox_set_to_wd:Nnn \l__tblr_a_box { \dim_max:nn { \c_zero_dim } { \l__tblr_cell_wd_dim } }
       {
         \tl_if_eq:NnTF \l__tblr_cell_halign_tl {j}
-          % cell width may be less than column width for j cells
           { \__tblr_get_cell_text:nn {#1} {#2} \hfil }
           {
             \tl_if_eq:NnF \l__tblr_cell_halign_tl {l} { \hfil }
@@ -8060,7 +8088,7 @@
             \tl_if_eq:NnF \l__tblr_cell_halign_tl {r} { \hfil }
           }
       }
-    \vbox_set_to_ht:Nnn \l__tblr_b_box { \l__tblr_cell_ht_dim }
+    \vbox_set_to_ht:Nnn \l__tblr_b_box { \dim_max:nn { \c_zero_dim } { \l__tblr_cell_ht_dim } }
       {
         \tl_case:Nn \l__tblr_cell_valign_tl
           {
@@ -8070,9 +8098,9 @@
                 \int_compare:nNnT { \lTblrCellRowSpanInt } < {2}
                   {
                     \box_set_ht:Nn \l__tblr_a_box
-                      { \__tblr_data_item:nen { row } {#1} { @row-upper } }
+                      { \dim_max:nn { \c_zero_dim } { \__tblr_data_item:nen { row } {#1} { @row-upper } } }
                     \box_set_dp:Nn \l__tblr_a_box
-                      { \__tblr_data_item:nen { row } {#1} { @row-lower } }
+                      { \dim_max:nn { \c_zero_dim } { \__tblr_data_item:nen { row } {#1} { @row-lower } } }
                   }
                 \box_use:N \l__tblr_a_box
                 \vfil
@@ -8080,7 +8108,7 @@
             \c__tblr_valign_h_tl
               {
                 \box_set_ht:Nn \l__tblr_a_box
-                  { \__tblr_data_item:nen { row } {#1} { @row-head } }
+                  { \dim_max:nn { \c_zero_dim } { \__tblr_data_item:nen { row } {#1} { @row-head } } }
                 \box_use:N \l__tblr_a_box
                 \vfil
               }
@@ -8090,25 +8118,28 @@
                 \int_compare:nNnTF { \lTblrCellRowSpanInt } < {2}
                   {
                     \box_set_dp:Nn \l__tblr_a_box
-                      { \__tblr_data_item:nen { row } {#1} { @row-foot } }
+                      { \dim_max:nn { \c_zero_dim } { \__tblr_data_item:nen { row } {#1} { @row-foot } } }
                   }
                   {
                     \box_set_dp:Nn \l__tblr_a_box
                       {
-                        \__tblr_data_item:nen
-                          { row }
-                          { \int_eval:n { #1 + \lTblrCellRowSpanInt - 1 } }
-                          { @row-foot }
+                        \dim_max:nn { \c_zero_dim } {
+                          \__tblr_data_item:nen
+                            { row }
+                            { \int_eval:n { #1 + \lTblrCellRowSpanInt - 1 } }
+                            { @row-foot }
+                        }
                       }
                   }
                 \box_use:N \l__tblr_a_box
               }
           }
-        \hrule height ~ 0pt %% zero depth
+        \hrule height ~ \c_zero_dim
       }
     \vbox_set_to_ht:Nnn \l__tblr_c_box
-      { \l__tblr_row_ht_dim - \l__tblr_row_abovesep_dim }
+      { \dim_max:nn { \c_zero_dim } { \l__tblr_row_ht_dim } }
       {
+        \skip_vertical:n { \l__tblr_row_abovesep_dim }
         \box_use:N \l__tblr_b_box
         \vss
       }
@@ -8130,14 +8161,22 @@
         \tl_set:Ne \lTblrCellBackgroundTl
           { \__tblr_data_item:neen { cell } {#1} {#2} { background } }
         \group_begin:
+        \__tblr_get_cell_background_width:NNN #1 #2 \l__tblr_tmpa_dim
+        \__tblr_get_cell_background_depth:NNN #1 #2 \l__tblr_tmpb_dim
+        \int_compare:nNnT { #1 } = { 1 }
+          {
+            \dim_compare:nNnT { \l__tblr_tmpa_dim } < { \c_zero_dim }
+              {
+                \msg_warning:nnee { tabularray } { negative-colsep }
+                  {#2} { \dim_use:N \l__tblr_tmpa_dim }
+              }
+          }
         \tl_if_empty:NF \lTblrCellBackgroundTl
           {
-            \__tblr_get_cell_background_width:NNN #1 #2 \l_tmpa_dim
-            \__tblr_get_cell_background_depth:NNN #1 #2 \l_tmpb_dim
             \__tblr_build_cell_background:nnnn
-              { \dim_use:N \l_tmpa_dim }
+              { \dim_use:N \l__tblr_tmpa_dim }
               { \l__tblr_row_ht_dim }
-              { \dim_use:N \l_tmpb_dim }
+              { \dim_use:N \l__tblr_tmpb_dim }
               { \lTblrCellBackgroundTl }
           }
         \group_end:
@@ -8174,11 +8213,13 @@
     \hbox_set:Nn \l__tblr_a_box
       {
         \color {#4}
-        \vrule width ~ #1 ~ height ~ #2 ~ depth ~ #3
+        \vrule width ~ \dim_max:nn { \c_zero_dim } {#1} ~
+          height ~ \dim_max:nn { \c_zero_dim } {#2} ~
+          depth  ~ \dim_max:nn { \c_zero_dim } {#3}
       }
-    \box_set_dp:Nn \l__tblr_a_box { 0pt }
+    \box_set_dp:Nn \l__tblr_a_box { \c_zero_dim }
     \box_use:N \l__tblr_a_box
-    \skip_horizontal:n { - #1 }
+    \skip_horizontal:n { - \dim_max:nn { \c_zero_dim } {#1} }
   }
 
 %% #1: row number; #2: column number; #3: dimen register for rowsep above.

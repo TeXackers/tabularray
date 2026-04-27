@@ -1,0 +1,51 @@
+
+\documentclass{article}
+
+\input{regression-test}
+
+\begin{document}
+\SetTblrInner{hspan=default}
+\def\testrowsep#1{%
+  \leavevmode\llap{\small\texttt{\detokenize{#1}}}
+  \begin{tblr}{
+    hlines,
+    vlines={bg=yellow, wd=.3ex},
+    row{odd}={red!70!black},
+    row{even}={blue!70!black},
+    baseline=T,
+    #1
+  }
+  	Alpha   & Beta  & Gamma  & Delta \\
+  	Epsilon & Zeta  & Eta    & Theta \\
+  	Iota    & Kappa & Lambda & Mu    \\
+  \end{tblr}
+  \par\medskip
+}
+
+\def\testcolsep#1{%
+  \leavevmode\llap{\small\texttt{\detokenize{#1}}}
+  \begin{tblr}{
+    hlines={bg=yellow, wd=.3ex},
+    vlines,
+    row{odd}={red!70!black},
+    row{even}={blue!70!black},
+    baseline=T,
+    columns={c, 6em},
+    #1
+  }
+    Brilliant & Brilliant\\
+    Mega Blunder & Mega Blunder\\
+  \end{tblr}
+  \par\medskip
+}
+
+\testrowsep{rowsep=5pt}
+\testrowsep{rowsep=0pt}
+\testrowsep{rowsep=-3pt}
+\testrowsep{rowsep=-5pt}
+\testrowsep{rowsep=-10pt}
+\testcolsep{colsep=0pt}
+\testcolsep{colsep=-10pt}
+\testcolsep{colsep=-15pt}
+\testcolsep{colsep=-20pt}
+\end{document}

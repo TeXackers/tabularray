@@ -99,6 +99,7 @@
 | `rowcol-003` | `\\*[dimen]`, `\\\relax`, `\hline\relax` |
 | `rowcol-004` | `X` columns with positive and negative coefficients |
 | `rowcol-005` | `X` column errors from `\hfuzz=\maxdimen` setting (#445) |
+| `rowcol-006` | `rowsep` and `colsep` options with negative values (#428) |
 
 # Test files for tables
 
