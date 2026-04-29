@@ -7015,7 +7015,8 @@
                 \dim_set:Nn \l__tblr_page_overfill_dim
                   {
                     % Issue #361 and #536: overfill the page (including shrink).
-                    \pagegoal - \pagetotal + \pageshrink + 1sp
+                    % Issue #587: simply limit \l__tblr_page_overfill_dim to min. 0pt
+                    \dim_max:nn { \c_zero_dim } { \pagegoal - \pagetotal + \pageshrink + 1sp }
                   }
                 \skip_vertical:n { \l__tblr_page_overfill_dim }
                 \tex_penalty:D 9999
@@ -7028,6 +7029,9 @@
                 \int_incr:N \lTblrTablePageInt
                 \int_set:Nn \l__tblr_long_from_int { \l__tblr_prev_i_int + 1 }
                 \TblrNewPage
+                % Issue #587: Ensure \topskip cancellation only applies on explicitly
+                % generated new pages
+                \hbox{}\kern-\topskip\noindent
               }
             \hbox{}\kern-\topskip\nobreak
             \noindent
