@@ -8163,7 +8163,7 @@
         \__tblr_get_cell_background_depth:NNN #1 #2 \l__tblr_tmpb_dim
         \int_compare:nNnT { #1 } = { 1 }
           {
-            \dim_compare:nNnT { \l__tblr_tmpa_dim } < { \c_zero_dim }
+            \dim_compare:nNnT { \l__tblr_tmpa_dim } < { \dim_max:nn { \c_zero_dim } { -\l__tblr_x_tl } + \dim_max:nn { \c_zero_dim } { -\l__tblr_y_tl } }
               {
                 \msg_warning:nnee { tabularray } { negative-colsep }
                   {#2} { \dim_use:N \l__tblr_tmpa_dim }

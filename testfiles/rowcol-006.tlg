@@ -1,0 +1,22 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST 1: Negative rowsep and its warning
+============================================================
+Package tabularray Warning: Negative 'rowsep' makes row 1 non-positive (ht=3.39996pt, dp=-1.39996pt). The table may appear broken.
+Package tabularray Warning: Negative 'rowsep' makes row 2 non-positive (ht=3.39996pt, dp=-1.39996pt). The table may appear broken.
+Package tabularray Warning: Negative 'rowsep' makes row 3 non-positive (ht=3.39996pt, dp=-1.39996pt). The table may appear broken.
+Package tabularray Warning: Negative 'rowsep' makes row 1 non-positive (ht=-1.60004pt, dp=-6.39996pt). The table may appear broken.
+Package tabularray Warning: Negative 'rowsep' makes row 2 non-positive (ht=-1.60004pt, dp=-6.39996pt). The table may appear broken.
+Package tabularray Warning: Negative 'rowsep' makes row 3 non-positive (ht=-1.60004pt, dp=-6.39996pt). The table may appear broken.
+============================================================
+============================================================
+TEST 2: Negative colsep and its warning
+============================================================
+Package tabularray Warning: Negative 'colsep' makes column 1 non-positive (wd=20.0pt). The table may appear broken.
+Package tabularray Warning: Negative 'colsep' makes column 2 non-positive (wd=20.0pt). The table may appear broken.
+Package tabularray Warning: Negative 'colsep' makes column 1 non-positive (wd=0.0pt). The table may appear broken.
+Package tabularray Warning: Negative 'colsep' makes column 2 non-positive (wd=0.0pt). The table may appear broken.
+============================================================
+[1
+] (rowcol-006.aux)
