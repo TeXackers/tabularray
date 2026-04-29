@@ -1,0 +1,56 @@
+
+\documentclass{article}
+
+\input{regression-test}
+
+\begin{document}
+\START
+
+\SetTblrInner{hspan=default}
+\def\testrowsep#1{%
+  \leavevmode\llap{\small\texttt{\detokenize{#1}}}
+  \begin{tblr}{
+    hlines,
+    vlines={bg=magenta, wd=.3ex},
+    row{odd}={red!20},
+    row{even}={cyan!20},
+    baseline=T,
+    #1
+  }
+  	Alpha   & Beta  & Gamma  & Delta \\
+  	Epsilon & Zeta  & Eta    & Theta \\
+  	Iota    & Kappa & Lambda & Mu    \\
+  \end{tblr}
+  \par\medskip
+}
+
+\def\testcolsep#1{%
+  \leavevmode\llap{\small\texttt{\detokenize{#1}}}
+  \begin{tblr}{
+    hlines={bg=magenta, wd=.3ex},
+    vlines,
+    row{odd}={red!20},
+    row{even}={cyan!20},
+    baseline=T,
+    columns={c, 6em},
+    #1
+  }
+    Brilliant & Brilliant\\
+    Mega Blunder & Mega Blunder\\
+  \end{tblr}
+  \par\medskip
+}
+\BEGINTEST{Negative rowsep and its warning}
+\testrowsep{rowsep=5pt}
+\testrowsep{rowsep=0pt}
+\testrowsep{rowsep=-3pt}
+\testrowsep{rowsep=-5pt}
+\testrowsep{rowsep=-10pt}
+\ENDTEST
+\BEGINTEST{Negative colsep and its warning}
+\testcolsep{colsep=0pt}
+\testcolsep{colsep=-1em}
+\testcolsep{colsep=-2em}
+\testcolsep{colsep=-3em}
+\ENDTEST
+\end{document}
