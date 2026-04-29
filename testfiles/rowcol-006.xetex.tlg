@@ -13,8 +13,8 @@ Package tabularray Warning: Negative 'rowsep' makes row 3 non-positive (ht=-1.60
 ============================================================
 TEST 2: Negative colsep and its warning
 ============================================================
-Package tabularray Warning: Negative 'colsep' makes column 1 non-positive (wd=20.00003pt). The table may appear broken.
-Package tabularray Warning: Negative 'colsep' makes column 2 non-positive (wd=20.00003pt). The table may appear broken.
+Package tabularray Warning: Negative 'colsep' makes column 1 non-positive (wd=20.0pt). The table may appear broken.
+Package tabularray Warning: Negative 'colsep' makes column 2 non-positive (wd=20.0pt). The table may appear broken.
 Package tabularray Warning: Negative 'colsep' makes column 1 non-positive (wd=0.0pt). The table may appear broken.
 Package tabularray Warning: Negative 'colsep' makes column 2 non-positive (wd=0.0pt). The table may appear broken.
 ============================================================
