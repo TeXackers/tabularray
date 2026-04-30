@@ -6972,17 +6972,17 @@
   {
     \LogTblrTracing { page }
     \par
-    \skip_zero:N \parskip % see issue #203
+    \skip_zero:N \parskip
     \LogTblrTracing { page }
     \dim_compare:nNnTF { \pagegoal } = { \maxdimen }
       { \hbox{}\kern-\topskip\nobreak }
       { \skip_vertical:n { \__tblr_spec_item:nn { outer } { presep } } }
     \LogTblrTracing { page }
     \nointerlineskip
-    \mode_leave_vertical: % enter horizontal mode to update \pagetotal
+    \mode_leave_vertical:
     \LogTblrTracing { page }
     \hrule height ~ 0pt
-    \nobreak % prevent page break after \hrule (see issue #42)
+    \nobreak
     \LogTblrTracing { page }
     \int_set:Nn \lTblrTablePageInt {1}
     \__tblr_build_head_foot:
@@ -7007,16 +7007,10 @@
             \int_compare:nNnTF
               { \l__tblr_long_from_int } > { \l__tblr_prev_i_int }
               {
-                % See issue #42: if longtblr starts at the bottom of a page,
-                % \pagetotal maybe exceed \pagegoal after adding presep,
-                % or after adding rowhead or rowfoot of the table.
-                % In these cases, we will not typeset table in this page,
-                % but rather force a page break.
                 \dim_set:Nn \l__tblr_page_overfill_dim
                   {
-                    % Issue #361 and #536: overfill the page (including shrink).
-                    % Issue #587: simply limit \l__tblr_page_overfill_dim to min. 0pt
-                    \dim_max:nn { \c_zero_dim } { \pagegoal - \pagetotal + \pageshrink + 1sp }
+                    \dim_max:nn { \c_zero_dim }
+                      { \pagegoal - \pagetotal + \pageshrink + 1sp }
                   }
                 \skip_vertical:n { \l__tblr_page_overfill_dim }
                 \tex_penalty:D 9999
@@ -7029,12 +7023,9 @@
                 \int_incr:N \lTblrTablePageInt
                 \int_set:Nn \l__tblr_long_from_int { \l__tblr_prev_i_int + 1 }
                 \TblrNewPage
-                % Issue #587: Ensure \topskip cancellation only applies on explicitly
-                % generated new pages
-                \hbox{}\kern-\topskip\noindent
+                \hbox{}\kern-\topskip\nobreak
+                \noindent
               }
-            \hbox{}\kern-\topskip\nobreak
-            \noindent
             \LogTblrTracing { page }
             \dim_set:Nn \l__tblr_remain_height_dim
               {
@@ -7075,9 +7066,6 @@
       { \int_use:N \l__tblr_long_from_int }
       { \int_use:N \l__tblr_long_to_int }
     \skip_vertical:n { \__tblr_spec_item:nn { outer } { postsep } }
-    % In the past we used "\hrule height ~ 0pt" to get strict postsep,
-    % but the postsep was not discarded when page breaks, see issue #39.
-    % Therefore we use \nointerlineskip here.
     \nointerlineskip
   }
 \cs_generate_variant:Nn \__tblr_build_long_table:n { e }
