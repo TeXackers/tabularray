@@ -4738,6 +4738,18 @@
 \cs_new_protected:Npn \__tblr_get_cell_text_real:nn #1 #2
   {
     \group_begin:
+    \dim_set:Nn \belowsep
+      {
+        \__tblr_data_item:nen { row }
+          { \int_eval:n { #1 + \__tblr_data_item:neen { cell } {#1} {#2} { rowspan } - 1 } }
+          { belowsep }
+      }
+    \dim_set:Nn \rightsep
+      {
+        \__tblr_data_item:nen { column }
+          { \int_eval:n { #2 + \__tblr_data_item:neen { cell } {#1} {#2} { colspan } - 1 } }
+          { rightsep }
+      }
     \tl_set:Ne \l__tblr_c_tl { \__tblr_spec_item:ne { text } {[#1][#2]} }
     %% when the cell text is guarded by a pair of curly braces,
     %% we unbrace it and ignore cmd option of the cell, see issue #90.
