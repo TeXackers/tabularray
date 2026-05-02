@@ -6964,12 +6964,10 @@
               + #2 + \__tblr_box_height:N \l__tblr_table_firstfoot_box
           }
         \box_set_eq:NN \l__tblr_table_head_box \l__tblr_table_firsthead_box
+        \box_set_eq:NN \l__tblr_table_foot_box \l__tblr_table_firstfoot_box
         \dim_compare:nNnTF
           { \l__tblr_table_head_body_foot_dim } > {#1}
-          {
-            \bool_set_true:N #3
-            \box_set_eq:NN \l__tblr_table_foot_box \l__tblr_table_firstfoot_box
-          }
+          { \bool_set_true:N #3 }
           { \bool_set_false:N #3 }
       }
       {
@@ -6979,12 +6977,10 @@
               + #2 + \__tblr_box_height:N \l__tblr_table_middlefoot_box
           }
         \box_set_eq:NN \l__tblr_table_head_box \l__tblr_table_middlehead_box
+        \box_set_eq:NN \l__tblr_table_foot_box \l__tblr_table_middlefoot_box
         \dim_compare:nNnTF
           { \l__tblr_table_head_body_foot_dim } > {#1}
-          {
-            \bool_set_true:N #3
-            \box_set_eq:NN \l__tblr_table_foot_box \l__tblr_table_middlefoot_box
-          }
+          { \bool_set_true:N #3 }
           { \bool_set_false:N #3 }
       }
   }
