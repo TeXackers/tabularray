@@ -21,9 +21,9 @@
 \providecommand\DeclareCurrentRelease[2]{}
 \DeclareRelease{v2024}{2022-01-01}{tabularray-2024.sty}
 \DeclareRelease{v2021}{2021-01-01}{tabularray-2021.sty}
-\DeclareCurrentRelease{}{2025-01-01}
+\DeclareCurrentRelease{}{2026-01-01}
 
-\ProvidesExplPackage{tabularray-dev}{2026-02-23}{2026A-DEV}
+\ProvidesExplPackage{tabularray-dev}{2026-05-09}{2026A-DEV}
   {Develoment and experimental variant of tabularray}
 
 %% \IfFormatAtLeastTF, xparse and lthooks are added in LaTeX 2020-10-01
@@ -55,20 +55,29 @@
   }
 \NewDocumentCommand \TblrParboxRestore { } { \@parboxrestore }
 
+\cs_set_eq:NN \__tblr_cr: \@normalcr
+\cs_set_eq:NN \__tblr_center_cr: \@centercr
+
+\AddToHook {package/beamerarticle/after} [tabularray]
+  {
+    \cs_set_eq:NN \__tblr_cr: \beamer@origbreak
+    \cs_set_eq:NN \__tblr_center_cr: \beamer@origbreakcenter
+  }
+
 \NewDocumentCommand \TblrAlignBoth { }
   {
-    \let \\ = \@normalcr
+    \let \\ = \__tblr_cr:
     \leftskip = \z@skip
     \@rightskip = \z@skip
     \rightskip = \@rightskip
     \parfillskip = \@flushglue
   }
 
-\NewDocumentCommand \TblrAlignLeft { } { \raggedright }
+\NewDocumentCommand \TblrAlignLeft { } { \raggedright \let \\ = \__tblr_center_cr: }
 
-\NewDocumentCommand \TblrAlignCenter { } { \centering }
+\NewDocumentCommand \TblrAlignCenter { } { \centering \let \\ = \__tblr_center_cr: }
 
-\NewDocumentCommand \TblrAlignRight { } { \raggedleft }
+\NewDocumentCommand \TblrAlignRight { } { \raggedleft \let \\ = \__tblr_center_cr: }
 
 \cs_set_eq:NN \TblrNewPage \newpage
 
