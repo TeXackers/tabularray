@@ -6864,10 +6864,26 @@
                 \noindent
               }
             \LogTblrTracing { page }
-            \dim_set:Nn \l__tblr_remain_height_dim
+            \bool_if:NTF \l__tblr_page_break_curr_bool
               {
-                \pagegoal - \pagetotal
-                - \l__tblr_row_head_foot_dim - \l__tblr_next_rows_dim
+                \__tblr_build_page_table:nee {#1}
+                  { \int_use:N \l__tblr_long_from_int }
+                  { \int_use:N \l__tblr_curr_i_int }
+                \int_incr:N \lTblrTablePageInt
+                \TblrNewPage
+                \hbox{}\kern-\topskip\nobreak
+                \noindent
+                \LogTblrTracing { page }
+                \dim_set:Nn \l__tblr_remain_height_dim
+                  { \pagegoal - \pagetotal - \l__tblr_row_head_foot_dim }
+                \int_set:Nn \l__tblr_long_from_int { \l__tblr_curr_i_int + 1 }
+              }
+              {
+                \dim_set:Nn \l__tblr_remain_height_dim
+                  {
+                    \pagegoal - \pagetotal
+                    - \l__tblr_row_head_foot_dim - \l__tblr_next_rows_dim
+                  }
               }
           }
           {
