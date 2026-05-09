@@ -4747,6 +4747,10 @@
 \cs_new_protected:Npn \__tblr_get_cell_text_real:nn #1 #2
   {
     \group_begin:
+    \bool_if:NT \lTblrMeasuringBool
+      {
+        \cs_if_exist:NT \glsifmeasuring { \cs_gset_eq:NN \glsifmeasuring \@firstoftwo }
+      }
     \dim_set:Nn \belowsep
       {
         \__tblr_data_item:nen { row }
