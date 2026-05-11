@@ -1,0 +1,10 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST 1: Warning for out-of-bound span
+============================================================
+Package tabularray Warning: Row span of cell [2][2] is too large and cropped to 1.
+Package tabularray Warning: Column span of cell [2][2] is too large and cropped to 1.
+============================================================
+[1
+] (rowcol-007.aux)
