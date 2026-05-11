@@ -23,7 +23,7 @@
 \DeclareRelease{v2021}{2021-01-01}{tabularray-2021.sty}
 \DeclareCurrentRelease{}{2026-01-01}
 
-\ProvidesExplPackage{tabularray-dev}{2026-05-09}{2026A-DEV}
+\ProvidesExplPackage{tabularray-dev}{2026-05-11}{2026A-DEV}
   {Develoment and experimental variant of tabularray}
 
 %% \IfFormatAtLeastTF, xparse and lthooks are added in LaTeX 2020-10-01
@@ -2641,16 +2641,16 @@
     \tblr_set_cell:nn { #1 } { #2 }
   }
 
-\tl_new:N \l__tblr_row_span_num_tl
-\tl_new:N \l__tblr_col_span_num_tl
+\int_new:N \l__tblr_row_span_num_int
+\int_new:N \l__tblr_col_span_num_int
 
 \cs_new_protected:Npn \tblr_set_cell:nn #1 #2
   {
-    \tl_set:Nn \l__tblr_row_span_num_tl { 1 }
-    \tl_set:Nn \l__tblr_col_span_num_tl { 1 }
+    \int_set:Nn \l__tblr_row_span_num_int { 1 }
+    \int_set:Nn \l__tblr_col_span_num_int { 1 }
     \__tblr_keys_set:nn { cell/outer } { #1 }
     \__tblr_keys_set:nn { cell/inner } { #2 }
-    \__tblr_set_span_spec:VV \l__tblr_row_span_num_tl \l__tblr_col_span_num_tl
+    \__tblr_set_span_spec:VV \l__tblr_row_span_num_int \l__tblr_col_span_num_int
   }
 \cs_generate_variant:Nn \tblr_set_cell:nn { nV }
 
@@ -2707,8 +2707,8 @@
 
 \__tblr_keys_define:nn { cell/outer }
   {
-    r .tl_set:N = \l__tblr_row_span_num_tl,
-    c .tl_set:N = \l__tblr_col_span_num_tl,
+    r .int_set:N = \l__tblr_row_span_num_int,
+    c .int_set:N = \l__tblr_col_span_num_int,
   }
 
 \__tblr_keys_define:nn { cell/inner }
