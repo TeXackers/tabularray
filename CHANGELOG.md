@@ -10,8 +10,10 @@
 ## Changed
 
 - Renamed `fg` and `bg` keys to `fgcolor` and `bgcolor` respectively
-- Reworked the extendable column algorithm (#210)
+- Reworked the extendable column algorithm (#210, #658)
 - Made the internal state-tracking variables local (#401)
+- Removed `ninecolors` dependency when `xcolor` is loaded (#643)
+
 
 ## Fixed
 
@@ -24,10 +26,6 @@
 - Restore original linebreak definitions when `beamerarticle` is loaded (#632)
 - Make `glossaries` interact with the `tabularray` measuring phase (#635)
 - Refactor `longtable` to handle manual page breaks correctly (#164, #184)
-
-## Removed
-
-- Removed `ninecolors` dependency (#643)
 
 ---
 
