@@ -2,36 +2,30 @@
 
 ## Added
 
-- Added `bgcolor` key for background rules (#217, #287, #595)
-- Added warning messages for out-of-bound cell spans (#418, #419)
-- Added warning messages for extreme negative `rowsep` and `colsep` values (#428)
-- Require the `xcolor` package upon loading `tabularray` (#645)
+- `bgcolor` key for background rules (#217, #287, #595)
+- Warning messages for out-of-bound cell spans (#418, #419)
+- Warning messages for extreme negative `rowsep` and `colsep` values (#428)
+- `xcolor` package as dependency (#645)
 
 ## Changed
 
-- Renamed `fg` and `bg` keys to `fgcolor` and `bgcolor` respectively
-- Reworked the extendable column algorithm (#210, #658)
-- Made the internal state-tracking variables local (#401)
-- Removed `ninecolors` dependency when `xcolor` is loaded (#643)
+- Rename `fg` and `bg` keys to `fgcolor` and `bgcolor` respectively
+- Extendable column algorithm (#210, #658)
+- Internal state-tracking variables are now local (#401)
+- `ninecolors` dependency when `xcolor` is loaded (#643)
 
 
 ## Fixed
 
-- Properly handle non-existent class styles (#636)
-- Improved shrinking heuristics for rules and background cells (#428)
-- Update `belowsep` and `rightsep` values before cell content evaluation (#387, #470)
+- Handling for non-existent class styles (#636)
+- Shrinking heuristics for rules and background cells (#428)
+- `belowsep` and `rightsep` values before cell content evaluation (#387, #470)
 - Gobble leading spaces inside braced cells (#590)
 - Ensure `\topskip` cancellation only applies on explicitly generated new pages (#587)
 - Limit the internal page overfill dimen to a minimum of 0pt (#587)
 - Restore original linebreak definitions when `beamerarticle` is loaded (#632)
 - Make `glossaries` interact with the `tabularray` measuring phase (#635)
 - Refactor `longtable` to handle manual page breaks correctly (#164, #184)
-
----
-
-All notable changes to this package will be documented here.
-The format is based on [Keep a Changelog](https://keepachangelog.com).
-Changes above this text are made in a DEV release.
 
 # [v2025C] - 2025-11-27
 
