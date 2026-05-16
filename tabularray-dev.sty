@@ -21,10 +21,10 @@
 \providecommand\DeclareCurrentRelease[2]{}
 \DeclareRelease{v2024}{2022-01-01}{tabularray-2024.sty}
 \DeclareRelease{v2021}{2021-01-01}{tabularray-2021.sty}
-\DeclareCurrentRelease{}{2025-01-01}
+\DeclareCurrentRelease{}{2026-01-01}
 
-\ProvidesExplPackage{tabularray-dev}{2026-02-23}{2026A-DEV}
-  {Develoment and experimental variant of tabularray}
+\ProvidesExplPackage{tabularray-dev}{2026-05-11}{2026A-DEV}
+  {Development and experimental variant of tabularray}
 
 %% \IfFormatAtLeastTF, xparse and lthooks are added in LaTeX 2020-10-01
 %% Note that \@ifl@t@r or \@ifpackagelater means 'this date or later'
@@ -55,20 +55,29 @@
   }
 \NewDocumentCommand \TblrParboxRestore { } { \@parboxrestore }
 
+\cs_set_eq:NN \__tblr_cr: \@normalcr
+\cs_set_eq:NN \__tblr_center_cr: \@centercr
+
+\AddToHook {package/beamerarticle/after} [tabularray]
+  {
+    \cs_set_eq:NN \__tblr_cr: \beamer@origbreak
+    \cs_set_eq:NN \__tblr_center_cr: \beamer@origbreakcenter
+  }
+
 \NewDocumentCommand \TblrAlignBoth { }
   {
-    \let \\ = \@normalcr
+    \let \\ = \__tblr_cr:
     \leftskip = \z@skip
     \@rightskip = \z@skip
     \rightskip = \@rightskip
     \parfillskip = \@flushglue
   }
 
-\NewDocumentCommand \TblrAlignLeft { } { \raggedright }
+\NewDocumentCommand \TblrAlignLeft { } { \raggedright \let \\ = \__tblr_center_cr: }
 
-\NewDocumentCommand \TblrAlignCenter { } { \centering }
+\NewDocumentCommand \TblrAlignCenter { } { \centering \let \\ = \__tblr_center_cr: }
 
-\NewDocumentCommand \TblrAlignRight { } { \raggedleft }
+\NewDocumentCommand \TblrAlignRight { } { \raggedleft \let \\ = \__tblr_center_cr: }
 
 \cs_set_eq:NN \TblrNewPage \newpage
 
@@ -2632,16 +2641,16 @@
     \tblr_set_cell:nn { #1 } { #2 }
   }
 
-\tl_new:N \l__tblr_row_span_num_tl
-\tl_new:N \l__tblr_col_span_num_tl
+\int_new:N \l__tblr_row_span_num_int
+\int_new:N \l__tblr_col_span_num_int
 
 \cs_new_protected:Npn \tblr_set_cell:nn #1 #2
   {
-    \tl_set:Nn \l__tblr_row_span_num_tl { 1 }
-    \tl_set:Nn \l__tblr_col_span_num_tl { 1 }
+    \int_set:Nn \l__tblr_row_span_num_int { 1 }
+    \int_set:Nn \l__tblr_col_span_num_int { 1 }
     \__tblr_keys_set:nn { cell/outer } { #1 }
     \__tblr_keys_set:nn { cell/inner } { #2 }
-    \__tblr_set_span_spec:VV \l__tblr_row_span_num_tl \l__tblr_col_span_num_tl
+    \__tblr_set_span_spec:NN \l__tblr_row_span_num_int \l__tblr_col_span_num_int
   }
 \cs_generate_variant:Nn \tblr_set_cell:nn { nV }
 
@@ -2698,8 +2707,8 @@
 
 \__tblr_keys_define:nn { cell/outer }
   {
-    r .tl_set:N = \l__tblr_row_span_num_tl,
-    c .tl_set:N = \l__tblr_col_span_num_tl,
+    r .int_set:N = \l__tblr_row_span_num_int,
+    c .int_set:N = \l__tblr_col_span_num_int,
   }
 
 \__tblr_keys_define:nn { cell/inner }
@@ -2791,22 +2800,40 @@
   }
 \cs_generate_variant:Nn \__tblr_cell_unknown_key:n { V }
 
+\msg_new:nnn { tabularray } { crop-rowspan }
+  { Row ~ span ~ of ~ cell ~ [#1][#2] ~ is ~ too ~ large ~ and ~ cropped ~ to ~ #3. }
+
+\msg_new:nnn { tabularray } { crop-colspan }
+  { Column ~ span ~ of ~ cell ~ [#1][#2] ~ is ~ too ~ large ~ and ~ cropped ~ to ~ #3. }
+
 %% Whether to allow page breaks in the middle of multirow cells
 \bool_new:N \lTblrCellBreakBool
 
-\cs_new_protected:Npn \__tblr_set_span_spec:nn #1 #2
+\cs_new_protected:Npn \__tblr_set_span_spec:NN #1 #2
   {
+    \int_compare:nNnT { \c@rownum + #1 - 1 } > { \c@rowcount }
+      {
+        \int_set:Nn #1 { \int_max:nn { 1 } { \c@rowcount - \c@rownum + 1 } }
+        \msg_warning:nneee { tabularray } { crop-rowspan }
+          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { \int_use:N #1 }
+      }
+    \int_compare:nNnT { \c@colnum + #2 - 1 } > { \c@colcount }
+      {
+        \int_set:Nn #2 { \int_max:nn { 1 } { \c@colcount - \c@colnum + 1 } }
+        \msg_warning:nneee { tabularray } { crop-colspan }
+          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { \int_use:N #2 }
+      }
     \int_compare:nNnT { #1 } > { 1 }
       {
         \__tblr_prop_gput:nnn { inner } { rowspan } { true }
-        \__tblr_data_gput:neenn { cell }
-          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { rowspan } {#1}
+        \__tblr_data_gput:neene { cell }
+          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { rowspan } { \int_use:N #1 }
       }
     \int_compare:nNnT { #2 } > { 1 }
       {
         \__tblr_prop_gput:nnn { inner } { colspan } { true }
-        \__tblr_data_gput:neenn { cell }
-          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { colspan } {#2}
+        \__tblr_data_gput:neene { cell }
+          { \int_use:N \c@rownum } { \int_use:N \c@colnum } { colspan } { \int_use:N #2 }
       }
     \int_step_variable:nnNn
       { \int_use:N \c@rownum } { \int_eval:n { \c@rownum + #1 - 1 } } \l__tblr_i_tl
@@ -2858,7 +2885,6 @@
           { [\l__tblr_i_tl][\int_eval:n {\c@colnum + #2}](1) / belowpos } {1}
       }
   }
-\cs_generate_variant:Nn \__tblr_set_span_spec:nn { VV }
 
 %% Obsolete \multicolumn and \multirow commands
 
@@ -4738,6 +4764,10 @@
 \cs_new_protected:Npn \__tblr_get_cell_text_real:nn #1 #2
   {
     \group_begin:
+    \bool_if:NT \lTblrMeasuringBool
+      {
+        \cs_if_exist:NT \glsifmeasuring { \cs_gset_eq:NN \glsifmeasuring \@firstoftwo }
+      }
     \dim_set:Nn \belowsep
       {
         \__tblr_data_item:nen { row }

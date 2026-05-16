@@ -1,0 +1,15 @@
+\documentclass{article}
+\input{regression-test}
+
+\begin{document}
+\START
+
+\BEGINTEST{Warning for out-of-bound span}
+\begin{tblr}{
+  cell{2}{2}={c=2,r=2}{}
+}
+  1 & 2 \\
+  3 & 4 \\
+\end{tblr}
+\ENDTEST
+\end{document}
