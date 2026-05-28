@@ -23,7 +23,7 @@
 \DeclareRelease{v2021}{2021-01-01}{tabularray-2021.sty}
 \DeclareCurrentRelease{}{2026-01-01}
 
-\ProvidesExplPackage{tabularray-dev}{2026-05-11}{2026A-DEV}
+\ProvidesExplPackage{tabularray-dev}{2026-05-28}{2026A-DEV}
   {Development and experimental variant of tabularray}
 
 %% \IfFormatAtLeastTF, xparse and lthooks are added in LaTeX 2020-10-01
@@ -5607,15 +5607,23 @@
   }
 
 %% Compute and set column widths from span widths
-\cs_new_protected:Npn \__tblr_set_column_widths_from_span_widths:
+\cs_set_protected:Npn \__tblr_set_column_widths_from_span_widths:
   {
     \prop_clear:N \l__tblr_column_min_width_prop
     \int_step_variable:nNn { \c@colcount } \l__tblr_j_tl
       {
-        \tl_set:Ne \l__tblr_min_tl
-          { \prop_item:Ne \l__tblr_col_item_skip_size_prop { item[\l__tblr_j_tl] } }
-        \prop_put:Nee \l__tblr_column_min_width_prop
-          { \l__tblr_j_tl } { \l__tblr_min_tl }
+        \tl_set:Ne \l__tblr_co_tl
+          { \__tblr_data_item:nen { column } { \l__tblr_j_tl } { coefficient } }
+        \fp_compare:nNnTF { \l__tblr_co_tl } > { 0 }
+          {
+            \prop_put:Nen \l__tblr_col_item_skip_size_prop { item[\l__tblr_j_tl] } { 0pt }
+          }
+          {
+            \tl_set:Ne \l__tblr_min_tl
+              { \prop_item:Ne \l__tblr_col_item_skip_size_prop { item[\l__tblr_j_tl] } }
+            \prop_put:Nee \l__tblr_column_min_width_prop
+              { \l__tblr_j_tl } { \l__tblr_min_tl }
+          }
       }
     \prop_set_eq:NN \l__tblr_col_item_even_prop \l__tblr_col_item_skip_size_prop
     \str_if_eq:enTF
