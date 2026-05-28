@@ -5607,7 +5607,7 @@
   }
 
 %% Compute and set column widths from span widths
-\cs_set_protected:Npn \__tblr_set_column_widths_from_span_widths:
+\cs_new_protected:Npn \__tblr_set_column_widths_from_span_widths:
   {
     \prop_clear:N \l__tblr_column_min_width_prop
     \int_step_variable:nNn { \c@colcount } \l__tblr_j_tl
