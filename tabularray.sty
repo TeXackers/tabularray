@@ -6991,12 +6991,14 @@
       }
   }
 
+%% Use the vertical box from the outside of math for correct alignment of
+%% the rules in LuaTeX (the directions inside math can switch, see #351)
 \cs_new_protected:Npn \__tblr_get_vcenter_box:N #1
   {
     \hbox:n
       {
         $ \m@th \l__tblr_delim_left_tl
-        \tex_vcenter:D { \vbox_unpack_drop:N #1 }
+        \tex_vcenter:D { \box_use_drop:N #1 }
         \l__tblr_delim_right_tl $
       }
   }
