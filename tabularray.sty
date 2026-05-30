@@ -6993,13 +6993,13 @@
 
 %% We box the vertical box outside of math for correct alignment of
 %% the rules in LuaTeX (the directions inside math can switch, see #351)
-\cs_new_protected:Npn \__tblr_get_vcenter_box:N #1
+\cs_set_protected:Npn \__tblr_get_vcenter_box:N #1
   {
     \hbox:n
       {
-        \vbox_set:Nn \l_tmpa_box { \vbox_center:n { \vbox_unpack_drop:N #1 } }
+        \vbox_set:Nn \l_tmpa_box { \vbox:n { \vbox_unpack_drop:N #1 } }
         $ \m@th \l__tblr_delim_left_tl
-        \box_use_drop:N \l_tmpa_box
+        \tex_vcenter:D { \vbox_unpack_drop:N \l_tmpa_box }
         \l__tblr_delim_right_tl $
       }
   }
