@@ -1,0 +1,33 @@
+\documentclass{article}
+\input{regression-test}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\START
+\BEGINTEST{Test merged cells in non-X columns}
+\begin{tblr}{
+  colspec = {lllXX},
+  hlines,
+  vlines,
+}
+    1-1 & 1-2 & 1-3 & very very long text in the X column & sooooooooooooo very much long it will not stop and continue \\
+    2-1 & 2-2 & 2-3 & 2-4 & 2-5 \\ 
+\end{tblr}
+\begin{tblr}{
+  colspec = {lllXX},
+  hlines,
+  vlines,
+}
+    1-1 & \SetCell[c=2]{c} merged & 1-3 & very very long text in the X column & sooooooooooooo very much long it will not stop and continue \\
+    2-1 & 2-2 & 2-3 & 2-4 & 2-5 \\ 
+\end{tblr}
+\begin{tblr}{
+  colspec = {llrXX},
+  hlines,
+  vlines,
+}
+    1-1 & 1-2 & \SetCell[c=2]{c} merged & very very long text in the X column & sooooooooooooo very much long it will not stop and continue \\
+    2-1 & 2-2 & 2-3 & 2-4 & 2-5 \\ 
+\end{tblr}
+\ENDTEST
+\end{document}

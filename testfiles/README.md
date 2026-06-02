@@ -122,3 +122,4 @@
 | `table-015` | empty tables (#326) |
 | `table-016` | first cell starts with a square bracket (#598) |
 | `table-017` | set horizontal alignment of longtblr with `\SetTblrOuter` (#611) |
+| `table-018` | merged cells in non-X columns  (#659) |
