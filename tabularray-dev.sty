@@ -5625,6 +5625,24 @@
               { \l__tblr_j_tl } { \l__tblr_min_tl }
           }
       }
+    \prop_clear:N \l_tmpa_prop
+    \prop_map_inline:Nn \l__tblr_col_span_size_prop
+      {
+        \__tblr_get_span_from_to:w ##1
+        \bool_set_false:N \l_tmpa_bool
+        \int_step_inline:nnn { \l__tblr_a_tl } { \l__tblr_b_tl }
+          {
+            \tl_set:Ne \l__tblr_co_tl
+              { \__tblr_data_item:nen { column } { ####1 } { coefficient } }
+            \fp_compare:nNnT { \l__tblr_co_tl } > { 0 }
+              { \bool_set_true:N \l_tmpa_bool }
+          }
+        \bool_if:NF \l_tmpa_bool
+          {
+            \prop_put:Nnn \l_tmpa_prop { ##1 } { ##2 }
+          }
+      }
+    \prop_set_eq:NN \l__tblr_col_span_size_prop \l_tmpa_prop
     \prop_set_eq:NN \l__tblr_col_item_even_prop \l__tblr_col_item_skip_size_prop
     \str_if_eq:enTF
       { \__tblr_prop_item:ne { inner } { hspan } }
