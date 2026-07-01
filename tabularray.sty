@@ -6010,6 +6010,18 @@
   }
 \SetTblrTemplate { caption } { normal }
 
+\DeclareTblrTemplate { capcont-pre } { normal }
+  {
+    \UseTblrTemplate { conthead-pre } { default }
+  }
+\SetTblrTemplate { capcont-pre } { normal }
+
+\DeclareTblrTemplate { capcont-text } { normal }
+  {
+    \UseTblrTemplate { conthead-text } { default }
+  }
+\SetTblrTemplate { capcont-text } { normal }
+
 \DeclareTblrTemplate { capcont } { empty } { }
 \DeclareTblrTemplate { capcont } { plain }
   {
@@ -6018,8 +6030,8 @@
         \UseTblrTemplate { caption-tag } { default }
         \UseTblrTemplate { caption-sep } { default }
         \UseTblrTemplate { caption-text } { default }
-        \UseTblrTemplate { conthead-pre } { default }
-        \UseTblrTemplate { conthead-text } { default }
+        \UseTblrTemplate { capcont-pre } { default }
+        \UseTblrTemplate { capcont-text } { default }
       }
     \dim_compare:nNnTF { \box_wd:N \l__tblr_caption_box } > { \hsize }
       {
@@ -6040,8 +6052,8 @@
         \UseTblrTemplate { caption-tag } { default }
         \UseTblrTemplate { caption-sep } { default }
         \UseTblrTemplate { caption-text } { default }
-        \UseTblrTemplate { conthead-pre } { default }
-        \UseTblrTemplate { conthead-text } { default }
+        \UseTblrTemplate { capcont-pre } { default }
+        \UseTblrTemplate { capcont-text } { default }
       }
     \dim_compare:nNnTF { \box_wd:N \l__tblr_caption_box } > { \hsize }
       {
@@ -6074,8 +6086,8 @@
     \UseTblrTemplate { caption-tag } { default }
     \UseTblrTemplate { caption-sep } { default }
     \UseTblrTemplate { caption-text } { default }
-    \UseTblrTemplate { conthead-pre } { default }
-    \UseTblrTemplate { conthead-text } { default }
+    \UseTblrTemplate { capcont-pre } { default }
+    \UseTblrTemplate { capcont-text } { default }
     \par
   }
 \SetTblrTemplate { capcont} { normal }
