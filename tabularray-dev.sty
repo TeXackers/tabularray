@@ -1890,10 +1890,14 @@
   {
     \tl_if_head_eq_meaning:VNT #1 \SetChild
       {
-        \tl_set:Ne #1 { \tl_tail:N #1 }
-        \__tblr_keys_set:ne { child/index } { \tl_head:N #1 }
-        \tl_set:Ne #1 { \tl_tail:N #1 }
+        \exp_after:wN \__tblr_child_extract_index_command_aux:w #1 \q_stop #1
       }
+  }
+
+\cs_new_protected:Npn \__tblr_child_extract_index_command_aux:w \SetChild #1 #2 \q_stop #3
+  {
+    \__tblr_keys_set:ne { child/index } {#1}
+    \tl_set:Nn #3 {#2}
   }
 
 \NewExpandableDocumentCommand \ExpTblrChildId {m}
