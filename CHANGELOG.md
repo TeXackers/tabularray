@@ -1,6 +1,23 @@
 All notable changes to this package will be documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+# [v2025C] - 2025-11-27
+
+## Fixed
+
+- Make sure there is at least one row in any table (#326)
+- Fix unexpected new pages caused by \pageshrink (#536)
+- Skip detection for `*` and `[` for the first row (#598)
+- Make `measure=vbox` work together with `\mathcolor` (#603)
+- Fix default horizontal alignment setting of `longtblr` (#611)
+- Work around `NoHyper` bug in `hyperref` for nested tables (#620, latex3/hyperref#397)
+
+# [v2025B] - 2025-08-29
+
+## Fixed
+
+- Stop creating `intarray` data when using property lists ([#618])
+
 # [v2025A] - 2025-03-11
 
 ## Added
@@ -165,7 +182,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 - Make `\pagebreak` and `\nopagebreak` accept an optional argument (#259)
 - Restore table commands before building cells (#31)
 - Share `rownum` and `colnum` counters (#269, davidcarlisle/dpctex#33)
-- Replace TeXSE with TopAnswersTeX in support sites
 
 ## Fixed
 
@@ -173,8 +189,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 - Fix extra line breaks when cells begin or end with CJK punctuations (#145, #257)
 
 # [v2022B] - 2022-06-01
-
-**It is in Overleaf installation of [TeX Live 2022](https://www.overleaf.com/blog/tex-live-2022-now-available).**
 
 ## Added
 
@@ -308,8 +322,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 # [v2021L] - 2021-07-01
 
-**It is in Overleaf installation of [TeX Live 2021](https://www.overleaf.com/blog/tex-live-2021-now-available).**
-
 ## Added
 
 - Add full support for long tables with `longtblr` environment
@@ -419,8 +431,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 [#578]: https://github.com/lvjr/tabularray/issues/578
 [#579]: https://github.com/lvjr/tabularray/issues/579
 [#580]: https://github.com/lvjr/tabularray/issues/580
+[#618]: https://github.com/lvjr/tabularray/issues/618
 
-[Unreleased]: https://github.com/lvjr/tabularray/compare/2024A...HEAD
+[Unreleased]: https://github.com/lvjr/tabularray/compare/2025B...HEAD
+[v2025B]: https://github.com/lvjr/tabularray/compare/2025A...2025B
 [v2025A]: https://github.com/lvjr/tabularray/compare/2024A...2025A
 [v2024A]: https://github.com/lvjr/tabularray/compare/2023A...2024A
 [v2023A]: https://github.com/lvjr/tabularray/compare/2022D...2023A

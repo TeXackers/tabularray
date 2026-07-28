@@ -1,5 +1,15 @@
 --- tabularray benchmark script
 
+local lfs = require("lfs")
+
+local function info(...)
+  print("[benchmark]", ...)
+end 
+
+local function fileExists(path)
+   return lfs.attributes(path, "mode") == "file"
+end
+
 local function fileRead(input)
   local f = io.open(input, "rb")
   local text
@@ -33,6 +43,10 @@ local function fileCopy(from, to)
 end
 
 local function fileDelete(fname)
+  if not fileExists(fname) then
+    info("file " .. fname .. " doesn't exist, skip deleting")
+    return
+  end
   if os.type == "windows" then
     fname = fileNormalize(fname)
     os.execute("del" .. " " .. fname)
@@ -62,19 +76,21 @@ end
 
 local function bmTestOne(tbl, prog, name)
   for i = 1, warmupruns do
+    info(prog .. " warmup run " .. i .. "/" .. warmupruns)
     os.execute(makeCmdString(prog, name))
   end
   for i = 1, benchruns do
+    info(prog .. " run " .. i .. "/" .. benchruns)
     os.execute(makeCmdString(prog, name))
     local text = fileRead(name .. ".log")
     local t = string.match(text, "> \\g_benchmark_time_fp =([%d]+%.[%d]+)%.")
     if t == nil then
       error("failed to get benchmark time for " .. prog)
     else
-      --print(prog .. " used time " .. i, t)
       table.insert(tbl[prog], tonumber(t))
     end
-    end
+  end
+  print()
 end
 
 local function bmTestSome(tbl, name)
@@ -110,6 +126,7 @@ local function bmRun(name)
     fileDelete("tabularray.sty")
     bmTestSome(oldtime, name)
   end
+  fileDelete("tabularray.sty")
   for _, p in ipairs(programs) do
     local oldt, newt = 0, 0
     for i = 1, benchruns do

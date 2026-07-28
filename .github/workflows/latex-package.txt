@@ -17,7 +17,6 @@ float
 functional
 geometry
 hyperref
-l3benchmark
 l3kernel
 lmodern
 mathtools

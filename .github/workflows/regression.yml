@@ -6,9 +6,9 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install TeX Live
-      uses: teatimeguest/setup-texlive-action@v3
+      uses: TeX-Live/setup-texlive-action@v4
       with:
         package-file: .github/workflows/texlive-package.txt
         packages: ppmcheckpdf
@@ -17,7 +17,8 @@ jobs:
       run: |
         l3build check --debug --halt-on-error --show-log-on-error
     - name: Install pdftoppm
-      run:
+      run: |
+        sudo apt-get update
         sudo apt-get install poppler-utils
     - name: Test tabularray with ppmcheckpdf
       run: |
@@ -25,9 +26,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Install TeX Live
-      uses: teatimeguest/setup-texlive-action@v3
+      uses: TeX-Live/setup-texlive-action@v4
       with:
         package-file: .github/workflows/texlive-package.txt
         packages: ppmcheckpdf
@@ -42,7 +43,7 @@ jobs:
       run: |
         ppmcheckpdf check
     - name: Upload png and md5
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: png-and-md5
         path: |
