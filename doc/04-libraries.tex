@@ -1,0 +1,960 @@
+\chapter{Libraries with Examples}\label{lib}
+This chapter examines the libraries that extend \pkg{tabularray} beyond its core. Some act as a bridge to another package, such as \pkg{booktabs} or \pkg{siunitx}, whereas others change the way tables are typeset. None of them is loaded by default, for a practical reason: each one adds a dependency or a compilation cost, and several of them affect every table in the document rather than the tables that use their commands. A library is therefore best treated as a considered trade-off, not as a free addition.
+
+In this chapter, we introduce the libraries in alphabetical order. Each section compares the output of a library with the plain equivalent, provided that one exists, so that the change it makes can be seen directly.
+
+\section{Loading a Library}\label{lib:loading}
+Leaving libraries to be requested limits the dependencies of the core, and places the decision with the author, who names each one in the preamble. The same mechanism extends to libraries outside the package, which lets others build on \pkg{tabularray} without changing it.
+
+\begin{codedescribe}[
+        code,
+        new=2021L,
+        update=2024A,
+        update=2025A
+    ]{UseTblrLibrary}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\UseTblrLibrary}\{\arg{library list}\}
+    \end{codesyntax}
+    \tsobj[code, no index]{\UseTblrLibrary} loads one or more libraries, given as a comma-separated list, and belongs in the preamble. A library can be named more than once, but its code runs only on the first occasion. Any name outside the list below is taken as an external library, so that \tsverb*{\UseTblrLibrary{foo}} loads the file \vrb{tblrlibfoo.sty}.
+
+    \begin{codestore}[st=lib:use]
+        \usepackage{tabularray}
+        \UseTblrLibrary{booktabs, siunitx}\end{codestore}
+    \tscode*[tblr]{lib:use}
+    \begin{tsremark}
+        A package can define a library of its own with \tsobj[code]{\NewTblrLibrary}\{\arg{name}\}\{\arg{code}\}, which keeps \tsmeta{code} in reserve until the first \tsobj[code, no index]{\UseTblrLibrary} of that name.
+    \end{tsremark}
+\end{codedescribe}
+
+\begin{center}
+    \begin{tblr}{
+        colspec = {Q[l, font=\ttfamily] X[l] Q[l]},
+        width = \linewidth,
+        cell{1}{1} = {font=\rmfamily\bfseries},
+        row{1} = {font=\bfseries},
+        hline{1,2,Z} = {solid},
+                rowsep = 1pt,
+            }
+        Library    & Provides                                                                    & Also loads                     \\
+        amsmath    & Math environments built on \env[no index]{tblr}                             & \pkg{amsmath}                  \\
+        booktabs   & Rule commands and environments in the style of \pkg{booktabs}               & \pkg{booktabs}, \pkg{etoolbox} \\
+        counter    & \LaTeX{} counters that can be stepped inside cells                          & ---                            \\
+        diagbox    & Cells divided by diagonal lines                                             & \pkg{diagbox}                  \\
+        functional & Functions in specifications, and the keys \key[no index]{evaluate, process} & \pkg{functional}               \\
+        hook       & Hooks into the building of a table (experimental)                           & \pkg{varwidth} library         \\
+        html       & Variables that describe the borders of a cell (experimental)                & ---                            \\
+        nameref    & \tsobj[code, no index]{\nameref} for captioned tables                       & \pkg{nameref}                  \\
+        siunitx    & Column types \tsverb{S}, \tsverb{s} and the keys \key[no index]{si, guard}  & \pkg{siunitx}                  \\
+        tikz       & Drawing below or above tables (experimental)                                & \pkg{tikz}, \pkg{hook} library \\
+        varwidth   & The key \key[no index]{measure}, for vertical material in cells             & \pkg{varwidth}                 \\
+        zref       & \tsobj[code, no index]{\zref} for captioned tables                          & \pkg{zref-user}
+    \end{tblr}
+\end{center}
+
+Most libraries add commands or environments, and have no effect until those are used. The exceptions act on every table as soon as they are loaded: \pkg{counter} restores counters after measuring, \pkg{functional} evaluates every inner specification before parsing it, \pkg{html} computes extra variables for each cell, and \pkg{varwidth} changes the default value of \key[no index]{measure}. \pkg{hook} and \pkg{tikz} change that default again.
+
+\section{Library \texttt{amsmath}}\label{lib:amsmath}
+This library loads \pkg{amsmath} and defines versions of the array, matrix and cases environments that are built on \env{tblr}. Each new environment has the name of its counterpart with a \vrb{+} in front, and is used in math mode. This gives mathematics access to the full inner specification, along with rows that accommodate tall entries. Each of these environments is a complete table, however, and takes considerably longer to compile than its counterpart, so the original remains preferable when neither benefit is needed.
+
+\begin{codedescribe}[
+    env,
+    new=2021P
+]{+array, +matrix, +bmatrix, +Bmatrix, +pmatrix, +vmatrix, +Vmatrix, +cases}
+\begin{codesyntax}
+\tsobj[code, no index]{\begin{+array}}[\oarg{outer spec}]\{\arg{inner spec}\}
+\tsobj[code, no index]{\begin{+pmatrix}}[\oarg{inner spec}]
+\end{codesyntax}
+\env{+array} takes outer and inner specifications, as \env{tblr} does, whereas the others take an inner specification as an optional argument. That argument is applied after the defaults of the environment, so it can override them.
+
+The first matrix below is the \pkg{amsmath} original. The second has taller rows, as it keeps the \val{2pt} \key[no index]{rowsep} of a \env{tblr}, and the third uses the optional argument to style its cells.
+
+\begin{codestore}[st=lib:amsmath:pmatrix]
+$\begin{pmatrix}
+        \dfrac{2}{3} & -\dfrac{1}{3} \\
+        \dfrac{1}{3} & \dfrac{2}{3}
+    \end{pmatrix}\quad
+    \begin{+pmatrix}
+    \dfrac{2}{3} & -\dfrac{1}{3} \\
+    \dfrac{1}{3} &  \dfrac{2}{3}
+    \end{+pmatrix}\quad
+    \begin{+pmatrix}[cells = {r}, row{2} = {bg=yellow!30}]
+    \dfrac{2}{3} & -\dfrac{1}{3} \\
+    \dfrac{1}{3} &  \dfrac{2}{3}
+    \end{+pmatrix}$\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:amsmath:pmatrix}
+\end{center}
+
+The matrix environments differ only in their delimiters. Each one centres its cells and removes the space outside the first and last columns.
+
+\begin{codestore}[st=lib:amsmath:matrix]
+$\begin{+matrix}  a & b \\ c & d \end{+matrix}\quad
+    \begin{+bmatrix} a & b \\ c & d \end{+bmatrix}\quad
+    \begin{+Bmatrix} a & b \\ c & d \end{+Bmatrix}\quad
+    \begin{+pmatrix} a & b \\ c & d \end{+pmatrix}\quad
+    \begin{+vmatrix} a & b \\ c & d \end{+vmatrix}\quad
+    \begin{+Vmatrix} a & b \\ c & d \end{+Vmatrix}$\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:amsmath:matrix}
+\end{center}
+
+\env{+cases} sets 2 left-aligned columns, a brace on the left, and \vrb{stretch=1.2}, which gives fractions more room than the original on the left.
+
+\begin{codestore}[st=lib:amsmath:cases]
+$f(x) = \begin{cases}
+        0,            & x = 1 \\
+        \dfrac{1}{3}, & x = 2
+    \end{cases}\quad
+    f(x) = \begin{+cases}
+    0,            & x = 1 \\
+    \dfrac{1}{3}, & x = 2
+    \end{+cases}$\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:amsmath:cases}
+\end{center}
+
+\env{+array} accepts any inner key, and defaults to a \key[no index]{colsep} of \val{5pt}, the same as the \env{array} environment of \LaTeX.
+
+\begin{codestore}[st=lib:amsmath:array]
+$\begin{+array}{
+        colspec = {cc}, hline{2} = {solid}, vline{2} = {solid}
+    }
+    x & x^2 \\
+    2 & 4   \\
+    3 & 9
+    \end{+array}$\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:amsmath:array}
+\end{center}
+\begin{tsremark}
+    The matrix environments and \env{+cases} are built on \env{+array}, so that \tsverb*{\SetTblrInner[+array]{rowsep=0pt}} changes the defaults of all of them at once.
+\end{tsremark}
+\end{codedescribe}
+
+\section{Library \texttt{booktabs}}\label{lib:booktabs}
+The \pkg{booktabs} package embodies a particular view of table design, in which rules of different weights and generous vertical space take the place of a full grid. This library loads the package for its dimensions and defines its commands as table commands. These commands work in any \pkg{tabularray} table, but only the environments of this library add the space around the rules, so a \env{tblr} adopts the weights of \pkg{booktabs} without its spacing.
+
+\begin{codedescribe}[
+        code,
+        new=2021L
+    ]{toprule, midrule, bottomrule}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\toprule}[\oarg{rule spec}]
+        \tsobj[code, no index]{\midrule}[\oarg{rule spec}]
+        \tsobj[code, no index]{\bottomrule}[\oarg{rule spec}]
+    \end{codesyntax}
+    These commands draw a rule across the table, and go in the same place as \tsobj[code, no index]{\hline}. \tsobj[code, no index]{\toprule} and \tsobj[code, no index]{\bottomrule} take their width from \tsobj[code]{\heavyrulewidth} (default: \val{.08em}), and \tsobj[code, no index]{\midrule} from \tsobj[code]{\lightrulewidth} (default: \val{.05em}). The optional argument accepts the keys of \tsobj[code, no index]{\hline}, described in \S\ref{inner:rules}, and overrides these widths.
+
+    \begin{codestore}[st=lib:booktabs:rules]
+        \begin{tblr}{lll}
+            \toprule
+            Poet     & City & Work      \\
+            \midrule
+            Ferdowsi & Tus  & Shahnameh \\
+            \bottomrule
+        \end{tblr}\quad
+        \begin{tblr}{lll}
+            \toprule[2pt, red]
+            Poet     & City & Work      \\
+            \midrule[blue]
+            Ferdowsi & Tus  & Shahnameh \\
+            \bottomrule[2pt, red]
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:booktabs:rules}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2021L,
+        update=2021N
+    ]{cmidrule}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\cmidrule}[\oarg{rule spec}]\{\arg{columns}\}
+    \end{codesyntax}
+    \tsobj[code, no index]{\cmidrule} draws a rule across the selected columns, with its width taken from \tsobj[code]{\cmidrulewidth} (default: \val{.03em}). It applies \key[no index]{endpos} by default, so the trim keys \key[no index]{l, r, lr} of \S\ref{inner:rules} act on the ends of the rule and not on the crossings between. The default trim of \val{-0.8} is chosen to resemble the output of \pkg{booktabs}, and a value between \val{-1} and \val{0} suits a table with no vertical rules.
+
+    \begin{codestore}[st=lib:booktabs:cmidrule]
+        \begin{tblr}{llll}
+            \toprule
+            Poet     & City   & Work      & Form     \\
+            \cmidrule{1-2} \cmidrule{3-4}
+            Ferdowsi & Tus    & Shahnameh & Epic     \\
+            \cmidrule[lr]{1-2} \cmidrule[lr=-0.4]{3-4}
+            Rumi     & Konya  & Masnavi   & Couplets \\
+            \cmidrule[r]{1-2} \cmidrule[l]{3-4}
+            Hafez    & Shiraz & Divan     & Ghazals  \\
+            \bottomrule
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:booktabs:cmidrule}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2021N
+    ]{cmidrulemore, morecmidrules}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\cmidrulemore}[\oarg{rule spec}]\{\arg{columns}\}
+        \tsobj[code, no index]{\morecmidrules} \tsobj[code, no index]{\cmidrule}[\oarg{rule spec}]\{\arg{columns}\}
+    \end{codesyntax}
+    Both forms add a second \tsobj[code, no index]{\cmidrule} below the first. \tsobj[code, no index]{\cmidrulemore} is the shorter of the two, and \tsobj[code, no index]{\morecmidrules} follows the usage of \pkg{booktabs}. The rows below show that they give the same result.
+
+    \begin{codestore}[st=lib:booktabs:more]
+        \begin{tblr}{llll}
+            \toprule
+            Poet     & City  & Work      & Form     \\
+            \cmidrule{1-3} \cmidrulemore{2-4}
+            Ferdowsi & Tus   & Shahnameh & Epic     \\
+            \cmidrule{1-3} \morecmidrules \cmidrule{2-4}
+            Rumi     & Konya & Masnavi   & Couplets \\
+            \bottomrule
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:booktabs:more}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    env,
+    new=2021N,
+    update=2022A
+]{booktabs, longtabs, talltabs}
+\begin{codesyntax}
+\tsobj[code, no index]{\begin{booktabs}}[\oarg{outer spec}]\{\arg{inner spec}\}
+\end{codesyntax}
+These environments are the counterparts of \env{tblr}, \env{longtblr} and \env{talltblr}. Each one sets \vrb{rowsep=0pt} and has the rule commands add \tsobj[code]{\aboverulesep} (default: \val{.4ex}) and \tsobj[code]{\belowrulesep} (default: \val{.65ex}) around each rule, in the manner of \pkg{booktabs}. The first table below is a \env{tblr}, in which the rules leave the even \key[no index]{rowsep} as it is. The second is a \env{booktabs}.
+
+\begin{codestore}[st=lib:booktabs:env]
+    \begin{tblr}{lll}
+        \toprule
+        Poet     & City   & Work      \\
+        \midrule
+        Ferdowsi & Tus    & Shahnameh \\
+        Hafez    & Shiraz & Divan     \\
+        \bottomrule
+    \end{tblr}\quad
+    \begin{booktabs}{lll}
+        \toprule
+        Poet     & City   & Work      \\
+        \midrule
+        Ferdowsi & Tus    & Shahnameh \\
+        Hafez    & Shiraz & Divan     \\
+        \bottomrule
+    \end{booktabs}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:booktabs:env}
+\end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2021N
+    ]{specialrule}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\specialrule}\{\arg{rule spec}\}\{\arg{space above}\}\{\arg{space below}\}
+    \end{codesyntax}
+    \tsobj[code, no index]{\specialrule} draws a rule and sets the \key[no index]{abovespace} and \key[no index]{belowspace} of its border (\S\ref{inner:borders}) directly.
+
+    \begin{codestore}[st=lib:booktabs:special]
+        \begin{booktabs}{row{2} = {bg=yellow!30}}
+            \toprule
+            Poet     & City   & Work      \\
+            \specialrule{0.5pt}{4pt}{6pt}
+            Ferdowsi & Tus    & Shahnameh \\
+            \specialrule{0.8pt, blue}{3pt}{2pt}
+            Hafez    & Shiraz & Divan     \\
+            \bottomrule
+        \end{booktabs}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:booktabs:special}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2021N
+    ]{addlinespace, addrowspace}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\addlinespace}[\oarg{dim}]
+    \end{codesyntax}
+    \tsobj[code, no index]{\addlinespace}, also available as \tsobj[code, no index]{\addrowspace}, adds vertical space between 2 rows with no rule, and divides that space equally between the \key[no index]{belowsep} of the first row and the \key[no index]{abovesep} of the second. The size defaults to \tsobj[code]{\defaultaddspace}, which is \val{.5em} unless changed.
+
+    \begin{codestore}[st=lib:booktabs:space]
+        \begin{booktabs}{row{2} = {bg=yellow!30}}
+            \toprule
+            Poet     & City   & Work      \\
+            \addlinespace
+            Ferdowsi & Tus    & Shahnameh \\
+            \addlinespace[1em]
+            Hafez    & Shiraz & Divan     \\
+            \bottomrule
+        \end{booktabs}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:booktabs:space}
+    \end{center}
+\end{codedescribe}
+
+\section{Library \texttt{counter}}\label{lib:counter}
+\pkg{tabularray} typesets a cell more than once: at least once to measure it, and again to build the table. A counter stepped inside a cell is therefore stepped on every pass, so its values skip. This library saves all \LaTeX{} counters before measuring and restores them afterwards, which leaves only the final pass to count. It has no commands or keys of its own. Its cost is small, yet it applies to every table, so a document with no counters in its cells has little reason to load it.
+
+The result on the left below shows the same table without the library, and the one on the right with it. The left-hand values depend on how often each cell is typeset, and so are of no use to a document.
+
+\begin{codestore}[st=lib:counter:def]
+    \newcounter{mycnt}
+    \newcommand{\mycnt}{\stepcounter{mycnt}\arabic{mycnt}}\end{codestore}
+\begin{codestore}[st=lib:counter:table]
+    \begin{tblr}{hlines, vlines}
+        \mycnt & \mycnt & \mycnt \\
+        \mycnt & \mycnt & \mycnt
+    \end{tblr}\end{codestore}
+\tscode*[tblr]{lib:counter:def}
+\tscode*[tblr]{lib:counter:table}
+\tsexec{lib:counter:def}
+\begin{center}
+    {\WithoutCounterLibrary\tsexec{lib:counter:table}}\qquad
+    \setcounter{mycnt}{0}\tsexec{lib:counter:table}
+\end{center}
+
+\section{Library \texttt{diagbox}}\label{lib:diagbox}
+A diagonal cell labels both axes of a table in one place, at the expense of the room available to each label. This library loads \pkg{diagbox} and adapts its command to table cells.
+
+\begin{codedescribe}[
+        code,
+        new=2021L
+    ]{diagbox, diagboxthree}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\diagbox}[\oarg{options}]\{\arg{lower left}\}\{\arg{upper right}\}
+        \tsobj[code, no index]{\diagboxthree}[\oarg{options}]\{\arg{lower left}\}\{\arg{middle}\}\{\arg{upper right}\}
+    \end{codesyntax}
+    \tsobj[code, no index]{\diagbox} divides a cell with a diagonal line, and \tsobj[code, no index]{\diagboxthree} divides it into 3 parts with 2 lines. The optional argument accepts the options of \pkg{diagbox}, and the box takes its side margins from the cell. In a table in math mode, each part is set in math mode as well, as in the last table below.
+
+    \begin{codestore}[st=lib:diagbox]
+        \begin{tblr}{hlines, vlines}
+            \diagbox{s}{S} & Signifier \\
+            Signified      & Bar
+        \end{tblr}\quad
+        \begin{tblr}{hlines, vlines}
+            \diagboxthree{s}{Bar}{S} & Signifier \\
+            Signified                & Bar
+        \end{tblr}\quad
+        $\begin{tblr}{hlines, vlines}
+                \diagbox{x_1}{x_2} & 0   \\
+                1                  & 0.5
+            \end{tblr}$\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:diagbox}
+    \end{center}
+\end{codedescribe}
+
+\section{Library \texttt{functional}}\label{lib:functional}
+This library loads the \pkg{functional} package, in which a function is defined with \tsobj[code]{\prgNewFunction} and gives back its result with \tsobj[code]{\prgReturn}. It applies these functions at 3 stages of building a table: to the inner specification, to the table body, and to the table after its specification has been parsed. These stages turn a table from a static description into a computed result, which suits repetitive or data-driven tables. For a small table the gain is less clear, as the source can become harder to read than the table it produces.
+
+\subsection{Evaluating Inner Specifications}
+With this library loaded, every function in an inner specification is replaced with its return value before the key--value list is parsed, without any further key. In the example below, \tsobj[code]{\funColor} is a function of the \pkg{functional} package.
+
+\begin{codestore}[st=lib:fun:color]
+    \begin{tblr}{
+            hlines,
+            row{2} = {bg=\funColor{RGB}{180,180,255}},
+        }
+        Real      & Symbolic \\
+        Imaginary & Sinthome \\
+        Subject   & Other
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:fun:color}
+\end{center}
+
+A function can also compute its value from the state of the document. The function below selects a colour from the page number, and so the output of the table depends on the page it falls on. \tsobj[code]{\IgnoreSpacesOn} and \tsobj[code]{\IgnoreSpacesOff} prevent the spaces in the definition from being typeset.
+
+\begin{codestore}[st=lib:fun:page]
+    \IgnoreSpacesOn
+    \prgNewFunction \byPage {mm} {
+        \intIfOddTF {\value{page}} {\prgReturn {#1}} {\prgReturn {#2}}
+    }
+    \IgnoreSpacesOff
+    \begin{tblr}{
+            hlines,
+            row{1} = {bg=\byPage{yellow!30}{cyan!30}},
+            row{3} = {bg=\byPage{green!30}{blue!20}},
+        }
+        Real      & Symbolic \\
+        Imaginary & Sinthome \\
+        Subject   & Other
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:fun:page}
+\end{center}
+\begin{tsremark}
+    The inner specification is split into keys and values before it is evaluated. This is why a bare \key[no index]{colspec} containing \vrb{=} must keep its name when this library is loaded, as \S\ref{inner:types} notes.
+\end{tsremark}
+
+\subsection{Evaluating the Table Body}
+\begin{codedescribe}[
+        key,
+        new=2022B,
+        update=2023A
+    ]{evaluate}
+    \begin{codesyntax}
+        \keyval{evaluate}{\arg{function} | all}
+    \end{codesyntax}
+    \key{evaluate} is an outer key that replaces each use of a function in the table body with its return value, before the body is split into rows and cells. A function can therefore supply the separators \vrb{&} and \tsverb*{\\}, which \pkg{tabularray} would otherwise overlook. With \val{all}, every function in the body is evaluated. \S\ref{outer:expand} describes a related key for macros.
+
+    A common use is to read rows from a file with \tsobj[code]{\fileInput}, as in the listing below, in which \vrb{rows.tex} contains lines such as \tsverb*{Attar & 2 \\}.
+
+    \begin{codestore}[st=lib:fun:input]
+        \begin{tblr}[evaluate=\fileInput]{hlines}
+            Ferdowsi & 1 \\
+            \fileInput{rows.tex}
+            Hafez    & 4
+        \end{tblr}\end{codestore}
+    \tscode*[tblr]{lib:fun:input}
+\end{codedescribe}
+
+A function of our own can return parts of a table in the same way, up to the whole of its body.
+
+\begin{codestore}[st=lib:fun:row]
+    \IgnoreSpacesOn
+    \prgNewFunction \myRow {m} {
+        \prgReturn {#1 & #1 \\}
+    }
+    \prgNewFunction \emptyGrid {mm} {
+        \tlSet \lTmpaTl {\intReplicate {\intEval{#2-1}} {&}}
+        \tlPutRight \lTmpaTl {\\}
+        \intReplicate {#1} {\tlUse \lTmpaTl}
+    }
+    \IgnoreSpacesOff
+    \begin{tblr}[evaluate=\myRow]{hlines}
+        Real      & 1 \\
+        \myRow{Symbolic}
+        Imaginary & 3
+    \end{tblr}\quad
+    \begin{tblr}[evaluate=\emptyGrid]{hlines, vlines}
+        \emptyGrid{3}{7}
+    \end{tblr}\quad
+    \begin{tblr}[evaluate=all]{hlines}
+        \myRow{Symbolic}
+        Rings & \intEval{3+1}
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:fun:row}
+\end{center}
+
+\subsection{Processing Table Elements}
+\begin{codedescribe}[
+        key,
+        new=2022B
+    ]{process}
+    \begin{codesyntax}
+        \keyval{process}{\arg{function}}
+    \end{codesyntax}
+    \key{process} is an inner key that runs a function once the specification has been parsed and before the table is built. The function reads and changes the table through the functions below, which take row and column numbers.
+    \begin{describelist*}{code, no index}
+        \describe{\cellGetText}{\{\arg{row}\}\{\arg{column}\} returns the text of a cell}
+        \describe{\cellSetText}{\{\arg{row}\}\{\arg{column}\}\{\arg{text}\} replaces the text of a cell}
+        \describe{\cellSetStyle}{\{\arg{row}\}\{\arg{column}\}\{\arg{style}\} styles a cell}
+        \describe{\rowSetStyle}{\{\arg{row}\}\{\arg{style}\} styles a row}
+        \describe{\columnSetStyle}{\{\arg{column}\}\{\arg{style}\} styles a column}
+    \end{describelist*}
+\end{codedescribe}
+
+The function below sums each column into the last row of the table. The loops of \tsobj[code]{\intStepOneInline} are nested, so that \texttt{\#\#1} is the column and \texttt{\#\#\#\#1} the row.
+
+\begin{codestore}[st=lib:fun:sum]
+    \IgnoreSpacesOn
+    \prgNewFunction \calcSum {} {
+        \intStepOneInline {1} {\arabic{colcount}} {
+            \intZero \lTmpaInt
+            \intStepOneInline {1} {\arabic{rowcount}-1} {
+                \intAdd \lTmpaInt {\cellGetText {####1} {##1}}
+            }
+            \cellSetText {\expWhole{\arabic{rowcount}}} {##1} {\intUse\lTmpaInt}
+        }
+    }
+    \IgnoreSpacesOff
+    \begin{tblr}{colspec = {rrr}, process = \calcSum}
+        \hline
+        1 & 2 & 3 \\
+        4 & 5 & 6 \\
+        7 & 8 & 9 \\
+        \hline
+          &   &
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:fun:sum}
+\end{center}
+
+Styles can depend on the content of a cell in the same way. The first table below sets the background of each cell from the sign of its value, and the second styles whole rows and columns.
+
+\begin{codestore}[st=lib:fun:style]
+    \IgnoreSpacesOn
+    \prgNewFunction \colourSign {} {
+        \intStepOneInline {1} {\arabic{rowcount}} {
+            \intStepOneInline {1} {\arabic{colcount}} {
+                \intSet \lTmpaInt {\cellGetText {##1} {####1}}
+                \intCompareTF {\lTmpaInt} > {0}
+                    {\cellSetStyle {##1} {####1} {bg=green!30}}
+                    {\cellSetStyle {##1} {####1} {bg=red!30}}
+            }
+        }
+    }
+    \prgNewFunction \stripes {} {
+        \intStepOneInline {1} {\arabic{rowcount}} {
+            \intIfOddTF {##1} {\rowSetStyle {##1} {bg=yellow!30}} {}
+        }
+        \columnSetStyle {1} {font=\bfseries}
+    }
+    \IgnoreSpacesOff
+    \begin{tblr}{hlines, vlines, cells = {r}, process = \colourSign}
+        -1 & 2  & 3  \\
+        4  & 5  & -6 \\
+        7  & -8 & 9
+    \end{tblr}\quad
+    \begin{tblr}{hlines, process = \stripes}
+        Real      & 1 \\
+        Symbolic  & 2 \\
+        Imaginary & 3
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:fun:style}
+\end{center}
+
+\section{Library \texttt{hook}}\label{lib:hook}
+\DefaultMeasure{vstore}
+This experimental library lets code run at fixed points while a table is built, and its interface may change in a later release. Hooks go beyond what the keys can express, but code written for them depends on the order in which a table is built. The library loads the \pkg{varwidth} library and makes \val{vstore} the default value of \key[no index]{measure} (\S\ref{lib:varwidth}).
+
+\begin{codedescribe}[
+        code,
+        new=2025A
+    ]{AddToTblrHook, AddToTblrHookNext}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\AddToTblrHook}\{\arg{hook}\}[\oarg{label}]\{\arg{code}\}
+        \tsobj[code, no index]{\AddToTblrHookNext}\{\arg{hook}\}\{\arg{code}\}
+    \end{codesyntax}
+    \tsobj[code, no index]{\AddToTblrHook} adds code to a hook for the rest of the document, and \tsobj[code, no index]{\AddToTblrHookNext} adds it for the next use of the hook only. They are short forms of the \LaTeX{} commands \tsobj[code, no index]{\AddToHook} and \tsobj[code, no index]{\AddToHookNext}, which take the same names with \vrb{tabularray/} in front. The hooks are listed below. Without this library they are not used, so code added to them has no effect and raises no error.
+    \begin{describelist*}{verb, no index}
+        \describe{trial/before}{Before the cells go through measuring}
+        \describe{trial/after}{After the cells go through measuring}
+        \describe{table/before}{Before the whole table is built}
+        \describe{table/after}{After the whole table is built}
+        \describe{row/before}{Before a row is typeset}
+        \describe{row/after}{After a row is typeset}
+        \describe{cell/before}{Before a cell is typeset}
+        \describe{cell/after}{After a cell is typeset}
+    \end{describelist*}
+
+    The code in \vrb{table/before} below runs inside the table, so that only the text of the first table turns red. The rules keep their own colour.
+
+    \begin{codestore}[st=lib:hook:next]
+        \AddToTblrHookNext{table/before}{\color{red}}
+        \begin{tblr}{hlines}
+            Red ink & Unavailable
+        \end{tblr}\quad
+        \begin{tblr}{hlines}
+            Red ink & Unavailable
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:hook:next}
+    \end{center}
+
+    A label names the code in a hook so that it can be removed later, here with the \LaTeX{} command \tsobj[code, no index]{\RemoveFromHook}. The hook for cells runs once per cell, unlike the text of a cell, as it is not used while measuring.
+
+    \begin{codestore}[st=lib:hook:label]
+        \newcounter{cellcount}
+        \AddToTblrHook{cell/before}[demo]{\stepcounter{cellcount}}
+        \begin{tblr}{hlines}
+            Sublime  & Object  \\
+            Ticklish & Subject
+        \end{tblr}
+        \RemoveFromHook{tabularray/cell/before}[demo]
+        This table has \arabic{cellcount} cells.\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:hook:label}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2023A
+    ]{lTblrMeasuringBool}
+    \tsobj[code, no index]{\lTblrMeasuringBool} is true while \pkg{tabularray} measures the cells, which allows the text of a cell to differ between the passes. It is reliable with \vrb{measure=vstore} only, which is the default under this library. Below, the column keeps the width of the words typeset while measuring.
+\end{codedescribe}
+
+\begin{codestore}[st=lib:hook:bool]
+    \ExplSyntaxOn
+    \NewDocumentCommand \PassName { }
+    { \bool_if:NTF \lTblrMeasuringBool { first~as~tragedy } { then~as~farce } }
+    \ExplSyntaxOff
+    \begin{tblr}{hlines, vlines}
+        \PassName & Real
+    \end{tblr}\end{codestore}
+\tscode*[tblr]{lib:hook:bool}
+\begin{center}
+    \tsexec{lib:hook:bool}
+\end{center}
+
+\section{Library \texttt{html}}\label{lib:html}
+\DefaultMeasure{hbox}
+This experimental library updates a further set of variables before each cell is built, to describe its borders. They are intended for packages that tag or convert documents, such as \pkg{tagpdf}, \pkg{tex4ht} and \pkg{lwarp}, and they may change in a later release. Their value lies in exposing the visual properties of a table to tools that have to reproduce them in another form, which makes the library of little use to an ordinary document.
+
+\begin{codedescribe}[
+        code,
+        new=2024A
+    ]{lTblrCellAboveBorderStyleTl, lTblrCellAboveBorderWidthDim, lTblrCellAboveBorderColorTl}
+    The word \vrb{Above} in these names can be replaced with \vrb{Below}, \vrb{Left} or \vrb{Right}, for 12 variables in all. Style, width and colour correspond to \vrb{border-style}, \vrb{border-width} and \vrb{border-color} in CSS. A side with no rule has an empty style and a width of \val{0pt}, and the colour stays empty unless a rule sets one.
+
+    These variables are only updated for the final pass, so the columns below have a fixed width. The first row shows the rule above each cell, and the second row the rule on its left.
+
+    \begin{codestore}[st=lib:html]
+        \newcommand\showAbove{%
+            \lTblrCellAboveBorderStyleTl{}
+            \the\lTblrCellAboveBorderWidthDim{}
+            \lTblrCellAboveBorderColorTl}
+        \newcommand\showLeft{%
+            \lTblrCellLeftBorderStyleTl{}
+            \the\lTblrCellLeftBorderWidthDim{}
+            \lTblrCellLeftBorderColorTl}
+        \begin{tblr}{
+                colspec = {Q[9em] Q[9em]},
+                hline{1} = {2pt, red},
+                vline{2} = {1pt, dotted},
+            }
+            \showAbove & \showAbove \\
+            \showLeft  & \showLeft
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:html}
+    \end{center}
+    \begin{tsremark}
+        \tsobj[code]{\lTblrCellRowSpanInt}, \tsobj[code]{\lTblrCellColSpanInt}, \tsobj[code]{\lTblrCellOmittedBool} and \tsobj[code]{\lTblrCellBackgroundTl} are updated before each cell as well, and need no library.
+    \end{tsremark}
+\end{codedescribe}
+
+\section{Library \texttt{nameref}}\label{lib:nameref}
+\tsobj[code, no index]{\nameref} prints the title of what a label refers to, and a caption is a natural candidate for that title. Without this library, a label on a \env{longtblr} or \env{talltblr} gives the title of the enclosing section. With it, \tsobj[code, no index]{\nameref} prints the \key[no index]{entry} of the table if it has one, or else its \key[no index]{caption}. The preference for \key[no index]{entry} recognises that a caption written for the page is often too long for running text.
+
+\begin{codestore}[st=lib:nameref]
+    \begin{longtblr}[
+        caption = {A caption that is too long for a reference},
+        entry = {A short entry},
+        label = {tab:nameref:entry},
+        ]{hlines, colspec = {X[c]X[c]}, width = 10cm}
+        Real & Symbolic
+    \end{longtblr}
+    \begin{longtblr}[
+        caption = {A caption only},
+        label = {tab:nameref:caption},
+        ]{hlines, colspec = {X[c]X[c]}, width = 10cm}
+        Real & Symbolic
+    \end{longtblr}
+    The first is \nameref{tab:nameref:entry}, and the
+    second is \nameref{tab:nameref:caption}.\end{codestore}
+\tscode*[tblr]{lib:nameref}
+\tsexec{lib:nameref}
+
+\section{Library \texttt{siunitx}}\label{lib:siunitx}
+Aligning numbers on their decimal markers makes them easier to compare, which the alignment keys of \pkg{tabularray} cannot do on their own. This library loads \pkg{siunitx} and connects its formatting of numbers and units to table columns, so that every cell in such a column is treated as a number until it is exempted. \S\ref{inner:types} describes the underlying key \key[no index]{si}.
+
+\begin{codedescribe}[
+        code,
+        new=2021L,
+        update=2021M,
+        update=2025A
+    ]{S, s}
+    \begin{codesyntax}
+        \tsverb{S}[\oarg{siunitx options}]
+        \tsverb{s}[\oarg{siunitx options}]
+    \end{codesyntax}
+    \tsverb{S} is a centred column that aligns numbers on their decimal markers, and \tsverb{s} is a centred column that formats its cells as units. The options are those of \pkg{siunitx}. A cell in these columns that is neither a number nor a unit, such as a column head, needs a pair of braces around it.
+
+    \begin{codestore}[st=lib:si:columns]
+        \begin{tblr}{
+                hlines, vlines,
+                colspec = {S[table-format=3.2] s},
+            }
+            {Value} & {Unit}            \\
+            111     & \kilo\metre       \\
+            2.1     & \metre\per\second \\
+            33.11   & \joule
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:si:columns}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        key,
+        new=2022B
+    ]{guard}
+    \begin{codesyntax}
+        \key[no index]{guard}
+    \end{codesyntax}
+    \key{guard} exempts a cell, row or column from number formatting by clearing its \key[no index]{cmd}, which removes the need to brace each cell by hand. A guarded cell keeps its own horizontal alignment, which must be set with \key[no index]{l}, \key[no index]{c} or \key[no index]{r}. The table below uses the \pkg{siunitx} option \vrb{table-number-alignment} to match the numbers of each column to that alignment.
+
+    \begin{codestore}[st=lib:si:guard]
+        \begin{tblr}{
+                hlines, vlines, columns = {6em},
+                colspec = {
+                        Q[si={table-format=3.2, table-number-alignment=left}, l]
+                        Q[si={table-format=3.2, table-number-alignment=center}, c]
+                        Q[si={table-format=3.2, table-number-alignment=right}, r]
+                    },
+                row{1} = {guard},
+            }
+            I would & prefer & not to \\
+            111     & 111    & 111    \\
+            2.1     & 2.2    & 2.3    \\
+            33.11   & 33.22  & 33.33
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:si:guard}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        code,
+        new=2021M
+    ]{TblrNum, TblrUnit}
+    \begin{codesyntax}
+        \key[no index]{cmd} \tsobj[code, no index]{=} \tsobj[code, no index]{\TblrNum}
+        \key[no index]{cmd} \tsobj[code, no index]{=} \tsobj[code, no index]{\TblrUnit}
+    \end{codesyntax}
+    These are the commands that the column types apply through \key[no index]{cmd}. \tsobj[code, no index]{\TblrNum} formats a cell as a number and \tsobj[code, no index]{\TblrUnit} as a unit, using the \key[no index]{si} options of the column. They can be set on selected cells, which leaves a head row free of braces and \key{guard}.
+
+    \begin{codestore}[st=lib:si:cmd]
+        \begin{tblr}{
+                hlines, vlines, colspec = {cc},
+                cell{2-Z}{1} = {cmd=\TblrNum},
+                cell{2-Z}{2} = {cmd=\TblrUnit},
+            }
+            Value & Unit        \\
+            1.5   & \kilo\metre \\
+            12.25 & \second
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:si:cmd}
+    \end{center}
+\end{codedescribe}
+
+\section{Library \texttt{tikz}}\label{lib:tikz}
+\DefaultMeasure{vstore}
+This experimental library\footnote{We thank \href{https://github.com/jasperhabicht}{Jasper Habicht} for his contributions to this library.} draws \pkg{tikz} pictures below or above a table, and its interface may change in a later release. A drawing can express relations between cells that rules and backgrounds cannot, such as a path across several of them, but this is the most demanding option in the chapter: it loads \pkg{tikz} with its \vrb{calc} library, together with the \pkg{hook} library of \S\ref{lib:hook}, changes the default value of \key[no index]{measure}, and needs a second compilation.
+
+\begin{codedescribe}[
+        env,
+        new=2025A
+    ]{tblrtikzbelow, tblrtikzabove}
+    \begin{codesyntax}
+        \tsobj[code, no index]{\begin{tblrtikzbelow}} \tsmeta{tikz code} \tsobj[code, no index]{\end{tblrtikzbelow}}
+        \tsobj[code, no index]{\begin{tblrtikzabove}} \tsmeta{tikz code} \tsobj[code, no index]{\end{tblrtikzabove}}
+    \end{codesyntax}
+    These environments keep \pkg{tikz} code for the table that follows, which is drawn behind or over that table. They go before the table, and a \texttt{\%} after each one prevents a stray space. The drawing depends on positions saved in the \vrb{.aux} file, so a document needs 2 compilations.
+
+    The following nodes are available inside these environments:
+    \begin{center}
+        \begin{tblr}{
+            colspec = {Q[l] Q[l] X[l]},
+            width = \linewidth,
+            row{1} = {font=\bfseries},
+            hline{1,2,Z} = {solid},
+                    rowsep = 1pt,
+                }
+            Name                        & Type       & Position                                                \\
+            \vrb{table}                 & Rectangle  & The whole table                                         \\
+            \tsmeta{i}\vrb{-}\tsmeta{j} & Rectangle  & \keysel{cell}{i}\{\tsmeta{j}\}                          \\
+            \vrb{h}\tsmeta{i}           & Coordinate & Crossing of \keysel{hborder}{i} and \keysel{vborder}{1} \\
+            \vrb{v}\tsmeta{j}           & Coordinate & Crossing of \keysel{vborder}{j} and \keysel{hborder}{1}
+        \end{tblr}
+    \end{center}
+
+    The first example below uses the table node and cell nodes. The second traces a path with corner nodes, for which the \pkg{tikz} intersection syntax \vrb{h}\tsmeta{i}\vrb{-|v}\tsmeta{j} gives the crossing of any 2 borders.
+
+    \begin{codestore}[st=lib:tikz:nodes]
+        \begin{tblrtikzbelow}
+            \path[pattern=dots, pattern color=blue,
+                draw=blue, thick, rounded corners]
+            (table.north west) rectangle (table.south east);
+        \end{tblrtikzbelow}%
+        \begin{tblrtikzabove}
+            \draw[red, thick]
+            (2-2.north west) -- (2-3.south east)
+            (2-2.south west) -- (2-3.north east);
+        \end{tblrtikzabove}%
+        \begin{tblr}{hline{2-3}, vline{2-4}}
+            1-1 & 1-2 & 1-3 & 1-4 \\
+            2-1 & 2-2 & 2-3 & 2-4 \\
+            3-1 & 3-2 & 3-3 & 3-4
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:tikz:nodes}
+    \end{center}
+
+    \begin{codestore}[st=lib:tikz:corners]
+        \begin{tblrtikzabove}
+            \draw[white, thick]
+            (h1-|v1) -- (h1-|v2) -- (h2-|v2)
+            -- (h2-|v3) -- (h3-|v3) -- (h3-|v4)
+            -- (h4-|v4) -- (h4-|v5) -- (h2-|v5)
+            -- (h2-|v6) -- (h1-|v6);
+        \end{tblrtikzabove}%
+        \begin{tblr}{hlines = {wd=4pt}, vlines = {wd=3pt}}
+            1-1 & 1-2 & 1-3 & 1-4 & 1-5 \\
+            2-1 & 2-2 & 2-3 & 2-4 & 2-5 \\
+            3-1 & 3-2 & 3-3 & 3-4 & 3-5
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:tikz:corners}
+    \end{center}
+    \begin{tsremark}
+        The styles \vrb{tblr/table}, \vrb{tblr/cell} and \vrb{tblr/overlay} can be set with \tsobj[code, no index]{\tikzset} to change the table node, every cell node, and each picture drawn in these environments.
+    \end{tsremark}
+    \begin{tsremark}
+        A package written in \vrb{expl3} syntax should read \href{https://github.com/pgf-tikz/pgf/issues/1213}{this \pkg{tikz} issue} before it loads the library.
+    \end{tsremark}
+\end{codedescribe}
+
+\subsection{Drawing Across Tables}
+The nodes of a table have a full name of \vrb{tblr}\tsmeta{name}\vrb{-}\tsmeta{node}, and the environments above add the prefix on our behalf. A table given the inner key \key[no index]{name} can therefore be addressed from any \pkg{tikz} picture. Nodes are only made for a table that follows one of the environments, which may be empty.
+
+\begin{codestore}[st=lib:tikz:name]
+    \begin{tblrtikzbelow}\end{tblrtikzbelow}%
+    \begin{tblr}{name = first, hlines, vlines}
+        Zal & Rostam
+    \end{tblr}\hspace{4em}%
+    \begin{tblrtikzbelow}\end{tblrtikzbelow}%
+    \begin{tblr}{name = second, hlines, vlines}
+        Esfandiyar & Bahman
+    \end{tblr}%
+    \begin{tikzpicture}[remember picture, overlay]
+        \draw[->, red, thick]
+        (tblrfirst-1-2.east) -- (tblrsecond-1-1.west);
+    \end{tikzpicture}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{lib:tikz:name}
+\end{center}
+
+\subsection{Drawing on Long Tables}
+Support for long tables is limited. A \env{longtblr} that spans several pages has cell nodes only, and the code runs once per page, so it must only draw on rows of the current page. The following variables help with that check:
+\begin{describelist*}{code, no index}
+    \describe{\lTblrRowHeadInt}{The number of head rows}
+    \describe{\lTblrRowFootInt}{The number of foot rows}
+    \describe{\lTblrTablePageInt}{The index of the current page of the table}
+    \describe{\lTblrRowFirstInt}{The first body row on the current page}
+    \describe{\lTblrRowLastInt}{The last body row on the current page}
+\end{describelist*}
+
+The example below marks cells with a class through \tsobj[code]{\SetChild}, at the very start of each cell. \tsobj[code]{\ExpTblrChildClass} expands to the row and column of each marked cell, and the code then fills only those on the current page. The \key[no index]{hborder} forces a break, so that the table spans 2 pages.
+
+\begin{codestore}[st=lib:tikz:long]
+    \ExplSyntaxOn
+    \cs_generate_variant:Nn \clist_map_inline:nn {e}
+    \cs_new_protected:Npn \fillclass #1
+    {
+        \clist_map_inline:en {\ExpTblrChildClass {#1}}
+        {
+            \bool_lazy_and:nnT
+            { \int_compare_p:n {\lTblrRowFirstInt <= \use_i:nn ##1} }
+            { \int_compare_p:n {\lTblrRowLastInt >= \use_i:nn ##1} }
+            { \exp_args:Noo \fillcell {\use_i:nn ##1} {\use_ii:nn ##1} }
+        }
+    }
+    \ExplSyntaxOff
+    \newcommand\fillcell[2]{
+        \fill[yellow, rounded corners=4pt]
+        (#1-#2.north west) rectangle (#1-#2.south east);
+    }
+    \begin{tblrtikzbelow}
+        \fillclass{mark}
+    \end{tblrtikzbelow}%
+    \begin{longtblr}[
+            caption = {Cells filled across the pages of a long table},
+        ]{
+            rowhead = 1, rowfoot = 1, hlines, vlines,
+            colspec = {*{4}{X[r]}}, width = \linewidth,
+            hborder{5} = {pagebreak},
+        }
+        Head                     & Head                     & Head                     & Head \\
+        2-1                      & 2-2                      & \SetChild{class=mark}2-3 & 2-4  \\
+        3-1                      & 3-2                      & 3-3                      & 3-4  \\
+        \SetChild{class=mark}4-1 & 4-2                      & 4-3                      & 4-4  \\
+        5-1                      & 5-2                      & 5-3                      & 5-4  \\
+        6-1                      & \SetChild{class=mark}6-2 & 6-3                      & 6-4  \\
+        Foot                     & Foot                     & Foot                     & Foot
+    \end{longtblr}\end{codestore}
+\tscode*[tblr]{lib:tikz:long}
+\tsexec{lib:tikz:long}
+
+\section{Library \texttt{varwidth}}\label{lib:varwidth}
+\DefaultMeasure{vbox}
+A horizontal box suits a line of text but cannot contain a list, and a table uses one method for all of its cells. The core chooses the simpler method and leaves the general case to this library, which adds a dependency and a small cost in compilation time.
+
+\begin{codedescribe}[
+        key,
+        new=2021N,
+        update=2025A
+    ]{measure}
+    \begin{codesyntax}
+        \keyval{measure}{hbox | vbox | vstore}
+    \end{codesyntax}
+    To find the natural width of a cell, \pkg{tabularray} typesets it in a box. The core uses a horizontal box, which cannot contain vertical material, so a list raises the error \vrb{Not allowed in LR mode} and display maths raises \vrb{Bad math environment delimiter}. This library loads \pkg{varwidth} and adds the key \key{measure}, which selects the box.
+    \begin{describelist*}{values}
+        \describe{hbox}{Typeset the cell in a horizontal box. The default of the core}
+        \describe{vbox}{Typeset the cell in a \pkg{varwidth} box, which accepts vertical material. The default with this library}
+        \describe{vstore}{As \val{vbox}, but reuse the box in place of typesetting the cell again while measuring. The default with the \pkg{hook} library. Experimental}
+    \end{describelist*}
+    The setting also applies to tables nested in the cells. A column of fixed width, such as \vrb{Q[6em]}, skips measuring and so needs none of this, but an \tsverb{X} column does not.
+
+    \begin{codestore}[st=lib:varwidth:vbox]
+        \begin{tblr}{hlines, vlines, measure=vbox}
+            Underneath the Bough:
+            \begin{itemize}
+                \item A Book of Verses
+                \item A Jug of Wine
+                \item A Loaf of Bread
+            \end{itemize}
+            And Thou & Paradise enow
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:varwidth:vbox}
+    \end{center}
+
+    Lists leave extra space above and below them. A negative \key[no index]{stretch} (\S\ref{inner:table}) removes it, which is the difference between the 2 tables below.
+
+    \begin{codestore}[st=lib:varwidth:stretch]
+        \begin{tblr}{hlines, vlines, measure=vbox}
+            \begin{itemize}
+                \item A Jug of Wine
+                \item A Loaf of Bread
+            \end{itemize} & And Thou
+        \end{tblr}\quad
+        \begin{tblr}{hlines, vlines, measure=vbox, stretch=-1}
+            \begin{itemize}
+                \item A Jug of Wine
+                \item A Loaf of Bread
+            \end{itemize} & And Thou
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{lib:varwidth:stretch}
+    \end{center}
+    \begin{tsremark}
+        Natural widths stay the same between the values, but other details of the output can shift slightly, such as a line break in a spanning cell. Adding the \pkg{hook} or \pkg{tikz} library to a finished document therefore calls for a check of its tables.
+    \end{tsremark}
+\end{codedescribe}
+
+\section{Library \texttt{zref}}\label{lib:zref}
+\DefaultMeasure{hbox}
+\pkg{zref} is an alternative to the reference system of \LaTeX{}, and its \tsobj[code, no index]{\zref} does not recognise a \key[no index]{label} on a \env{longtblr} or \env{talltblr} by default. This library loads \pkg{zref-user} and sets each such \key[no index]{label} for \tsobj[code, no index]{\zref} as well, so that \tsobj[code, no index]{\ref} and \tsobj[code, no index]{\zref} both work on the same name. This is a matter of compatibility and adds no capability of its own, so the library is useful only to documents that already rely on \pkg{zref}.
+
+\begin{codestore}[st=lib:zref]
+    \begin{longtblr}[
+        caption = {A table with a label},
+        label = {tab:zref},
+        ]{hlines, colspec = {X[c]X[c]}, width = 10cm}
+        Real & Symbolic
+    \end{longtblr}
+    Table \zref{tab:zref} is on page \zref[page]{tab:zref}.\end{codestore}
+\tscode*[tblr]{lib:zref}
+\tsexec{lib:zref}

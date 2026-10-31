@@ -1,87 +1,1382 @@
 \chapter{Specifications of the Inner Components with Examples}
-As highlighted briefly in \ref{impatient:inner}, the \vrb{inner} specification refers to any and all specification that is directly related to the table itself, including column and row specifications. These are supplied within the \arg{inner spec} argument in a key--value format.
+This chapter examines the \vrb{inner} specification, introduced briefly in \S\ref{impatient:inner}, which covers everything directly related to the table itself, including its columns and rows. It is supplied within the \arg{inner spec} argument in a key--value format.
 
-In this chapter, we show applied examples of the inner specifications. Note that \pkg{tabularray} provides a wide range of options to achieve the same thing---then it is up to the user to choose the most intuitive and efficient way for them to achieve the desired result.
+A defining feature of this interface is its redundancy: \pkg{tabularray} commonly offers several routes to the same output, such as a key in the specification and a command in the table body.
+We thus aim to showcase comprehensive (but not exhaustive) examples of using \pkg{tabularray}, but not prescribe to a correct method of typesetting, since the most intuitive and efficient choice depends on the table---and most importantly: on you and your preferences.
+In short, the examples hereinafter isolate one option at a time so that its effect can be observed directly.
+Please read them as an overview of each option and its applications, not as a full account of how the options interact.
 
-While it is our intention to provide a comprehensive guide to showcase the inner specifications, the examples delineated here are thus not intended to be exhaustive, but rather to provide a general overview of the inner specifications and their applications.
+\section{Column and Row Options}\label{inner:colrow}
+Columns and rows are the principal units of a specification, and most of the appearance of a table is set through them. Because options apply by selection and not by position in the table body, a single key can style many cells and the body stays free of formatting. Selection by index does depend on the shape of the table, however: inserting a row renumbers those after it, which is one reason the selectors of \S\ref{inner:selectors} can also count from the end.
 
-\section{Column-wise Options}
 \begin{codedescribe}[
-  marg,
-  new=2021F,
-  update=2021G,
-  update=2021L
-]{columns}
+    key,
+    new=2021F,
+    update=2021L
+  ]{columns}
   \begin{codesyntax}
-    \tsobj[code, no index]{\begin{tblr}}\tsobj[oarg]{outer spec}\{
-      \quad\keyval{columns}{kwargs}
-      \quad\ldots
-    \}
-    \quad\ldots
-    \tsmacro{\end{tblr}}{}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+        \quad\keyval{columns}{kwargs}
+        \quad\ldots
+        \}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
   \end{codesyntax}
 
-\key{columns} is the most intuitive key, and a familiar concept for those who have experience with \LaTeX's \env[no index]{tabular}. It generally represents the global column-wise specification for all columns in a given \env{tblr}.
+  \key{columns} is the most intuitive key, and a familiar concept for those who have experience with \LaTeX's \env*[no index]{tabular}. It generally represents the global column-wise specification for all columns in a given \env{tblr}. It accepts every key in this section, except for those marked as \vrb{row} only.
+
+  \begin{codestore}[st=columns:columns]
+    \begin{tblr}{hlines, vlines}
+      Real      & Symbolic \\
+      Imaginary & Sinthome
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines, vlines,
+        columns = {c, bg=yellow!30}
+      }
+      Real      & Symbolic \\
+      Imaginary & Sinthome
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:columns}
+  \end{center}
 \end{codedescribe}
 
 \begin{codedescribe}[
-  key,
-  new=2021L
-]{halign}
-\begin{codesyntax}
-\end{codesyntax}
-  The \key{halign} key represents the horizontal alignment of the cell content. It accepts four values: \val{j, l, c, r}, which represent justified, left-aligned, centered and right-aligned content, respectively. The default value is \val{j}.
-  \begin{tsremark}
-    Values of this key can be supplied without the key.
-  \end{tsremark}
+    key,
+    new=2021F
+  ]{column}
+  \begin{codesyntax}
+    \keysel{column}{j}[\{\tsmeta{keys}\}]
+  \end{codesyntax}
+  \key{column} applies the same keys as \key{columns}, but only to the columns selected by \tsmeta{j} (see \S\ref{inner:selectors}).
+
+  \begin{codestore}[st=columns:column]
+    \begin{tblr}{
+        hlines, vlines,
+        column{2} = {r, bg=yellow!30}
+      }
+      Desire  & Drive      \\
+      Fantasy & Jouissance
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:column}
+  \end{center}
 \end{codedescribe}
 
 \begin{codedescribe}[
-  value,
-  new=2021L
-]{l,c,r}
-  \val{l,c,r} represent left-aligned, centred and right-aligned cell content, respectively, and behave the same as that of \LaTeX's \env[no index]{tabular}.
-  \begin{tsremark}
-    All of these keys can be supplied without the \key{halign}. \vrb{columns={l}} is equivalent to \vrb{columns={halign=l}}.
-  \end{tsremark}
+    key,
+    new=2021F,
+    update=2021L
+  ]{rows}
+  \begin{codesyntax}
+    \keyval{rows}{\{\tsmeta{keys}\}}
+  \end{codesyntax}
+  \key{rows} is the row-wise counterpart of \key{columns}, and applies keys to every row of the table. It accepts every key in this section, except for those marked as \vrb{column} only.
+
+  \begin{codestore}[st=columns:rows]
+    \begin{tblr}{hlines, vlines}
+      Real      & Symbolic \\
+      Imaginary & Sinthome
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines, vlines,
+        rows = {ht=8mm, bg=yellow!30}
+      }
+      Real      & Symbolic \\
+      Imaginary & Sinthome
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:rows}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F
+  ]{row}
+  \begin{codesyntax}
+    \keysel{row}{i}[\{\tsmeta{keys}\}]
+  \end{codesyntax}
+  \key{row} applies the same keys as \key{rows}, but only to the rows selected by \tsmeta{i} (see \S\ref{inner:selectors}).
+
+  \begin{codestore}[st=columns:row]
+    \begin{tblr}{
+        hlines, vlines,
+        row{1} = {font=\bfseries, bg=yellow!30}
+      }
+      Real      & Symbolic \\
+      Imaginary & Sinthome
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:row}
+  \end{center}
+\end{codedescribe}
+
+\subsection{Selecting Columns and Rows}\label{inner:selectors}
+\begin{codedescribe}[
+    value,
+    new=2021F,
+    update=2021P,
+    update=2022A,
+    update=2025A
+  ]{odd, even, every, U...Z}
+  Keys that address part of a table, such as \key{column}, \key{row}, \key{cell}, \key{hline} and \key{vline}, select what they apply to with any of the following forms. These may be combined in a comma-separated list, e.g.\ \vrb{{row{1,3-4,Z}}}.
+  \begin{describelist*}{values}
+    \describe{2}{A single index}
+    \describe{2-4}{A range of indexes}
+    \describe{-}{Every row or column}
+    \describe{odd}{Every odd index. \vrb{odd[5]} starts from index 5}
+    \describe{even}{Every even index. \vrb{even[4]} starts from index 4}
+    \describe{every}{\vrb{every}[\tsmeta{step}]\{\tsmeta{start}\}\{\tsmeta{end}\} selects the indexes from \tsmeta{start} to \tsmeta{end}, which may be negative to count from the end}
+    % TODO: document Z[<n>] here once it works again (broken by cd75229, #638?)
+    \describe{U...Z}{The last 6 indexes: \vrb{Z} is the last, \vrb{Y} the second last, and so on}
+  \end{describelist*}
+
+  \begin{codestore}[st=columns:selectors]
+    \begin{tblr}{
+      hlines, vlines,
+      cell{1}{even} = {bg=yellow!30},
+      cell{2}{odd[3]} = {bg=green!30},
+      cell{3}{every[3]{1}{-1}} = {bg=cyan!30},
+          cell{4}{2-Y} = {bg=blue!20},
+        }
+      1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+      1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+      1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+      1 & 2 & 3 & 4 & 5 & 6 & 7
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:selectors}
+  \end{center}
+\end{codedescribe}
+
+\subsection{Positioning and Dimensions}
+\begin{codedescribe}[
+    key,
+    new=2021L
+  ]{halign}
+  \begin{codesyntax}
+    \keyval{halign}{l | c | r | j}
+  \end{codesyntax}
+  The \key{halign} key represents the horizontal alignment of the cell content. It accepts four values: \val{j, l, c, r}, which represent justified, left-aligned, centred and right-aligned content, respectively. The default value is \val{j}. Values of this key can be supplied without the key.
+\end{codedescribe}
+
+\begin{codedescribe}[
+    value,
+    new=2021A,
+    update=2021L
+  ]{l,c,r}
+  \val{l,c,r} represent left-aligned, centred and right-aligned cell content, respectively, and behave the same as those of \LaTeX's \env*[no index]{tabular}. All of these keys can be supplied without \key{halign}: \vrb{columns={l}} is equivalent to \vrb{columns={halign=l}}.
 
   \begin{codestore}[st=columns:lcr]
     \begin{tblr}{
-      columns = {l}
-    }
-      Asrâr-e azal râ na to dâni-o na man\\
-      Win harf-e mu’amma na to khâni-o na man\\
-      Hast az pas-e pare guftegu-ye man-o-to\\
+      hlines, vlines,
+      columns = {24em},
+      row{1} = {l},
+      row{2} = {c},
+      row{3,4} = {r},
+        }
+      Asrâr-e azal râ na to dâni-o na man     \\
+      Win harf-e mu’amma na to khâni-o na man \\
+      Hast az pas-e pare guftegu-ye man-o-to  \\
       Chun parde baroftad na to mâni-o na man
     \end{tblr}\end{codestore}
   \begin{center}
-  \tsdemo*[tblr]{columns:lcr}
+    \tsdemo*[tblr]{columns:lcr}
   \end{center}
 \end{codedescribe}
 
 \begin{codedescribe}[
-  value,
-  new=2021N
-]{j}
-  \val{j} represents justified cell content. This is the default value for \key{halign}.
-  \begin{tsremark}
-    Values of this key can be supplied without the key, such that \vrb{j} is equivalent to \keyval{halign}{j}.
-  \end{tsremark}
+    value,
+    new=2021N
+  ]{j}
+  \val{j} represents justified cell content. This is the default value for \key{halign}, and it can be supplied without the key, such that \vrb{j} is equivalent to \keyval{halign}{j}. Observe the ugly justification of Khayyam's beautiful quatrain.
 
   \begin{codestore}[st=columns:j]
     \begin{tblr}{
-      hlines, vlines,
-      columns = {8em} % `j' already implied by default
-    }
-      Asrâr-e azal râ na to dâni-o na man\\
-      Win harf-e mu’amma na to khâni-o na man\\
-      Hast az pas-e pare guftegu-ye man-o-to\\
+        hlines, vlines,
+        columns = {8em} % `j' already implied by default
+      }
+      Asrâr-e azal râ na to dâni-o na man     \\
+      Win harf-e mu’amma na to khâni-o na man \\
+      Hast az pas-e pare guftegu-ye man-o-to  \\
       Chun parde baroftad na to mâni-o na man
     \end{tblr}\end{codestore}
   \begin{center}
-  \tsdemo*[tblr]{columns:j}
+    \tsdemo*[tblr]{columns:j}
   \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021L
+  ]{valign}
+  \begin{codesyntax}
+    \keyval{valign}{t | p | m | b | h | f}
+  \end{codesyntax}
+  The \key{valign} key represents the vertical alignment of the cell content. It accepts the values \val{t, p, m, b, h, f}, which represent top, paragraph (an alias of \val{t}), middle, bottom, head and foot alignment, respectively. The default value is \val{t}. Values of this key can be supplied without the key.
+\end{codedescribe}
+
+\begin{codedescribe}[
+    value,
+    new=2021B,
+    update=2021L
+  ]{t,p,m,b}
+  \val{t,p,m,b} represent top, paragraph, middle and bottom-aligned cell content, respectively; \val{p} is simply an alias of \val{t}. All of these keys can be supplied without \key{valign}: \vrb{columns={m}} is equivalent to \vrb{columns={valign=m}}.
+
+  \begin{codestore}[st=columns:tmb]
+    \begin{tblr}{
+      colspec = {|Q[t]|Q[m]|Q[b]|},
+      rowspec = {|Q[5em]|},
+      hlines, vlines,
+      }
+      {Top \\line1\\line2} & {Mid\\line1\\line2} & {Bot\\line1\\line2}
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:tmb}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    value,
+    new=2021G,
+    update=2021L
+  ]{h,f}
+  \val{h,f} represent head- and foot-aligned cell content, respectively: \val{h} places the text at the top edge of the row and \val{f} at the bottom edge, whereas \val{t,b} align on the first and last baselines. The difference shows when another cell in the row is taller, as with the middle cell below. Values of this key can be supplied without \key{valign}.
+
+  \begin{codestore}[st=columns:hf]
+    \begin{tblr}{
+      colspec = {Q[h,4em]Q[t,4em]Q[m,4em]Q[b,4em]Q[f,4em]},
+      hlines,
+      }
+      {row \\head} & {top\\line} & {11\\22\\mid\\44\\55} & {line\\bottom} & {row\\foot}
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:hf}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021B,
+    update=2021L
+  ]{wd}
+  \begin{codesyntax}
+    \keyval{wd}{\arg{dim}}
+  \end{codesyntax}
+  \key{wd} sets the width of a column (\vrb{column} only); the dimension may be given as a fixed length or as a fraction of \tsobj[code, no index]{\linewidth} via the usual \LaTeX\ dimension syntax. It can be supplied without the key, and text that does not fit wraps within the given width.
+
+  \begin{codestore}[st=columns:wd]
+    \begin{tblr}{hlines, vlines}
+      Žižek & The most dangerous unfreedom is the unfreedom
+      that we experience as freedom
+    \end{tblr}
+
+    \begin{tblr}{
+        hlines, vlines,
+        column{2} = {wd=3cm}
+      }
+      Žižek & The most dangerous unfreedom is the unfreedom
+      that we experience as freedom
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:wd}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F,
+    update=2021L
+  ]{ht}
+  \begin{codesyntax}
+    \keyval{ht}{\arg{dim}}
+  \end{codesyntax}
+  \key{ht} sets the height of a row (\vrb{row} only). It can be supplied without the key.
+
+  \begin{codestore}[st=columns:ht]
+    \begin{tblr}{
+        hlines, vlines,
+        row{2} = {ht=1cm}
+      }
+      Real      & Symbolic \\
+      Imaginary & Sinthome \\
+      Subject   & Other
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:ht}
+  \end{center}
+\end{codedescribe}
+
+\subsection{Colour and Font}
+\begin{codedescribe}[
+    key,
+    new=2021E,
+    update=2021F,
+    update=2021L,
+    update=2026A
+  ]{bgcolor, bg}
+  \begin{codesyntax}
+    \keyval{bgcolor}{\arg{colour}}
+  \end{codesyntax}
+  \key{bgcolor} sets the background colour of a column, row, or cell, and accepts any colour name known to \pkg{xcolor}. \key{bg} is a shorter alias, e.g.\ \vrb{bg=red} is equivalent to \vrb{bgcolor=red}. A colour name can also be supplied without the key.
   \begin{tsremark}
-    Observe the ugly justification of Khayyam's beautiful quatrain.
+    \pkg{tabularray} loads \pkg{xcolor} itself as of 2026A, but no longer loads \pkg{ninecolors}. Names such as \vrb{blue7} now need \tsverb*{\usepackage{ninecolors}}.
   \end{tsremark}
 \end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021K,
+    update=2021L,
+    update=2021P,
+    update=2026A
+  ]{fgcolor, fg}
+  \begin{codesyntax}
+    \keyval{fgcolor}{\arg{colour}}
+  \end{codesyntax}
+  \key{fgcolor} sets the colour of the text of a column, row, or cell. \key{fg} is a shorter alias, e.g.\ \vrb{fg=white} is equivalent to \vrb{fgcolor=white}. The 2 columns below use different names to the same effect.
+
+  \begin{codestore}[st=columns:bgfgcolor]
+    \begin{tblr}{
+        hlines, vlines,
+        column{1} = {bgcolor=yellow!30, fgcolor=blue!60!black},
+        column{2} = {bg=yellow!30, fg=blue!60!black},
+      }
+      Shops   & Full        \\
+      Food    & Abundant    \\
+      Red ink & Unavailable
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:bgfgcolor}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021K,
+    update=2021L
+  ]{font}
+  \begin{codesyntax}
+    \keyval{font}{\arg{font commands}}
+  \end{codesyntax}
+  \key{font} sets the font of the column/row/cell text by executing the given font-switching commands (e.g.\ \tsobj[code, no index]{\bfseries}, \tsobj[code, no index]{\itshape\Large}) before the cell text, followed by \tsobj[code, no index]{\selectfont}.
+
+  \begin{codestore}[st=columns:font]
+    \begin{tblr}{
+        hlines, vlines,
+        row{1} = {font=\bfseries},
+        column{2} = {font=\itshape\Large},
+      }
+      Libertà & Libertà \\
+      Libertà & Libertà
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:font}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021P
+  ]{mode, \$, \$\$}
+  \begin{codesyntax}
+    \keyval{mode}{text | math | imath | dmath}
+  \end{codesyntax}
+  \key{mode} sets the mode in which the cell text is typeset: \val{text}, \val{math}, \val{imath} or \val{dmath}. The default is \val{text}, or \val{math} when the table itself is in math mode. \val{math} sets no math style of its own, while \val{imath} forces \tsobj[code, no index]{\textstyle} and \val{dmath} forces \tsobj[code, no index]{\displaystyle}. \key{\$} is a shorter alias for \keyval{mode}{math}, and \key{\$\$} for \keyval{mode}{dmath}.
+
+  In the table below, the second column takes the default of \val{math} because the table is in math mode.
+
+  \begin{codestore}[st=columns:mode]
+    $\begin{tblr}{
+          hlines,
+          column{1} = {mode=text},
+          column{3} = {mode=dmath},
+        }
+        Non-All & \frac12 & \frac12 \\
+        Surplus & \frac54 & \frac54
+      \end{tblr}$\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:mode}
+  \end{center}
+  \begin{tsremark}
+    Multiline math, such as \tsverb*{{\alpha\\\beta}}, cannot be written directly in a math-mode cell.
+  \end{tsremark}
+\end{codedescribe}
+
+\subsection{Utilities}
+\begin{codedescribe}[
+    key,
+    new=2021L,
+    update=2021P
+  ]{cmd}
+  \begin{codesyntax}
+    \keyval{cmd}{\arg{control sequence}}
+  \end{codesyntax}
+  \key{cmd} names a control sequence of one argument to execute on the text of every affected cell, e.g.\ \tsverb**[verb]{cmd=\textbf} applies \tsobj[code, no index]{\textbf} to the cell content.
+
+  \begin{codestore}[st=columns:cmd]
+    \begin{tblr}{
+        column{1} = {cmd=\textbf},
+        column{2} = {cmd=\fbox},
+      }
+      Desire & Lack \\
+      Drive  & Loop
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:cmd}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021K
+  ]{preto, appto}
+  \begin{codesyntax}
+    \keyval{preto}{\arg{material}}
+    \keyval{appto}{\arg{material}}
+  \end{codesyntax}
+  \key{preto} and \key{appto} insert material immediately before and after the text of every affected cell, respectively. See \S\ref{colrow:colour} for how \key{preto, appto} interact when set on both \key{columns} and \key{rows}, and how \key{preto} relates to \key{font}.
+
+  \begin{codestore}[st=columns:pretoappto]
+    \begin{tblr}{
+      hlines, vlines,
+      column{2} = {preto={[}, appto={]}},
+      }
+      Absolute & Recoil \\
+      Looking  & Awry
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:pretoappto}
+  \end{center}
+\end{codedescribe}
+
+\subsection{Spacing}
+\begin{codedescribe}[
+    key,
+    new=2021G,
+    update=2021L,
+    update=2026A
+  ]{rowsep, rowsep+, abovesep, abovesep+, belowsep, belowsep+}
+  \begin{codesyntax}
+    \keyval{abovesep}{\arg{dim}}
+    \keyval{belowsep}{\arg{dim}}
+    \keyval{rowsep}{\arg{dim}}
+  \end{codesyntax}
+  \key{abovesep, belowsep} set the vertical space above/below a row (\vrb{row} only; default \val{2pt} each); \key{rowsep} is a shorter alias that sets both at once. The \key[no index]{+} variants add to, rather than replace, the current value---useful for adjusting the default without having to repeat it. A negative value that leaves a row with no height gives a warning.
+
+  \key{rowsep, abovesep, belowsep} can also be written directly in the \arg{inner spec} to apply to every row. The \key[no index]{+} variants cannot.
+
+  \begin{codestore}[st=columns:rowsep]
+    \begin{tblr}{hlines, vlines}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{hlines, vlines, rowsep=6pt}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines, vlines,
+        row{1} = {belowsep+=6pt}
+      }
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:rowsep}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021G,
+    update=2021L,
+    update=2026A
+  ]{colsep, colsep+, leftsep, leftsep+, rightsep, rightsep+}
+  \begin{codesyntax}
+    \keyval{leftsep}{\arg{dim}}
+    \keyval{rightsep}{\arg{dim}}
+    \keyval{colsep}{\arg{dim}}
+  \end{codesyntax}
+  \key{leftsep, rightsep} set the horizontal space before/after a column (\vrb{column} only; default \val{6pt} each); \key{colsep} is a shorter alias that sets both at once. As with \key{rowsep}, the \key[no index]{+} variants add to the current value, a negative value that leaves a column with no width gives a warning, and all but the \key[no index]{+} variants can be written directly in the \arg{inner spec}.
+
+  \begin{codestore}[st=columns:sepplus]
+    \begin{tblr}{
+      colspec = {|X[l]|X[l]|},
+      hlines, vlines,
+      column{2} = {leftsep+=1em},
+      }
+      Default leftsep & leftsep + 1em
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:sepplus}
+  \end{center}
+\end{codedescribe}
+
+\subsection{Table Commands}
+\begin{codedescribe}[
+    code,
+    new=2021F
+  ]{SetRow, SetRows, SetColumn, SetColumns}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetRow}\{\tsmeta{keys}\} \tsmeta{cell text}
+  \end{codesyntax}
+  These commands set the same keys from inside the table body, at the start of a cell. \tsobj[code, no index]{\SetRow} in row \tsmeta{i} is the same as \keysel{row}{i}[\{\tsmeta{keys}\}], \tsobj[code, no index]{\SetColumn} in column \tsmeta{j} is the same as \keysel{column}{j}[\{\tsmeta{keys}\}], and \tsobj[code, no index]{\SetRows, \SetColumns} are the same as \key{rows, columns}.
+
+  \begin{codestore}[st=columns:setrow]
+    \begin{tblr}{llll}
+      \hline
+      \SetRow{bg=blue!20} Id        & \SetColumn{r} Ego & Superego & Drive \\
+      \hline
+      \SetRow{bg=yellow!30, c} Need & Demand            & Desire   & Lack  \\
+      \hline
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{columns:setrow}
+  \end{center}
+\end{codedescribe}
+
+\section{Column and Row Types}\label{inner:types}
+A type condenses the settings of a column or row into a single letter, which gives a specification the compactness of a \LaTeX{} preamble. That compactness has limits. A long string of letters conveys less than the equivalent keys, and it has to keep pace with the number of columns. The types below range from shorthand letters to the explicit \tsverb{Q}, and a table can combine them with the keys of \S\ref{inner:colrow}.
+
+\begin{codedescribe}[
+    key,
+    new=2021B,
+    update=2021F
+  ]{colspec, rowspec}
+  \begin{codesyntax}
+    \keyval{colspec}{\{\tsmeta{column types}\}}
+    \keyval{rowspec}{\{\tsmeta{row types}\}}
+  \end{codesyntax}
+  \key{colspec} gives one type letter for each column, as in the preamble of \LaTeX's \env*[no index]{tabular}, and \key{rowspec} does the same for each row. The name \key{colspec} can be left out if it is the only key in the \arg{inner spec}, so the first two tables below are the same.
+
+  \begin{codestore}[st=types:colspec]
+    \begin{tblr}{colspec = {|l|c|r|}}
+      Id & Ego & Superego
+    \end{tblr}\quad
+    \begin{tblr}{|l|c|r|}
+      Id & Ego & Superego
+    \end{tblr}\quad
+    \begin{tblr}{
+        colspec = {lcr},
+        rowspec = {|Q|Q|},
+      }
+      Id   & Ego    & Superego \\
+      Need & Demand & Desire
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:colspec}
+  \end{center}
+  \begin{tsremark}
+    With the \pkg{functional} library loaded, a \key{colspec} containing \vrb{=}, such as \vrb{Q[bg=red]}, must keep its name.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    new=2021B
+  ]{Q[ ... ]}
+  \begin{codesyntax}
+    \tsverb{Q[}\tsmeta{keys}\tsverb{]}
+  \end{codesyntax}
+  \tsverb{Q} is the flexible, do-everything placeholder type introduced in \S\ref{impatient:qtype}. In \key{colspec} it accepts the keys of \key{column}, and in \key{rowspec} those of \key{row}, so a column can be styled where it is declared.
+
+  \begin{codestore}[st=types:q]
+    \begin{tblr}{
+      colspec = {|Q[l,t]|Q[c,m,bg=yellow!30]|Q[r,b,fg=blue]|}
+      }
+      \hline
+      {Top Baseline \\Left Left} & Middle Centre & {Right Right\\Bottom Baseline} \\
+      \hline
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:q}
+  \end{center}
+  \begin{tsremark}
+    \tsverb{Q}, \tsverb{|} (for rules), \tsverb{<} and \tsverb{>} are the only primitive types in \pkg{tabularray}. Every other column/row type, including \tsverb{l, c, r, j, X} and the dimensioned types below, is defined in terms of these. \tsverb{Q} was named \tsverb{Y} in 2021A.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021B
+  ]{co}
+  \begin{codesyntax}
+    \keyval{co}{\arg{num}}
+  \end{codesyntax}
+  \key{co} sets the stretch coefficient of an \tsverb{X}-type column, weighting the share of the available table width it receives relative to other \tsverb{X}-type columns in the same table (default: \val{1}). It can be supplied without the key, e.g.\ \vrb{X[2]}. A negative coefficient is also allowed: its absolute value sets the weight, but the column stops at its natural width and the spare width goes to the other columns. If every stretchable column has stopped at its natural width, the spare width is shared in proportion to those widths.
+
+  In the second table below, the column with \vrb{X[-1]} stops at its natural width. In the third, the text is long enough to reach the weights, so \vrb{X[-2]} takes twice the width of \vrb{X[-1]}.
+
+  \begin{codestore}[st=types:co]
+    \begin{tblr}{colspec = {|X[1]|X[2]|}, width = 10cm}
+      One share & Two shares
+    \end{tblr}
+
+    \begin{tblr}{colspec = {|X[1]|X[-1]|}, width = 10cm}
+      The rest & Natural
+    \end{tblr}
+
+    \begin{tblr}{colspec = {|X[-2]|X[-1]|}, width = 10cm}
+      There was the Door to which I found no Key;
+      There was the Veil through which I might not see: &
+      Some little talk awhile of Me and Thee
+      There was---and then no more of Thee and Me.
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:co}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    value,
+    new=2021A,
+    update=2021F,
+    update=2021N
+  ]{l,c,r,j}
+  As bare column/row types (i.e.\ usable directly in \key{colspec, rowspec} without \tsverb{Q[...]}), \val{l, c, r, j} are shorthand for \vrb{Q[l]}, \vrb{Q[c]}, \vrb{Q[r]} and \vrb{Q[j]}. In \key{rowspec} they align every cell of the row.
+
+  \begin{codestore}[st=types:lcrj]
+    \begin{tblr}{
+        colspec = {|l|c|r|},
+        columns = {wd=2cm},
+      }
+      Id   & Ego    & Superego \\
+      Need & Demand & Desire
+    \end{tblr}\quad
+    \begin{tblr}{
+        rowspec = {|c|r|},
+        columns = {wd=2cm},
+      }
+      Id   & Ego    & Superego \\
+      Need & Demand & Desire
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:lcrj}
+  \end{center}
+  \begin{tsremark}
+    These are the same letters used as \key{halign} values (\S\ref{colrow:positioning}): \vrb{colspec={l}} and \vrb{columns={l}} both ultimately set \keyval{halign}{l}.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    new=2021C
+  ]{X[ ... ]}
+  \begin{codesyntax}
+    \tsverb{X[}\tsmeta{keys}\tsverb{]}
+  \end{codesyntax}
+  \tsverb{X} is a stretchable column type defined as \vrb{{Q[co=1,...]}}: it expands to fill the available table width, sharing that width with other \tsverb{X} columns according to their \key{co} coefficients. Readers of the \pkg{tabularx} and \pkg{tabu} packages will recognise it.
+
+  \begin{codestore}[st=types:x]
+    \begin{tblr}{
+      colspec = {|l|X[c]|X[r]|},
+      width = 10cm,
+      }
+      Natural & Stretched & Stretched
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:x}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021B
+  ]{width}
+  \begin{codesyntax}
+    \keyval{width}{\arg{dim}}
+  \end{codesyntax}
+  \key{width} sets the width of a table with stretchable columns. If it is unset, such a table is as wide as \tsobj[code, no index]{\linewidth}. It has no effect on a table without stretchable columns.
+
+  \begin{codestore}[st=types:width]
+    \begin{tblr}{colspec = {|X|X|}, width = 6cm}
+      Hay & Water
+    \end{tblr}
+
+    \begin{tblr}{colspec = {|X|X|}, width = 10cm}
+      Hay & Water
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:width}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    no index,
+    new=2021B,
+    update=2021F,
+    update=2021G
+  ]{h{...}, t{...}, m{...}, b{...}, f{...}}
+  \begin{codesyntax}
+    \tsverb{t}\{\tsmeta{dim}\}
+  \end{codesyntax}
+  These dimensioned types combine a \key{valign} value with a size in one letter. In \key{rowspec} the dimension sets the row height, so \vrb{t{5em}} is \vrb{{Q[t,ht=5em]}}; in \key{colspec} it sets the column width, so \vrb{t{5em}} is \vrb{{Q[t,wd=5em]}}. \vrb{p{...}} also exists, as an alias of \vrb{t{...}}.
+
+  \begin{codestore}[st=types:dim]
+    \begin{tblr}{|t{15mm}|m{15mm}|b{20mm}|}
+      Real & Lack & {Surplus \\Enjoyment}
+    \end{tblr}\quad
+    \begin{tblr}{rowspec = {|t{10mm}|m{10mm}|b{10mm}|}}
+      Real & Lack & {Surplus  \\Enjoyment} \\
+      Void & Gap  & {Sublime  \\Object}    \\
+      Id   & Ego  & {Ticklish \\Subject}
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:dim}
+  \end{center}
+  \begin{tsremark}
+    New types are defined with \tsobj[code, no index]{\NewTblrColumnType}, \tsobj[code, no index]{\NewTblrRowType} and \tsobj[code, no index]{\NewTblrColumnRowType}.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    no index,
+    new=2021B
+  ]{|, >, <, !, @, *}
+  These specifiers go between the types in \key{colspec} and \key{rowspec}.
+  \begin{describelist*}{values}
+    \describe{|}{Draws a rule. \vrb{|[dashed]} passes rule keys to it (\S\ref{inner:rules})}
+    \describe{>}{\vrb{>{...}} inserts material before the text of every cell in the next column or row, like \key{preto}. \vrb{>[1em]{...}} also sets its \key{leftsep} or \key{abovesep}}
+    \describe{<}{\vrb{<{...}} inserts material after the text of every cell in the previous column or row, like \key{appto}. \vrb{<[1em]{...}} also sets its \key{rightsep} or \key{belowsep}}
+    \describe{!}{\vrb{!{...}} replaces the rule with the given text}
+    \describe{@}{\vrb{@{...}} does the same as \vrb{!{...}}, and also removes the space on either side of it}
+    \describe{*}{\vrb{*{3}{c|}} repeats the given types 3 times}
+  \end{describelist*}
+
+  \begin{codestore}[st=types:specifiers]
+    \begin{tblr}{
+      colspec = {|*{2}{c|}>{(}r<{)}!{:}l@{ -- }l|}
+      }
+      Need & Demand & Desire & Lack & Drive
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:specifiers}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021L
+  ]{si}
+  \begin{codesyntax}
+    \keyval{si}{\{\tsmeta{siunitx options}\}}
+  \end{codesyntax}
+  \key{si} passes keyword arguments through to \pkg{siunitx}'s number formatting (e.g.\ \vrb{si={table-format=2.3}}), which aligns the numbers in a column on their decimal markers. It is available after \tsobj[code, no index]{\UseTblrLibrary}\tsverb{{siunitx}} (\S\ref{lib:siunitx}) and applies to columns only. It underlies the \tsverb{S}/\tsverb{s} column types, which are themselves defined as \vrb{{Q[si={...},c]}} and \tsverb*[verb]{Q[si={...},c,cmd=\TblrUnit]} respectively.
+
+  \begin{codestore}[st=types:si]
+    \begin{tblr}{hlines, column{1} = {c}}
+      1.5 \\ 12.25 \\ 100
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines,
+        colspec = {Q[si={table-format=3.2},c]}
+      }
+      1.5 \\ 12.25 \\ 100
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{types:si}
+  \end{center}
+\end{codedescribe}
+
+\section{Spanning Cells}\label{inner:spanning}
+A spanning cell poses a problem that an ordinary cell does not: its size has to be reconciled with the columns and rows it covers. \pkg{tabularray} performs this reconciliation itself, and the keys of this section control how it shares out any surplus. A single interface for both directions also replaces the separate \tsobj[code, no index]{\multicolumn} and \tsobj[code, no index]{\multirow} of traditional tables, so documents that rely on those commands need converting.
+
+\begin{codedescribe}[
+    code,
+    new=2021C,
+    update=2021L
+  ]{SetCell}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetCell}[\oarg{span spec}]\{\arg{style spec}\} \tsmeta{cell text}
+  \end{codesyntax}
+  \tsobj[code, no index]{\SetCell} styles the cell it is placed in, and goes at the very start of the cell text. It accepts the keys listed in \S\ref{impatient:spanning}.
+
+  \begin{codestore}[st=span:setcell]
+    \begin{tblr}{llll}
+      \hline
+      Real   & \SetCell{bg=blue!70, fg=white} Symbolic & Void \\
+      \hline
+      Desire & \SetCell{r, font=\scshape} Lack         & Loop \\
+      \hline
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:setcell}
+  \end{center}
+  \begin{tsremark}
+    \tsobj[code, no index]{\multicolumn} and \tsobj[code, no index]{\multirow} are not supported and raise an error. Old documents can be rolled back with \tsverb*{\usepackage{tabularray}[=v2021]}.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021C,
+    update=2021D
+  ]{r, c (span spec)}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetCell}[\keyval{r}{\arg{int}}, \keyval{c}{\arg{int}}]\{\arg{style spec}\} \tsmeta{cell text}
+  \end{codesyntax}
+  \key{r, c} set the number of rows and columns the cell spans. Their values are in the optional argument of \tsobj[code, no index]{\SetCell}, or the first pair of braces of \key{cell}. The cells a span covers stay in the source, and are left empty.
+
+  \begin{codestore}[st=span:rc]
+    \begin{tblr}{hlines, vlines, cells = {c}}
+      Subject                & \SetCell[c=2]{} Big Other &          \\
+      \SetCell[r=2]{} Desire & Real                      & Symbolic \\
+                             & Imaginary                 & Sinthome
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:rc}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    verb,
+    new=2026A
+  ]{out-of-bound span cropping}
+  A \key{r} or \key{c} span that would extend past the last row/column of the table is cropped to fit, with a warning identifying the offending cell and the value it was cropped to. Earlier releases stopped with errors such as ``Missing number, treated as zero'', which did not identify the cell. Below, \vrb{c=5} is cropped to \vrb{c=2}.
+
+  \begin{codestore}[st=span:crop]
+    \begin{tblr}{
+        hlines, vlines,
+        cell{1}{1} = {c=5}{c, bg=yellow!30},
+      }
+      Kay Kavus &        \\
+      Eagles    & Throne
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:crop}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    new=2021F,
+    update=2021L
+  ]{SetCells}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetCells}[\oarg{span spec}]\{\arg{style spec}\} \tsmeta{cell text}
+  \end{codesyntax}
+  \tsobj[code, no index]{\SetCells} applies a style spec to every cell of the table at once, and may be placed at the start of any cell.
+
+  \begin{codestore}[st=span:setcells]
+    \begin{tblr}{hlines, vlines}
+      \SetCells{c, bg=yellow!30} Real & Symbolic \\
+      Imaginary                       & Sinthome
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:setcells}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F,
+    update=2021L,
+    update=2025A
+  ]{cell, cells}
+  \begin{codesyntax}
+    \keysel{cell}{i}\{\tsmeta{j}\} \tsobj[code, no index]{=} \arg{span spec}\arg{style spec}
+    \keyval{cells}{\arg{span spec}\arg{style spec}}
+  \end{codesyntax}
+  \tsobj[keys, no index]{cell}\{\tsmeta{i}\}\{\tsmeta{j}\} and \key{cells} are the inner-spec equivalents of \tsobj[code, no index]{\SetCell} and \tsobj[code, no index]{\SetCells} respectively. \tsmeta{i} and \tsmeta{j} select rows and columns as described in \S\ref{inner:selectors}. A list of two-dimensional indexes selects individual cells, e.g.\ \vrb{cell{{1}{2},{3}{4}}}, and a range of such tuples selects diagonally, e.g.\ \vrb{cell{{1}{1}-{4}{4}}}.
+
+  \begin{codestore}[st=span:cell]
+    \begin{tblr}{
+      hlines, vlines,
+      cells = {c},
+      cell{1}{odd} = {bg=yellow!30},
+      cell{2}{2} = {r=2, c=2}{bg=blue!20},
+      cell{{4}{1},{4}{4}} = {bg=green!30},
+        }
+      1 & 2 & 3 & 4 \\
+      1 & 2 &   & 4 \\
+      1 &   &   & 4 \\
+      1 & 2 & 3 & 4
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines, vlines,
+        cell{{1}{1}-{4}{4}} = {bg=cyan!30},
+      }
+      1 & 2 & 3 & 4 \\
+      1 & 2 & 3 & 4 \\
+      1 & 2 & 3 & 4 \\
+      1 & 2 & 3 & 4
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:cell}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021H
+  ]{hspan}
+  \begin{codesyntax}
+    \keyval{hspan}{default | even | minimal}
+  \end{codesyntax}
+  \key{hspan} sets how a wide spanning cell shares its width among the columns it covers. \val{default} and \val{even} compute the column widths from the span: \val{default} gives the extra width to the later columns, and \val{even} shares it out evenly. \val{minimal} computes the span from the column widths instead, so the text of the spanning cell wraps.
+
+  \begin{codestore}[st=span:hspan]
+    \begin{tblr}{
+        hlines, vlines, hspan=default,
+        cell{2}{1} = {c=2}{l},
+      }
+      Alâ yâ                    & ayyohâ s-sâqi & ader ka’san va nâvel-hâ \\
+      Ke ’eshq âsân nemud avval &               & vali oftâd moshkel-hâ
+    \end{tblr}
+
+    \begin{tblr}{
+        hlines, vlines, hspan=even,
+        cell{2}{1} = {c=2}{l},
+      }
+      Alâ yâ                    & ayyohâ s-sâqi & ader ka’san va nâvel-hâ \\
+      Ke ’eshq âsân nemud avval &               & vali oftâd moshkel-hâ
+    \end{tblr}
+
+    \begin{tblr}{
+        hlines, vlines, hspan=minimal,
+        cell{2}{1} = {c=2}{l},
+      }
+      Alâ yâ                    & ayyohâ s-sâqi & ader ka’san va nâvel-hâ \\
+      Ke ’eshq âsân nemud avval &               & vali oftâd moshkel-hâ
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:hspan}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021L
+  ]{vspan}
+  \begin{codesyntax}
+    \keyval{vspan}{default | even}
+  \end{codesyntax}
+  \key{vspan} sets how a tall spanning cell shares its height among the rows it covers. \val{default} gives the extra height to the last row of the span, and \val{even} shares it out evenly.
+
+  \begin{codestore}[st=span:vspan]
+    \begin{tblr}{
+        hlines, vlines, vspan=default,
+        column{2} = {3cm},
+        cell{1}{2} = {r=3}{l},
+      }
+      Hoopoe & Si morgh, thirty birds, set out to find the Simorgh
+      and find themselves                                          \\
+      Owl    &                                                     \\
+      Duck   &                                                     \\
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines, vlines, vspan=even,
+        column{2} = {3cm},
+        cell{1}{2} = {r=3}{l},
+      }
+      Hoopoe & Si morgh, thirty birds, set out to find the Simorgh
+      and find themselves                                          \\
+      Owl    &                                                     \\
+      Duck   &                                                     \\
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{span:vspan}
+  \end{center}
+\end{codedescribe}
+
+\section{Rules}\label{inner:rules}
+Rules can be declared in the specification or placed in the table body, and the two serve different ends. Commands in the body follow the model of \env[no index]{tabular} and remain close to the rows they separate. Keys in the specification keep the design of the rules in one place, and a form such as \vrb{{hline{1,Z}}} continues to work as rows are added.
+
+\begin{codedescribe}[
+    key,
+    new=2021F
+  ]{hlines, vlines}
+  \begin{codesyntax}
+    \key[no index]{hlines}
+    \keyval{hlines}{\{\tsmeta{style}\}}
+    \keyval{hlines}{\{\tsmeta{columns}\}\{\tsmeta{style}\}}
+    \keyval{hlines}{\{\tsmeta{index}\}\{\tsmeta{columns}\}\{\tsmeta{style}\}}
+  \end{codesyntax}
+  \key{hlines, vlines} draw every horizontal and vertical rule of the table. With no value, the rules are solid. A value in one pair of braces styles them. An extra pair before it selects which segments are drawn: columns for \key{hlines}, and rows for \key{vlines}. A third pair selects which rule to style when several are drawn in the same place, starting from \val{1}, and these must be used in order.
+
+  \begin{codestore}[st=rules:hlines]
+    \begin{tblr}{hlines, vlines}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines = {1pt}, vlines = {red, dashed}
+      }
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines = {2}{dashed},
+        vlines = {1}{solid},
+      }
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{
+        hlines = {1}{-}{solid},
+        hlines = {2}{-}{dashed},
+      }
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:hlines}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F
+  ]{hline, vline}
+  \begin{codesyntax}
+    \keysel{hline}{i}[\{\tsmeta{style}\}]
+    \keysel{vline}{j}[\{\tsmeta{style}\}]
+  \end{codesyntax}
+  \key{hline, vline} draw selected rules only, and take the same values as \key{hlines, vlines}. Rule \val{1} is above row 1 or left of column 1, and \vrb{Z} is the last rule, so \vrb{{hline{1,Z}}} draws the top and bottom rules of a table of any length.
+
+  \begin{codestore}[st=rules:hline]
+    \begin{tblr}{
+      hline{1,Z} = {1pt},
+      hline{2,4} = {dashed},
+          vline{2} = {2-3}{dotted},
+        }
+      Answer  & Meaning        \\
+      Yes     & Perhaps        \\
+      Perhaps & No             \\
+      No      & Not a diplomat
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:hline}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F,
+    update=2026A
+  ]{dash, wd, fgcolor, bgcolor}
+  \begin{codesyntax}
+    \keyval{dash}{solid | dashed | dotted}
+    \keyval{wd}{\arg{dim}}
+    \keyval{fgcolor}{\arg{colour}}
+    \keyval{bgcolor}{\arg{colour}}
+  \end{codesyntax}
+  These keys set the style of a rule: its dash pattern, its width (default: \val{0.4pt}), its colour, and the colour of the gaps in a dashed or dotted rule. \key{fg, bg} are shorter aliases for \key{fgcolor, bgcolor}. Values of \key{dash, wd, fgcolor} can be supplied without the key.
+
+  \begin{codestore}[st=rules:style]
+    \begin{tblr}{
+        hline{1} = {solid},
+        hline{2} = {dashed},
+        hline{3} = {dotted},
+        hline{4} = {2pt, red},
+        vline{2} = {2pt, dashed, fg=blue, bg=yellow},
+      }
+      Real      & Symbolic \\
+      Imaginary & Sinthome \\
+      Subject   & Other
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:style}
+  \end{center}
+  \begin{tsremark}
+    New dash patterns are defined with \tsobj[code, no index]{\NewTblrDashStyle}.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021F
+  ]{text}
+  \begin{codesyntax}
+    \keyval{text}{\arg{material}}
+  \end{codesyntax}
+  \key{text} replaces a rule with the given material, as the \vrb{!} specifier does in \key{colspec}. The material takes up width, unless it is wrapped in a command such as \tsobj[code, no index]{\clap}.
+
+  \begin{codestore}[st=rules:text]
+    \begin{tblr}{
+        hlines, vlines,
+        vline{2} = {1}{text=\clap{$\rightarrow$}},
+        vline{2} = {2}{text=\clap{//}},
+      }
+      Agent & Other      \\
+      Truth & Production
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:text}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021N
+  ]{leftpos, rightpos, l, r, lr, endpos, abovepos, belowpos}
+  \begin{codesyntax}
+    \keyval{leftpos}{\arg{num}}
+    \keyval{rightpos}{\arg{num}}
+    \keyval{abovepos}{\arg{num}}
+    \keyval{belowpos}{\arg{num}}
+  \end{codesyntax}
+  These keys trim or extend the ends of a rule, and accept decimal numbers from \val{-1} to \val{1}. For \key{leftpos, rightpos} on an \key{hline}, \val{1} touches every crossing \key{vline} (the default), \val{0} touches the first one only, and \val{-1} is trimmed by \key{colsep}. \key{abovepos, belowpos} on a \key{vline} work the same way against crossing rules and \key{rowsep}, but default to \val{0}.
+
+  \key{l, r} are short forms of \key{leftpos, rightpos}, and \key{lr} sets both at once. All 3 default to \val{-0.8} when given no value. \key{endpos} applies \key{leftpos, rightpos} only to the two ends of the table.
+
+  \begin{codestore}[st=rules:pos]
+    \begin{tblr}{
+      hline{1,4} = {1pt},
+      hline{2} = {leftpos=-1, rightpos=-1},
+      hline{3} = {leftpos=-1, rightpos=-1, endpos},
+      vline{1,4} = {abovepos=1, belowpos=1},
+        }
+      The Moving & Finger & writes \\
+      Nor Piety  & nor    & Wit    \\
+      To cancel  & half   & a Line
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:pos}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021K
+  ]{rulesep}
+  \begin{codesyntax}
+    \keyval{rulesep}{\arg{dim}}
+  \end{codesyntax}
+  \key{rulesep} sets the space between two rules drawn in the same place (default: \val{2pt}). It replaces \LaTeX's \tsobj[code, no index]{\doublerulesep}.
+
+  \begin{codestore}[st=rules:rulesep]
+    \begin{tblr}{colspec = {||ll||}, rowspec = {|QQ|}}
+      Minimal  & Difference \\
+      Parallax & Gap
+    \end{tblr}\quad
+    \begin{tblr}{
+        colspec = {||ll||}, rowspec = {|QQ|},
+        rulesep = 4pt,
+      }
+      Minimal  & Difference \\
+      Parallax & Gap
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:rulesep}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    code,
+    new=2021A,
+    update=2021D,
+    update=2021E,
+    update=2021F
+  ]{hline, cline, SetHline, SetHlines, vline, rline, SetVline, SetVlines}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\hline}[\oarg{style}]
+    \tsobj[code, no index]{\cline}[\oarg{style}]\{\tsmeta{columns}\}
+    \tsobj[code, no index]{\SetHline}[\oarg{index}]\{\tsmeta{columns}\}\{\tsmeta{style}\}
+    \tsobj[code, no index]{\SetHlines}[\oarg{index}]\{\tsmeta{columns}\}\{\tsmeta{style}\}
+  \end{codesyntax}
+  These commands draw rules from inside the table body. \tsobj[code, no index]{\hline, \cline} go between rows, and accept the style keys above in their optional argument. \tsobj[code, no index]{\SetHline} at the start of row \tsmeta{i} is the same as \keysel{hline}{i}[\{\tsmeta{index}\}\{\tsmeta{columns}\}\{\tsmeta{style}\}], and \tsobj[code, no index]{\SetHlines} is the same as \key{hlines}. \tsobj[code, no index]{\vline, \rline, \SetVline, \SetVlines} are the vertical equivalents.
+
+  \begin{codestore}[st=rules:commands]
+    \begin{tblr}{llll}
+      \hline
+      Master & University & Hysteric  & Analyst    \\
+      \hline[dashed]
+      Agent  & Other      & Truth     & Production \\
+      \cline[dotted]{2-3}
+      Real   & Symbolic   & Imaginary & Sinthome   \\
+      \SetHline{1,4}{2pt, blue}
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{rules:commands}
+  \end{center}
+\end{codedescribe}
+
+\section{Borders}\label{inner:borders}
+A rule and a border are distinct concepts. A rule is a line drawn in a table, while a border is the position it occupies, together with the space on either side. The distinction allows the spacing between rows or columns to be adjusted whether or not any rule is present, and it gives properties of that position, such as a page break, a natural place in the interface.
+
+\begin{codedescribe}[
+    key,
+    new=2022A
+  ]{hborder, vborder}
+  \begin{codesyntax}
+    \keysel{hborder}{i}[\{\tsmeta{keys}\}]
+    \keysel{vborder}{j}[\{\tsmeta{keys}\}]
+  \end{codesyntax}
+  \key{hborder, vborder} hold specifications for a border as a whole, rather than one rule in it. Border \val{1} is above row 1 or left of column 1. The same keys are available from inside the table body as \tsobj[code, no index]{\hborder} and \tsobj[code, no index]{\vborder}, at the start of the row or column that follows the border.
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2022A
+  ]{abovespace, abovespace+, belowspace, belowspace+, leftspace, leftspace+, rightspace, rightspace+}
+  \begin{codesyntax}
+    \keyval{abovespace}{\arg{dim}}
+    \keyval{leftspace}{\arg{dim}}
+  \end{codesyntax}
+  These keys set the space either side of a border. On \key{hborder}, \key{abovespace} sets the \key{belowsep} of the row before the border and \key{belowspace} sets the \key{abovesep} of the row after it. On \key{vborder}, \key{leftspace} sets the \key{rightsep} of the column before the border and \key{rightspace} sets the \key{leftsep} of the column after it. The \key[no index]{+} variants add to the current value.
+
+  \begin{codestore}[st=borders:space]
+    \begin{tblr}{hlines, vlines}
+      Beshno in ney & Chon shekâyat mikonad \\
+      Az jodâyi-hâ  & Hekâyat mikonad
+    \end{tblr}
+
+    \begin{tblr}{
+        hlines, vlines,
+        hborder{2} = {abovespace=8pt},
+        vborder{2} = {rightspace+=1em},
+      }
+      Beshno in ney & Chon shekâyat mikonad \\
+      Az jodâyi-hâ  & Hekâyat mikonad
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{borders:space}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2022A
+  ]{pagebreak}
+  \begin{codesyntax}
+    \keyval{pagebreak}{yes | no | auto}
+  \end{codesyntax}
+  \key{pagebreak} controls a page break at an \key{hborder} of a long table (default: \val{auto}), with \val{yes} assumed when no value is given. The example for \key{rowhead} in \S\ref{inner:table} forces one with \key{pagebreak}.
+\end{codedescribe}
+
+\section{Table-wide Options}\label{inner:table}
+Not every property of a table can be attributed to a column or row. The options in this section act on the table as a whole, and they reward a little caution accordingly, since one key such as \key[no index]{stretch} alters every row at once.
+
+\begin{codedescribe}[
+    key,
+    new=2021G
+  ]{stretch}
+  \begin{codesyntax}
+    \keyval{stretch}{\arg{num}}
+  \end{codesyntax}
+  \key{stretch} scales the strut added to every cell, which sets the least height a row can have (default: \val{1}). It replaces \LaTeX's \tsobj[code, no index]{\arraystretch}. With \val{0} there is no strut, so an exact row height can be set with \key{ht} to centre numbers vertically.
+
+  \begin{codestore}[st=table:stretch]
+    \begin{tblr}{hlines}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{hlines, stretch=1.5}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{hlines, stretch=0}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{table:stretch}
+  \end{center}
+  \begin{tsremark}
+    A negative value such as \vrb{stretch=-1} removes struts as well, and also removes the extra space above and below lists in cells (\issue{99}). Tables with \vrb{rowsep=0pt} may not work well with it.
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021G,
+    update=2022A
+  ]{baseline}
+  \begin{codesyntax}
+    \keyval{baseline}{t | T | m | M | b | B | \arg{int}}
+  \end{codesyntax}
+  \key{baseline} sets which part of the table lines up with the surrounding text (default: \val{m}).
+  \begin{describelist*}{values}
+    \describe{t, b}{The top or bottom edge of the table}
+    \describe{T, B}{The first or last row}
+    \describe{m}{The vertical middle of the table}
+    \describe{M}{The middle row, or the middle border if the row count is even}
+    \describe{\tsmeta{int}}{Row \tsmeta{int}}
+  \end{describelist*}
+
+  \begin{codestore}[st=table:baseline]
+    Base\begin{tblr}{hlines, baseline=t}
+      Law \\ Religion \\ Ideology
+    \end{tblr}Base\begin{tblr}{hlines, baseline=T}
+      Law \\ Religion \\ Ideology
+    \end{tblr}Base\begin{tblr}{hlines, baseline=B}
+      Law \\ Religion \\ Ideology
+    \end{tblr}Base\begin{tblr}{hlines, baseline=2}
+      Law \\ Religion \\ Ideology
+    \end{tblr}Base\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{table:baseline}
+  \end{center}
+  \begin{tsremark}
+    \key{baseline} is also accepted as a bare key in \key{row} and \key{hborder}, to align on that row or border: \vrb{row{3} = {baseline}}. It is an outer key too (\S\ref{outer:placement}).
+  \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2022D
+  ]{delimiter}
+  \begin{codesyntax}
+    \keyval{delimiter}{{\{left = \tsmeta{delimiter}, right = \tsmeta{delimiter}\}}}
+  \end{codesyntax}
+  \key{delimiter} wraps the whole table in a pair of stretching delimiters, as \tsobj[code, no index]{\left} and \tsobj[code, no index]{\right} do. A full stop leaves that side empty.
+
+  \begin{codestore}[st=table:delimiter]
+    \begin{tblr}{delimiter = {left = (, right = )}}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\quad
+    \begin{tblr}{delimiter = {left = \lbrace, right = .}}
+      Real & Lack  \\
+      Void & Drive
+    \end{tblr}\end{codestore}
+  \begin{center}
+    \tsdemo*[tblr]{table:delimiter}
+  \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2025A
+  ]{name}
+  \begin{codesyntax}
+    \keyval{name}{\arg{text}}
+  \end{codesyntax}
+  \key{name} gives the table a name, and has no visible effect of its own. The \pkg{tikz} library uses it to prefix its node names with \vrb{tblr}\tsmeta{name}\vrb{-}, so that drawings can address the nodes of a particular table (\S\ref{lib:tikz}).
+\end{codedescribe}
+
+\begin{codedescribe}[
+    key,
+    new=2021L
+  ]{rowhead, rowfoot}
+  \begin{codesyntax}
+    \keyval{rowhead}{\arg{int}}
+    \keyval{rowfoot}{\arg{int}}
+  \end{codesyntax}
+  \key{rowhead} and \key{rowfoot} set how many of the first and last rows of a long table repeat on every page (default: \val{0}). They have no effect on a table that fits on one page. The table below breaks at the page boundary forced by \key{pagebreak}, and its first and last rows appear on both pages.
+\end{codedescribe}
+
+\begin{codestore}[st=table:rowhead]
+  \begin{longtblr}[
+    caption = {Rows repeated across a page break},
+    ]{
+    hlines, vlines,
+    colspec = {X[l]X[l]}, width = 10cm,
+    rowhead = 1, rowfoot = 1,
+    row{1} = {font=\bfseries},
+    row{Z} = {font=\itshape},
+    hborder{3} = {pagebreak},
+    }
+    All great facts & Appear twice      \\
+    The first time  & As tragedy        \\
+    The second time & As farce          \\
+    Zeno            & My last cigarette
+  \end{longtblr}\end{codestore}
+\tscode*[tblr]{table:rowhead}
+\tsexec{table:rowhead}

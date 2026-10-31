@@ -1,8 +1,12 @@
 \documentclass[12pt, oneside]{TabularrayDoc}
 
 
-\usepackage{tabularray}
-\UseTblrLibrary{functional}
+\usepackage{tabularray-dev}
+\UseTblrLibrary{
+	amsmath, booktabs, counter, diagbox, functional, html,
+	nameref, siunitx, tikz, varwidth, zref
+}
+\usetikzlibrary{patterns}
 \IgnoreSpacesOn
 \prgNewFunction \YNColour {} {
 	\intStepOneInline {1} {\arabic{rowcount}} {
@@ -16,6 +20,17 @@
 }
 \IgnoreSpacesOff
 
+\ExplSyntaxOn
+\NewDocumentCommand \DefaultMeasure { m }
+  { \tl_set:Nn \l__tblr_inner_spec_measure_tl {#1} }
+\DefaultMeasure { hbox }
+\NewDocumentCommand \WithoutCounterLibrary { }
+  {
+    \cs_set_protected:Npn \__tblr_save_counters:n ##1 { }
+    \cs_set_protected:Npn \__tblr_restore_counters:n ##1 { }
+  }
+\ExplSyntaxOff
+
 % https://github.com/TeXackers/tabularray/issues/198
 \renewcommand\TblrOverlap[1]{#1}
 
@@ -25,25 +40,30 @@
 
 \begin{document}
 \frontmatter
-\begin{titlingpage}
-\tstitle{
-  author={%
-    Leothelion\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}, primary author of the documentation},
-    Author\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}}
-  },
-  date={2026A (\tsdate)},
-  title={{\ttfamily tabularray}: A Practitioner's Guide}
-}
-\begin{tsabstract}
-  This document serves as a practitioner's guide to the \pkg{tabularray} package, which provides a powerful and flexible interface for typesetting tables in \LaTeX. The guide is structured into two main sections: conceptualisation and practice. The conceptualisation section delves into the underlying principles and design philosophy of the package, while the practice section offers hands-on examples and explanations of key features, with a focus on the versatile Q-type for table cell specification.
-\end{tsabstract}
-\end{titlingpage}
+\begin{titlepage}
+	\tstitle{
+		author={%
+				Leothelion\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}, primary author of the documentation},
+				% add yours
+				Author\footnote{\tsfmt{\url{https://github.com/ponte-vecchio}}}
+			},
+		date={2026A (\tsdate)},
+		title={{\ttfamily tabularray}: A Practitioner's Guide}
+	}
+	\begin{tsabstract}
+		This document serves as a practitioner's guide to the \pkg{tabularray} package, which provides a powerful and flexible interface for typesetting tables in \LaTeX. The package was originally written by Jianrui Lyu, and its ownership and management were transferred to the TeXackers organisation in early 2026. Release 2026A is the first under these new arrangements, and the overhaul of this documentation is one example of the work that has followed.
+
+		The guide begins with a brief list of keys and commands for the impatient. It then examines the inner and outer specifications and the libraries in turn, showing by example what each option changes in the output. Because the interface commonly offers several routes to the same result, these examples illustrate each option and do not prescribe a correct method of typesetting.
+	\end{tsabstract}
+\end{titlepage}
 
 \tableofcontents\cleardoublepage
 
 \mainmatter
 \input{01-impatient.tex}
 \input{02-inner.tex}
+\input{03-outer.tex}
+\input{04-libraries.tex}
 
 \backmatter
 \cleardoublepage

@@ -1,16 +1,18 @@
 \chapter{Tabularray for the Impatient}
-\section{Conceptualisation}
-Specification of tabular typesetting in \pkg{tabularray} is conceptualised as two components: \vrb{inner, outer}.
-The \vrb{inner} specification refers to any and all specification that is directly related to the table itself, including column and row specifications. These are supplied within the \arg{inner spec} argument in a key--value format.
-Whereas, the \vrb{outer} specification refers to all elements of typesetting that are not directly related to the table itself, but rather to the environment in which the table is placed. These are supplied within the \oarg{outer spec} as an optional argument, also in a key--value format.
+This chapter is written for readers who need a working table before they need a full account of the package. It favours speed over completeness, introducing each construct only as far as a first table requires, and leaves the worked examples and their qualifications to the chapters that follow.
 
-Based on this conceptualisation, \pkg{tabularray} provides the following environments for tabular typesetting: \tsobj[env]{tblr,tallblr,longtblr}. 
+\section{Conceptualisation}\label{impatient:concept}
+Specification of tabular typesetting in \pkg{tabularray} is conceptualised as two components: \vrb{inner, outer}. The \vrb{inner} specification refers to everything directly related to the table itself, including its columns and rows, and is supplied within the \arg{inner spec} argument in a key--value format. The \vrb{outer} specification refers to the elements of typesetting that belong to the environment in which the table is placed, and is supplied within the \oarg{outer spec} as an optional argument, also in a key--value format.
 
-\begin{codedescribe}[env]{tblr,tallblr,longtblr}
+The value of this division lies in the independence it affords, as the structure of a table can be revised without disturbing its caption or notes. It is not a perfectly clean one, however: \key[no index]{baseline} appears on both sides, and telling where a given option belongs takes some familiarity.
+
+Based on this conceptualisation, \pkg{tabularray} provides the following environments for tabular typesetting: \tsobj[env]{tblr,talltblr,longtblr}.
+
+\begin{codedescribe}[env]{tblr,talltblr,longtblr}
   \begin{codesyntax}
     \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{\arg{inner spec}\}
-    \quad\ldots
-    \tsmacro{\end{tblr}}{}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
     % \bigskip
     % \tsobj[code]{\begin{talltblr}}\oarg{outer spec}\arg{inner spec}
     % \quad\ldots
@@ -19,86 +21,119 @@ Based on this conceptualisation, \pkg{tabularray} provides the following environ
     % \tsobj[code]{\begin{longtblr}}\oarg{outer spec}\arg{inner spec}
     % \quad\ldots
     % \tsmacro{\end{longtblr}}{}
-    \end{codesyntax}
+  \end{codesyntax}
 \end{codedescribe}
 
-The feature comparison is typeset in 
+The feature comparison is typeset in Table~\ref{comparison-of-tblr}.
 
 \begin{table}[!hbtp]
-\centering
-\begin{talltblr}[
-  caption = {Feature matrix of the \pkg{tabularray} environments},
-  label = {comparison-of-tblr},
-  entry = {Comparison of tblr, tallblr and longtblr environments},
-  note{a} = {\footnotesize Whether the environment can be placed inside a float, such as \env{table}.}
-]{
-  columns = {c},
-  row{1} = {preto={\bfseries}},
-  process = \YNColour
-}
-  \hline
-  & Caption/label & Float\TblrNote{a} & Pagebreak\\
-  \hline
-  \env{tblr} & No & No & No\\
-  \env{tallblr} & Yes & Yes & No\\
-  \env{longtblr} & Yes & No & Yes\\
-  \hline
-\end{talltblr}
+  \centering
+  \begin{talltblr}[
+      caption = {Feature matrix of the \pkg{tabularray} environments},
+      label = {comparison-of-tblr},
+      entry = {Comparison of tblr, talltblr and longtblr environments},
+      note{a} = {\footnotesize Whether the environment can be placed inside a float, such as a \env*{table}.}
+    ]{
+      columns = {c},
+      row{1} = {preto={\bfseries}},
+      process = \YNColour
+    }
+    \hline
+                   & Caption/label & Float\TblrNote{a} & Pagebreak \\
+    \hline
+    \env{tblr}     & No            & Yes               & No        \\
+    \env{talltblr} & Yes           & Yes               & No        \\
+    \env{longtblr} & Yes           & No                & Yes       \\
+    \hline
+  \end{talltblr}
 \end{table}
 
+\section{A First Table}\label{impatient:first}
+A first table calls for little beyond the package and the 2 specifications introduced above. With \tsverb*{\usepackage{tabularray}} in the preamble, the example below is complete: its caption and label belong to the \oarg{outer spec}, its columns and rules to the \arg{inner spec}, and the table body contains only text.
+
+\begin{codestore}[st = first-table]
+  \begin{talltblr}[
+    caption = {Poets and their works},
+    label = {first-table},
+    ]{
+    colspec = {lll},
+    hline{1,2,Z} = {solid},
+        row{1} = {font=\bfseries},
+      }
+    Poet     & City   & Work      \\
+    Ferdowsi & Tus    & Shahnameh \\
+    Rumi     & Konya  & Masnavi   \\
+    Hafez    & Shiraz & Divan
+  \end{talltblr}
+\end{codestore}
+
+\begin{center}
+  \tsdemo*[tblr]{first-table}
+\end{center}
+
+\key{colspec} gives each column a type, \key{hline} draws the rules selected by index, in which \vrb{Z} is the last, and \key{row} styles the head row. The rest of this chapter lists what else each specification accepts.
+
+A cell with a line break needs a pair of braces around its text, as in \tsverb*{{Surplus \\ Enjoyment}}, because \tsverb{\\} otherwise ends the row. A key value that contains a comma needs braces as well, as in \tsverb*{caption = {France, on the left}}.
+
 \section{Specifications of the Inner Components}\label{impatient:inner}
+The inner specification accounts for most of the interface of \pkg{tabularray}, so a first table depends on it far more than on its outer counterpart. This section is confined to the column and row keys that such a table is likely to need, which \S\ref{inner:colrow} then examines at length.
+
 \subsection{Column and Row Specifications}
 To specify columns and rows in \pkg{tabularray}, \key{columns,rows} keys may be used. As the names suggest, \key{columns,rows} represent global specifications that apply to all columns/rows of a given \env{tblr}; whereas \key{column, row} represent specifications that apply to a specific column/row, which may be useful in customisation.
 
-\begin{codedescribe}[keys]{column, columns, row, rows}
+\begin{codedescribe}[keys, update = 2026A]{column, columns, row, rows}
   \begin{codesyntax}
-    \tsobj[code, no index]{\begin{tblr}}\tsobj[oarg]{outer spec}\{
-    \quad\keyval{columns}{kwargs},
-    \quad\keyval{rows}{kwargs},
-    \quad\ldots
-    \}
-    \quad\ldots
-    \tsmacro{\end{tblr}}{}
-    \end{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+        \quad\keyval{columns}{kwargs},
+        \quad\keyval{rows}{kwargs},
+        \quad\ldots
+        \}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
+  \end{codesyntax}
   \begin{describelist*}{keys}
-    \deschead{Positioning \& Dimensions}\label{colrow:positioning}
+    \deschead{Positioning \& Dimensions\footnotemark[1]}\label{colrow:positioning}
     \describe{halign}
-      {Horizontal alignment: \val{l, c, r, j} (Default: \val{j})}
+    {Horizontal alignment: \val{l, c, r, j} (Default: \val{j})}
     \describe{valign}
-      {Vertical alignment: \val{t, m, b, f} (Default: \val{t})}
+    {Vertical alignment: \val{t, m, b, h, f} (Default: \val{t})}
     \describe{ht}
-      {Height of the row. \vrb{row} only}
+    {Height of the row. \vrb{row} only}
     \describe{wd}
-      {Width of the column. \vrb{column} only}
+    {Width of the column. \vrb{column} only}
     \deschead{Colour and Font}\label{colrow:colour}
-    \describe{bg}
-      {Colour of the background of the column/row}
-    \describe{fg}
-      {Colour of the text in the column/row}
+    \describe{bgcolor}
+    {Colour of the background of the column/row\footnotemark[1]}
+    \describe{fgcolor}
+    {Colour of the text in the column/row}
     \describe{font}
-      {Font of the text in the column/row}
+    {Font of the text in the column/row}
     \describe{mode}
-      {Mode in which the text will be typeset: \val{math, imath, dmath, text} (Default: \val{text})}
+    {Mode in which the text will be typeset: \val{math, imath, dmath, text} (Default: \val{text}, or \val{math} when the table itself is in math mode)}
     \describe{\$}
-      {Alias to \keyval{mode}{math, imath}, i.e. inline math mode}
+    {Alias to \keyval{mode}{math}}
     \describe{\$\$}
-      {Alias to \keyval{mode}{dmath}, i.e. display math mode}
+    {Alias to \keyval{mode}{dmath}, i.e. display math mode}
     \deschead{Utilities}
     \describe{cmd}{Control sequence to execute for every cell's text}
     \describe{preto}{Material to insert \emph{before} the text of every cell.}
     \describe{appto}{Material to insert \emph{after} the text of every cell.}
     \begin{tsremark}
       If you supply values for \key{preto, appto} in both \key{columns} and \key{rows}, the order in which they are typeset will be determined by the order in which you specify the keys.
-      For example, \vrb{columns={preto=+, appto=!}, rows={preto=X, appto=Z}} will yield ``\tsobj[code, no index]{X+text!Z}'', whereas \vrb{rows={preto=X, appto=Z}, columns={preto=+, appto=!}} will yield ``\tsobj[code, no index]{+XtextZ!}''.
+      For example, \vrb{{columns={preto=+, appto=!}, rows={preto=X, appto=Z}}} will yield ``\tsobj[code, no index]{X+text!Z}'', whereas \vrb{{rows={preto=X, appto=Z}, columns={preto=+, appto=!}}} will yield ``\tsobj[code, no index]{+XtextZ!}''.
     \end{tsremark}
     \begin{tsremark}
       \key{preto} may also be used for font purposes, but \key{font} always comes before \key{preto}---which may have its use.\footnotemark[2]
     \end{tsremark}
+    \begin{tsremark}
+      \key{bg, fg} are shorter aliases for \key{bgcolor, fgcolor} respectively.\footnotemark[3]
+    \end{tsremark}
   \end{describelist*}
 \end{codedescribe}
-\footnotetext[1]{The values of these keys may be supplied without need to specify the key itself. For example, \vrb{l, t, 5cm, red} will be understood as \vrb{halign=l, valign=t, wd=5cm, bg=red}.}
+\footnotetext[1]{The values of these keys may be supplied without need to specify the key itself. For example, \vrb{{l, t, 5cm, red}} will be understood as \vrb{{halign=l, valign=t, wd=5cm, bg=red}}.}
 \footnotetext[2]{The key difference is that \key{font} executes \tsobj[code]{\selectfont} after.}
-\clearpage
+\footnotetext[3]{\key{bgcolor, fgcolor} replace the older \key{bg, fg} as of \pkg{tabularray} 2026A; the short forms remain valid.}
+
 \begin{codedescribe}{}
   \begin{describelist*}{keys}
     \deschead{Spacing -- Rows}\label{colrow:rowspacing}
@@ -117,66 +152,411 @@ To specify columns and rows in \pkg{tabularray}, \key{columns,rows} keys may be 
     \describe{rightsep+}{Horizontal space after the column, added to the value of \tsobj[keys]{rightsep} (Default: none). \vrb{column} only}
   \end{describelist*}
   \begin{tsremark}
-      Setting values via \key{rowsep, rowsep+} is equivalent to that of using \key{abovesep, belowsep} (or that of \key{abovesep+, belowsep+}) with the same value. That is, \vrb{rowsep=3pt} will be the same as \vrb{abovesep=3pt, belowsep=3pt}. The same applies to the column spacing keys.
-    \end{tsremark}
+    Setting values via \key{rowsep, rowsep+} is equivalent to that of using \key{abovesep, belowsep} (or that of \key{abovesep+, belowsep+}) with the same value. That is, \vrb{rowsep=3pt} will be the same as \vrb{{abovesep=3pt, belowsep=3pt}}. The same applies to the column spacing keys.
+  \end{tsremark}
+  \begin{tsremark}
+    \key{rowsep, abovesep, belowsep} and \key{colsep, leftsep, rightsep} can also be written directly in the \arg{inner spec} to apply to every row or column. The \key[no index]{+} variants cannot.
+  \end{tsremark}
 \end{codedescribe}
 
-\section{[Practice] The Q-type}
+\subsection{Selecting Columns and Rows}\label{impatient:selectors}
+\begin{codedescribe}{}
+  Keys that address part of a table, such as \key{column}, \key{row}, \key{cell}, \key{hline} and \key{vline}, select what they apply to with any of the forms below. These may be combined in a comma-separated list, e.g.\ \vrb{{row{1,3-4,Z}}}, and \S\ref{inner:selectors} shows them in use.
+  \begin{describelist*}{values}
+    \describe{2}{A single index}
+    \describe{2-4}{A range of indexes}
+    \describe{-}{Every row or column}
+    \describe{odd}{Every odd index. \vrb{odd[5]} starts from index 5}
+    \describe{even}{Every even index. \vrb{even[4]} starts from index 4}
+    \describe{every}{\vrb{every}[\tsmeta{step}]\{\tsmeta{start}\}\{\tsmeta{end}\} selects the indexes from \tsmeta{start} to \tsmeta{end}}
+    \describe{U...Z}{The last 6 indexes: \vrb{Z} is the last, \vrb{Y} the second last, and so on}
+  \end{describelist*}
+\end{codedescribe}
+
+\subsection{Table Commands}\label{impatient:commands}
+\begin{codedescribe}[code]{SetRow, SetRows, SetColumn, SetColumns}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetRow}\{\tsmeta{keys}\} \tsmeta{cell text}
+    \tsobj[code, no index]{\SetColumn}\{\tsmeta{keys}\} \tsmeta{cell text}
+  \end{codesyntax}
+  These commands set the keys above from inside the table body, at the start of a cell. \tsobj[code, no index]{\SetRow} and \tsobj[code, no index]{\SetColumn} apply to the row and column of that cell, whereas \tsobj[code, no index]{\SetRows, \SetColumns} apply to every row and column, as \key{rows, columns} do.
+\end{codedescribe}
+
+\section{[Practice] The Q-type}\label{impatient:qtype}
+Traditional column types spread their features across many letters, each with its own conventions. The \tsverb{Q} type gathers those features into one general form, in which a single letter and a list of options can take the place of the others. We introduce it here because most of the other types in \pkg{tabularray} are defined as shorthand for it, as \S\ref{inner:types} shows.
+
+\begin{codedescribe}[keys]{colspec, rowspec, width}
+\begin{codesyntax}
+  \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+      \quad\keyval{colspec}{\{\tsmeta{column types}\}},
+      \quad\keyval{rowspec}{\{\tsmeta{row types}\}},
+      \quad\keyval{width}{\arg{dim}},
+      \quad\ldots
+      \}
+      \quad\ldots
+      \tsmacro{\end{tblr}}{}
+\end{codesyntax}
+\key{colspec} gives one type letter for each column, as in the preamble of \LaTeX's \env*[no index]{tabular}, and \key{rowspec} does the same for each row. \key{width} sets the width of a table with stretchable columns (Default: \tsobj[code, no index]{\linewidth}). The name \key{colspec} can be left out if it is the only key in the \arg{inner spec}, so \tsverb*{\begin{tblr}{|l|c|r|}} is a complete opening.
+\end{codedescribe}
+
 % 5x4 positioning table
 \begin{codestore}[st = Q-positioning]
-\begin{tblr}{
-    colspec = {|  X[j] | X[l] | X[c] | X[r] |},
-    rowspec = {| h{5em} | t{5em} | m{5em} | b{5em} | f{5em} |}
-}
-    {Justified head} & {Left\\ head} & {Centre\\ head} & {Right\\ head} \\
-    {Justified top} & {Left\\ top} & {Centre\\ top} & {Right\\ top} \\
-    {Justified middle} & {Left\\ middle} & {Centre\\ middle} & {Right\\ middle} \\
-    {Justified bottom} & {Left\\ bottom} & {Centre\\ bottom} & {Right\\ bottom} \\
-    {Justified\\ foot} & {Left\\ foot} & {Centre\\ foot} & {Right\\ foot}
-\end{tblr}
+  \begin{tblr}{
+      colspec = {|  X[j] | X[l] | X[c] | X[r] |},
+      rowspec = {| h{5em} | t{5em} | m{5em} | b{5em} | f{5em} |}
+    }
+    {Justified head}   & {Left \\ head} & {Centre\\ head} & {Right\\ head} \\
+    {Justified top}    & {Left \\ top} & {Centre\\ top} & {Right\\ top} \\
+    {Justified middle} & {Left \\ middle} & {Centre\\ middle} & {Right\\ middle} \\
+    {Justified bottom} & {Left \\ bottom} & {Centre\\ bottom} & {Right\\ bottom} \\
+    {Justified                 \\ foot} & {Left\\ foot} & {Centre\\ foot} & {Right\\ foot}
+  \end{tblr}
 \end{codestore}
 
 
 % explain
-\begin{codedescribe}[code, update = 2026A]{Q[ ... ]}
-Unlike column specifications known in a typical \LaTeX\ fashion, the \tsverb{Q}-type in \pkg{tabularray} is a generic, flexible placeholder type that can act as any column/row type, as well as accommodating an array of features including dimensions, spanning, colouring and so on.
-% In fact, the \tsverb{Q} type can become a more generalised version of the \tsobj[oarg]{p, m, b} types in \env*{tabular,tabularx}.
-The \tsverb{Q} type takes the following \emph{optional} arguments:
-\begin{describelist*}{oarg}
-    \describe{column}{\arg{coltype}, Column type of the cell (default: \tsobj[keys]{j}, see below)}
-    \describe{row}{\arg{rowtype}, Row type of the cell (default: \tsobj[keys]{t}, see below)}
-    \describe{colour}{=\arg{colour name}, Background colour of the cell (default: none)}
+\begin{codedescribe}[code, new = 2021B]{Q[ ... ]}
+  Unlike column specifications known in a typical \LaTeX\ fashion, the \tsverb{Q}-type in \pkg{tabularray} is a generic, flexible placeholder type that can act as any column/row type, as well as accommodating an array of features including dimensions, colouring and so on.
+  The \tsverb{Q} type takes the following \emph{optional} arguments:
+  \begin{describelist*}{oarg}
+    \describe{halign}{Horizontal alignment letter (default: \val{j}, see below)}
+    \describe{valign}{Vertical alignment letter (default: \val{t}, see below)}
+  \end{describelist*}
 
-    Other keyword arguments include:
-    \describe{co}{=\arg{int}, Number of columns to span (default: 1)}
-    \describe{wd}{=\arg{dim}, Width of the cell, cannot be used with \tsobj[oarg]{ht}. (default: natural width)}
-    \describe{ht}{=\arg{dim}, Height of the cell, cannot be used with \tsobj[oarg]{wd}. (default: natural height)}
-    \describe{si}{=\arg{kwargs}, pass arguments to }
-\end{describelist*}
+  Other keyword arguments include:
+  \begin{describelist*}{keys}
+    \describe{co}{=\arg{num}, Stretch coefficient, used to weight the share of the available width given to the column relative to other stretchable columns (default: \val{0}, not stretchable; \val{1} for \tsverb{X}). Only affects columns}
+    \describe{wd}{=\arg{dim}, Width of the column, \tsverb{colspec} only (default: natural width)}
+    \describe{ht}{=\arg{dim}, Height of the row, \tsverb{rowspec} only (default: natural height)}
+    \describe{si}{=\arg{kwargs}, pass arguments to \pkg{siunitx}'s number formatting; used internally by the \tsverb{S}/\tsverb{s} column types. Needs \tsobj[code, no index]{\UseTblrLibrary}\tsverb{{siunitx}}, \tsverb{colspec} only}
+    \describe{bgcolor}{=\arg{colour name}, Background colour of the cell (default: none). \key{bg} is a shorter alias. A bare colour name, e.g.\ \vrb{Q[red]}, is understood as \vrb{Q[bgcolor=red]}}
+  \end{describelist*}
 
 
-The \arg{column}, for example, can be any combination of:
+  The \arg{halign} letter can be any of the following. Each also works as a standalone type, as does the stretchable \tsverb{X}:
 
-\begin{describelist}{keys}
-    \describe{j}{Justified column (default), alias for \tsobj[keys]{Q[j]}}
-    \describe{l}{Left-aligned column, alias for \tsobj[keys]{Q[l]}}
-    \describe{c}{Centre-aligned column, alias for \tsobj[keys]{Q[c]}}
-    \describe{r}{Right-aligned column, alias for \tsobj[keys]{Q[r]}}
-    \describe{X[\arg{coltype}]}{Stretchable column type with the specified \arg{coltype} above i.e. \tsmeta{l, c, r, j}, alias for \tsverb[keys]{Q[co = 1, 1]}}
-\end{describelist}
+  \begin{describelist}{keys, no index}
+    \describe{j}{Justified column (default), alias for \tsobj[keys, no index]{Q[j]}}
+    \describe{l}{Left-aligned column, alias for \tsobj[keys, no index]{Q[l]}}
+    \describe{c}{Centre-aligned column, alias for \tsobj[keys, no index]{Q[c]}}
+    \describe{r}{Right-aligned column, alias for \tsobj[keys, no index]{Q[r]}}
+    \describe{X[\arg{halign}]}{Stretchable column type with the specified \arg{halign} above, alias for \tsverb[keys]{Q[co=1, ...]}}
+  \end{describelist}
 
-Likewise, the \arg{row} can entail the following:
-\begin{describelist}{keys}
-    \describe{h\{\arg{dim}\}}{``head''-aligned}
-    \describe{t\{\arg{dim}\}}{Top-aligned (default)}
+  Likewise, the \arg{valign} letter can be any of the following. With a \arg{dim} in braces, each also works as a standalone type: \vrb{t{5em}} is \vrb{{Q[t,ht=5em]}} in \key{rowspec} and \vrb{{Q[t,wd=5em]}} in \key{colspec}.
+  \begin{describelist}{keys, no index}
+    \describe{h\{\arg{dim}\}}{``Head''-aligned: the text sits at the top edge of the row}
+    \describe{t\{\arg{dim}\}}{Top-aligned on the first baseline (default)}
     \describe{m\{\arg{dim}\}}{Middle-aligned}
-    \describe{b\{\arg{dim}\}}{Bottom-aligned}
-    \describe{f\{\arg{dim}\}}{``foot''-aligned}
-\end{describelist}
+    \describe{b\{\arg{dim}\}}{Bottom-aligned on the last baseline}
+    \describe{f\{\arg{dim}\}}{``Foot''-aligned: the text sits at the bottom edge of the row}
+  \end{describelist}
+
+  Between the types, \key{colspec} and \key{rowspec} accept the following specifiers:
+  \begin{describelist}{keys, no index}
+    \describe{|}{Draws a rule. \vrb{|[dashed]} passes rule keys to it}
+    \describe{>\{...\}}{Inserts material before the text of every cell in the next column or row, like \key{preto}}
+    \describe{<\{...\}}{Inserts material after the text of every cell in the previous column or row, like \key{appto}}
+    \describe{!\{...\}}{Replaces the rule with the given text}
+    \describe{@\{...\}}{Does the same as \vrb{!}, and also removes the space on either side of it}
+    \describe{*\{3\}\{...\}}{Repeats the given types 3 times}
+  \end{describelist}
 \end{codedescribe}
 
-The following table visualises the combinations of the above keys for the \arg{column} and \arg{row} arguments of the \tsverb{Q} type:
+The following table visualises the combinations of the above keys for the \arg{halign} and \arg{valign} arguments of the \tsverb{Q} type:
 \begin{center}
-\tsdemo*[tblr]{Q-positioning}
+  \tsdemo*[tblr]{Q-positioning}
 \end{center}
-\clearpage
+
+\section{Spanning Cells}\label{impatient:spanning}
+A cell may be made to span multiple rows and/or columns, and this can be expressed in one of two equivalent ways. As a table command, \tsobj[code, no index]{\SetCell} is placed immediately before the text of the cell it applies to, which keeps the span beside the content it affects. As a \key{cell} key supplied directly in the \arg{inner spec}, it addresses the cell by its row and column number, which leaves the table body free of formatting but has to be revised if rows or columns move.
+
+\begin{codedescribe}[code]{SetCell, SetCells}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetCell}[\oarg{span spec}]\{\arg{style spec}\} \tsmeta{cell text}
+    \bigskip
+    \tsobj[code, no index]{\SetCells}[\oarg{span spec}]\{\arg{style spec}\} \tsmeta{cell text}
+  \end{codesyntax}
+  \tsobj[code, no index]{\SetCell} applies \arg{style spec}, and optionally \arg{span spec}, to the single cell that follows it. \tsobj[code, no index]{\SetCells} instead applies to \emph{every} cell of the \env{tblr}, and may be placed at the start of any cell.
+  \begin{describelist*}{keys}
+    \describe{r}{=\arg{int}, Number of rows to span (default: 1)}
+    \describe{c}{=\arg{int}, Number of columns to span (default: 1)}
+  \end{describelist*}
+  \begin{tsremark}
+    \arg{style spec} accepts the same keys as \key{column, row} (\S\ref{colrow:positioning}): \key{halign, valign} (and their aliases \val{l,c,r,j,t,m,b,h,f}), \key{wd}, \key{bgcolor}, \key{fgcolor} (and the aliases \key{bg, fg}), \key{font}, \key{mode} (and \key{\$,\$\$}), \key{cmd}, \key{preto}, \key{appto}.\footnotemark[4]
+  \end{tsremark}
+  \begin{tsremark}
+    A cell that is covered by another cell's row/column span must be left empty, i.e. the corresponding \tsobj[code, no index]{&} field is supplied with no content.
+  \end{tsremark}
+  \begin{tsremark}
+    \tsobj[code, no index]{\multicolumn} and \tsobj[code, no index]{\multirow} are not supported and raise an error.
+  \end{tsremark}
+\end{codedescribe}
+\footnotetext[4]{Unlike \key{column, row}, the per-cell \arg{style spec} does not accept \key{ht}: row height can only be set via \key{rows, row}.}
+
+\begin{codedescribe}[keys]{cell, cells}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+        \quad\tsobj[keys, no index]{cell}\{\tsmeta{row}\}\{\tsmeta{col}\} \tsobj[code, no index]{=} \arg{span spec}\arg{style spec},
+        \quad\keyval{cells}{\arg{span spec}\arg{style spec}},
+        \quad\ldots
+        \}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
+  \end{codesyntax}
+  \tsobj[keys, no index]{cell}\{\tsmeta{row}\}\{\tsmeta{col}\} is equivalent to placing \tsobj[code, no index]{\SetCell} at the given \tsmeta{row}/\tsmeta{col}; \key{cells} is equivalent to \tsobj[code, no index]{\SetCells}.
+  \begin{tsremark}
+    \tsmeta{row} and \tsmeta{col} each accept a single index (\vrb{2}), a comma-separated list (\vrb{{1,3}}), a range (\vrb{2-4}), the keywords \vrb{odd, even}, or a wildcard \vrb{-} meaning every row/column.
+  \end{tsremark}
+  \begin{tsremark}
+    A list of two-dimensional indexes may be supplied instead, as \vrb{cell{{i}{j},{i'}{j'},...}}; a range of such tuples, e.g.\ \vrb{cell{{i}{j}-{i'}{j'}}}, selects diagonally.
+  \end{tsremark}
+\end{codedescribe}
+
+% cell-spanning demo
+\begin{codestore}[st = cell-spanning]
+  \begin{tblr}{
+    colspec = {Q[c]Q[c]Q[c]Q[c]},
+    hlines, vlines,
+    cell{1}{1} = {r=2}{c,bg=blue!20},
+    cell{1}{2} = {c=3}{c,bg=yellow!20},
+    cell{2}{2} = {c=3}{c,bg=green!20},
+    }
+    Bani Âdam & A’zâ-ye yekdigarand               &        &        \\
+              & Ke dar âfarinesh ze yek gowharand &        &        \\
+    Sam       & Zal                               & Rostam & Sohrab
+  \end{tblr}
+\end{codestore}
+
+\begin{center}
+  \tsdemo*[tblr]{cell-spanning}
+\end{center}
+
+\begin{codedescribe}[keys]{hspan, vspan}
+  \begin{codesyntax}
+    \keyval{hspan}{default | even | minimal}
+    \keyval{vspan}{default | even}
+  \end{codesyntax}
+  \key{hspan} sets how a wide spanning cell shares its width among the columns it covers, and \key{vspan} how a tall one shares its height among the rows. \val{even} shares the extra space out evenly, and \val{minimal} wraps the text of the spanning cell to the widths of its columns.
+\end{codedescribe}
+
+\section{Rules and Borders}\label{impatient:rules}
+Rules can be declared as keys in the \arg{inner spec} or placed in the table body as commands, and one table can use both. Keys keep the design of the rules in one place, while commands remain close to the rows they separate. A border is a related but distinct concept: it is the position a rule occupies, together with the space on either side, so its keys apply whether or not any rule is drawn. \S\ref{inner:rules} and \S\ref{inner:borders} examine these options at length.
+
+\begin{codedescribe}[keys]{hlines, vlines, hline, vline}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+        \quad\keyval{hlines}{\{\tsmeta{style}\}},
+        \quad\keyval{vlines}{\{\tsmeta{style}\}},
+        \quad\keysel{hline}{i}[\{\tsmeta{style}\}],
+        \quad\keysel{vline}{j}[\{\tsmeta{style}\}],
+        \quad\ldots
+        \}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
+  \end{codesyntax}
+  \key{hlines, vlines} draw every horizontal and vertical rule of the table, and are solid if given no value. \key{hline, vline} draw selected rules only: rule \val{1} is above row 1 or left of column 1, and \vrb{Z} is the last rule. All 4 accept the keys below.
+  \begin{describelist*}{keys}
+    \deschead{Style}
+    \describe{dash}{Dash pattern: \val{solid, dashed, dotted} (Default: \val{solid})}
+    \describe{wd}{Width of the rule (Default: \val{0.4pt})}
+    \describe{fgcolor}{Colour of the rule}
+    \describe{bgcolor}{Colour of the gaps in a dashed or dotted rule}
+    \describe{text}{Material that replaces the rule}
+    \deschead{Ends of a Rule}
+    \describe{leftpos}{Left end of a horizontal rule, from \val{-1} to \val{1} (Default: \val{1}, which touches every crossing rule)}
+    \describe{rightpos}{Right end of a horizontal rule, in the same way}
+    \describe{abovepos}{Top end of a vertical rule, from \val{-1} to \val{1} (Default: \val{0})}
+    \describe{belowpos}{Bottom end of a vertical rule, in the same way}
+    \describe{lr}{Sets \key{leftpos, rightpos} at once (\val{-0.8} if given no value). \key{l, r} set one end each}
+    \describe{endpos}{Applies \key{leftpos, rightpos} only to the 2 ends of the table}
+    \begin{tsremark}
+      \key{fg, bg} are shorter aliases for \key{fgcolor, bgcolor}. Values of \key{dash, wd, fgcolor} can be supplied without the key, e.g.\ \vrb{{hlines = {1pt, red, dashed}}}.
+    \end{tsremark}
+  \end{describelist*}
+\end{codedescribe}
+
+\begin{codedescribe}[code]{hline, cline, SetHline, SetHlines, vline, rline, SetVline, SetVlines}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\hline}[\oarg{style}]
+    \tsobj[code, no index]{\cline}[\oarg{style}]\{\tsmeta{columns}\}
+    \tsobj[code, no index]{\SetHline}[\oarg{index}]\{\tsmeta{columns}\}\{\tsmeta{style}\}
+    \tsobj[code, no index]{\SetHlines}[\oarg{index}]\{\tsmeta{columns}\}\{\tsmeta{style}\}
+  \end{codesyntax}
+  \tsobj[code, no index]{\hline, \cline} go between rows, and accept the style keys above in their optional argument. \tsobj[code, no index]{\SetHline} at the start of a row is the same as \key{hline} for that row, and \tsobj[code, no index]{\SetHlines} is the same as \key{hlines}. \tsobj[code, no index]{\vline, \rline, \SetVline, \SetVlines} are the vertical equivalents.
+\end{codedescribe}
+
+\begin{codedescribe}[keys]{hborder, vborder}
+  \begin{codesyntax}
+    \keysel{hborder}{i}[\{\tsmeta{keys}\}]
+    \keysel{vborder}{j}[\{\tsmeta{keys}\}]
+  \end{codesyntax}
+  \key{hborder, vborder} set the properties of a border as a whole, in place of one rule within it. Border \val{1} is above row 1 or left of column 1.
+  \begin{describelist*}[24mm]{keys}
+    \describe{abovespace}{Space above an \key{hborder}, i.e.\ the \key{belowsep} of the row before it}
+    \describe{belowspace}{Space below an \key{hborder}, i.e.\ the \key{abovesep} of the row after it}
+    \describe{leftspace}{Space left of a \key{vborder}, i.e.\ the \key{rightsep} of the column before it}
+    \describe{rightspace}{Space right of a \key{vborder}, i.e.\ the \key{leftsep} of the column after it}
+    \describe{pagebreak}{Page break at an \key{hborder} of a long table: \val{yes, no, auto} (Default: \val{auto})}
+    \begin{tsremark}
+      Each space key has a \key[no index]{+} variant that adds to the current value. The commands \tsobj[code, no index]{\hborder, \vborder} set the same keys from the table body, and \tsobj[code, no index]{\pagebreak, \nopagebreak} are short forms of \vrb{pagebreak=yes} and \vrb{pagebreak=no}.
+    \end{tsremark}
+  \end{describelist*}
+\end{codedescribe}
+
+% rules and borders demo
+\begin{codestore}[st = rules-borders]
+  \begin{tblr}{
+    hline{1,Z} = {1pt},
+        vline{2} = {dashed},
+        hborder{2} = {belowspace=8pt},
+      }
+    Rule & Exception     \\
+    \hline[dotted]
+    Law  & Transgression
+  \end{tblr}
+\end{codestore}
+
+\begin{center}
+  \tsdemo*[tblr]{rules-borders}
+\end{center}
+
+\section{Table-wide Options}\label{impatient:table}
+A few properties belong to the table as a whole and cannot be attributed to any column or row. Their keys are written directly in the \arg{inner spec}, and \S\ref{inner:table} examines them at length.
+
+\begin{codedescribe}[keys]{stretch, rulesep, baseline, delimiter, rowhead, rowfoot, name}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{tblr}}[\oarg{outer spec}]\{
+        \quad\keyval{stretch}{\arg{num}},
+        \quad\keyval{rowhead}{\arg{int}},
+        \quad\ldots
+        \}
+        \quad\ldots
+        \tsmacro{\end{tblr}}{}
+  \end{codesyntax}
+  \begin{describelist*}{keys}
+    \describe{stretch}{Scale of the strut added to every cell, which sets the least height of a row. Replaces \tsobj[code, no index]{\arraystretch} (Default: \val{1})}
+    \describe{rulesep}{Space between 2 rules drawn in the same place. Replaces \tsobj[code, no index]{\doublerulesep} (Default: \val{2pt})}
+    \describe{baseline}{Part of the table that lines up with the surrounding text: \val{t, T, m, M, b, B}, or a row number (Default: \val{m})}
+    \describe{delimiter}{Stretching delimiters, e.g.\ \vrb{{delimiter = {left = (, right = )}}}}
+    \describe{rowhead}{Number of first rows that repeat on every page of a long table (Default: \val{0})}
+    \describe{rowfoot}{Number of last rows that repeat on every page of a long table (Default: \val{0})}
+    \describe{name}{Name of the table, which the \pkg{tikz} library uses to address its nodes}
+  \end{describelist*}
+\end{codedescribe}
+
+\section{Specifications of the Outer Components}\label{impatient:outer}
+The \oarg{outer spec} is optional, and most of its keys build the head and foot around a table, such as its caption and notes. A \env{tblr} has neither, so those keys only change the output of a \env{talltblr} or a \env{longtblr}. Each group below leads to a section that shows the keys in use.
+
+\begin{codedescribe}{}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\begin{talltblr}}[
+        \quad\keyval{caption}{\arg{text}},
+        \quad\keyval{label}{\arg{name}},
+        \quad\keysel{note}{tag}[\arg{text}],
+        \quad\ldots
+        ]\{\arg{inner spec}\}
+        \quad\ldots
+        \tsmacro{\end{talltblr}}{}
+  \end{codesyntax}
+  \begin{describelist*}{keys}
+    \deschead{Table Type (\S\ref{outer:types})}
+    \describe{long}{Makes a \env{tblr} a long table, the same as writing \env{longtblr}}
+    \describe{tall}{Makes a \env{tblr} a tall table, the same as writing \env{talltblr}}
+    \deschead{Placement (\S\ref{outer:placement})}
+    \describe{halign}{Horizontal position of a long table: \val{l, c, r} (Default: \val{c})}
+    \describe{baseline}{Part of the table that lines up with the surrounding text, as in \S\ref{impatient:table}}
+    \deschead{Captions and Labels (\S\ref{outer:captions})}
+    \describe{caption}{Text of the caption above the table}
+    \describe{label}{Label for \tsobj[code, no index]{\ref}. With \val{none}, the table is left unnumbered}
+    \describe{entry}{Short caption for the List of Tables. With \val{none}, the table is left out of the list}
+    \begin{tsremark}
+      \key{halign, baseline} can be written without the key name, e.g.\ \vrb{[r]} for \vrb{[halign=r]}.
+    \end{tsremark}
+  \end{describelist*}
+\end{codedescribe}
+
+\begin{codedescribe}{}
+  \begin{describelist*}{keys}
+    \deschead{Notes and Remarks (\S\ref{outer:notes})}
+    \describe{note}{\keysel{note}{tag}: text in the foot, tied to a cell by \tsobj[code, no index]{\TblrNote}\{\tsmeta{tag}\}}
+    \describe{remark}{\keysel{remark}{tag}: text in the foot, about the table as a whole}
+    \describe{more}{\keysel{more}{name}: extra text for a template to pick up}
+    \deschead{Spacing (\S\ref{outer:spacing})}
+    \describe{headsep}{Space between the head and the table body (Default: \val{6pt})}
+    \describe{footsep}{Space between the table body and the foot (Default: \val{6pt})}
+    \describe{presep}{Space between a long table and the text above it (Default: \tsobj[code, no index]{1.5\bigskipamount})}
+    \describe{postsep}{Space between a long table and the text below it (Default: \tsobj[code, no index]{1.5\bigskipamount})}
+    \deschead{Themes and Macros (\S\ref{outer:themes}, \S\ref{outer:expand})}
+    \describe{theme}{Name of a set of template and style settings defined with \tsobj[code, no index]{\NewTblrTheme}}
+    \describe{expand}{Macros to expand before the table body is split into cells, which any macro containing \tsverb{&} or \tsverb{\\} needs}
+    \describe{expand+}{Macros to add to the current list of \key{expand}}
+  \end{describelist*}
+\end{codedescribe}
+
+% notes demo
+\begin{codestore}[st = outer-notes]
+  \begin{talltblr}[
+    caption = {A table with notes},
+    note{a} = {Impossible.},
+    note{b} = {Enjoy.},
+    remark{Source} = {Lacan, \emph{Le sinthome}.},
+    ]{
+    hlines, colspec = {X[c]X[c]}, width = 8cm,
+    }
+    Real\TblrNote{a} & Symbolic             \\
+    Imaginary        & Sinthome\TblrNote{b}
+  \end{talltblr}
+\end{codestore}
+
+\begin{center}
+  \tsdemo*[tblr]{outer-notes}
+\end{center}
+
+\section{Libraries}\label{impatient:libraries}
+Support for other packages is kept out of the core of \pkg{tabularray}, so a feature such as the rules of \pkg{booktabs} has to be requested by name. Several libraries act on every table once loaded, which makes it prudent to load only those a document uses.
+
+\begin{codedescribe}[code]{UseTblrLibrary}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\UseTblrLibrary}\{\arg{library list}\}
+  \end{codesyntax}
+  \tsobj[code, no index]{\UseTblrLibrary} loads one or more libraries, given as a comma-separated list, and belongs in the preamble. The most common ones are below, and \S\ref{lib:loading} lists them all.
+  \begin{describelist*}[24mm]{pkg, no index}
+    \describe{amsmath}{Math environments built on \env[no index]{tblr}, such as \env[no index]{+array} and \env[no index]{+bmatrix}}
+    \describe{booktabs}{The rules \tsobj[code, no index]{\toprule, \midrule, \cmidrule, \bottomrule}, and the environment \env[no index]{booktabs}}
+    \describe{diagbox}{Cells divided by diagonal lines, with \tsobj[code, no index]{\diagbox}}
+    \describe{functional}{Functions in specifications, and the keys \key[no index]{evaluate, process}}
+    \describe{siunitx}{The column types \tsverb{S} and \tsverb{s}, for numbers and units}
+    \describe{varwidth}{The key \key[no index]{measure}, for vertical material in cells}
+  \end{describelist*}
+\end{codedescribe}
+
+\section{Reusing a Design}\label{impatient:reuse}
+Repeating a specification across a document is tedious and prone to error, so \pkg{tabularray} allows it to be declared once. The commands below change the defaults of an environment, or define a new environment with defaults of its own.
+
+\begin{codedescribe}[code]{SetTblrInner, SetTblrOuter, NewTblrEnviron}
+  \begin{codesyntax}
+    \tsobj[code, no index]{\SetTblrInner}[\oarg{environments}]\{\arg{inner spec}\}
+    \tsobj[code, no index]{\SetTblrOuter}[\oarg{environments}]\{\arg{outer spec}\}
+    \tsobj[code, no index]{\NewTblrEnviron}\{\arg{name}\}
+  \end{codesyntax}
+  \tsobj[code, no index]{\SetTblrInner, \SetTblrOuter} add to the default specifications of every table created afterwards. Each environment has its own defaults, so they apply to \env{tblr} unless \oarg{environments} names others: \tsverb*{\SetTblrInner[tblr, longtblr]{rowsep=0pt}} leaves a \env{talltblr} unchanged. \tsobj[code, no index]{\NewTblrEnviron} defines a new environment, which takes the same arguments as \env{tblr}.
+  \begin{tsremark}
+    New column and row types are defined with \tsobj[code, no index]{\NewTblrColumnType} and its relatives (\S\ref{inner:types}), and new themes with \tsobj[code, no index]{\NewTblrTheme} (\S\ref{outer:themes}).
+  \end{tsremark}
+\end{codedescribe}
+
+% new environment demo
+\begin{codestore}[st = reuse-design]
+  \NewTblrEnviron{borromean}
+  \SetTblrInner[borromean]{hlines, vlines, columns = {c}}
+  \SetTblrOuter[borromean]{baseline=T}
+  Base\begin{borromean}{}
+    Real      & Symbolic \\
+    Imaginary & Sinthome
+  \end{borromean}Base
+\end{codestore}
+
+\begin{center}
+  \tsdemo*[tblr]{reuse-design}
+\end{center}
