@@ -1,0 +1,369 @@
+\chapter{Specifications of the Outer Components with Examples}
+This chapter examines the \vrb{outer} specification, introduced briefly in \S\ref{impatient:concept}, which covers the elements of typesetting that belong to the environment in which a table is placed. It is supplied within the \oarg{outer spec} as an optional argument, also in a key--value format.
+
+The effect of these keys depends heavily on the type of table. Most of them build the head and foot around a table, such as its caption and notes, yet a \env{tblr} has no head or foot, so they only change the output of a \env{talltblr} or a \env{longtblr}. It follows that the outer specification is best approached as a question of what a table has to do in a document, and only then of how it should look. We show applied examples of each key below.
+
+\section{Table Types}\label{outer:types}
+The 3 environments represent different commitments. A \env{tblr} behaves like any other box in the text, at the price of having no head or foot. A \env{talltblr} adds these and remains a box, so it still cannot break across pages. A \env{longtblr} gives up the box in order to do so.
+
+\begin{codedescribe}[
+    key,
+    new=2021J,
+    update=2021M
+]{long, tall}
+\begin{codesyntax}
+\tsobj[code, no index]{\begin{tblr}}[\key[no index]{long}]\{\arg{inner spec}\}
+\tsobj[code, no index]{\begin{tblr}}[\key[no index]{tall}]\{\arg{inner spec}\}
+\end{codesyntax}
+\key{long} and \key{tall} change a \env{tblr} into a long or tall table, which is the same as writing \env{longtblr} or \env{talltblr}. In the example below, the first table has no head, so its caption does not appear.
+
+\begin{codestore}[st=outer:tall]
+    \begin{tblr}[caption = {Can you pass the salt?}]{hlines}
+        Of course & I can
+    \end{tblr}\quad
+    \begin{tblr}[
+        tall, caption = {Can you pass the salt?},
+        ]{
+        hlines, colspec = {X[c]X[c]}, width = 8cm,
+        }
+        Of course & I can
+    \end{tblr}\end{codestore}
+\begin{center}
+    \tsdemo*[tblr]{outer:tall}
+\end{center}
+\end{codedescribe}
+
+\section{Placement}\label{outer:placement}
+Placement raises 2 separate questions, and the table type determines which of them applies. A long table occupies its own lines, so the question is where it falls across the page. Other tables share a line with the surrounding text, so the question becomes how they align with it.
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{halign, l, c, r}
+    \begin{codesyntax}
+        \keyval{halign}{l | c | r}
+    \end{codesyntax}
+    \key{halign} sets the horizontal position of a long table on the page (default: \val{c}). The key name can be left out, so \vrb{[r]} is the same as \vrb{[halign=r]}. It has no effect on a \env{tblr} or a \env{talltblr}, which are placed in the text like any other box.
+\end{codedescribe}
+
+\begin{codestore}[st=outer:halign]
+    \begin{longtblr}[
+            l, caption = {France, on the left},
+        ]{hlines, colspec = {X[c]}, width = 6cm}
+        Revolutionary hastiness
+    \end{longtblr}
+    \begin{longtblr}[
+            caption = {England, by default},
+        ]{hlines, colspec = {X[c]}, width = 6cm}
+        Utilitarian pragmatism
+    \end{longtblr}
+    \begin{longtblr}[
+            r, caption = {Germany, on the right},
+        ]{hlines, colspec = {X[c]}, width = 6cm}
+        Reflective thoroughness
+    \end{longtblr}\end{codestore}
+\tscode*[tblr]{outer:halign}
+\tsexec{outer:halign}
+
+\begin{codedescribe}[
+        key,
+        new=2021G,
+        update=2022A
+    ]{baseline, t, T, m, M, b, B}
+    \begin{codesyntax}
+        \keyval{baseline}{t | T | m | M | b | B | \arg{int}}
+    \end{codesyntax}
+    \key{baseline} sets which part of the table lines up with the surrounding text, with the values described in \S\ref{inner:table}. It works as an inner key too, but only as an outer key can its name be left out.
+
+    \begin{codestore}[st=outer:baseline]
+        Base\begin{tblr}[t]{hlines}
+            Real \\ Symbolic \\ Imaginary
+        \end{tblr}Base\begin{tblr}[m]{hlines}
+            Real \\ Symbolic \\ Imaginary
+        \end{tblr}Base\begin{tblr}[B]{hlines}
+            Real \\ Symbolic \\ Imaginary
+        \end{tblr}Base\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:baseline}
+    \end{center}
+    \begin{tsremark}
+        The outer key \key[no index]{valign} is an obsolete alias of \key{baseline}.
+    \end{tsremark}
+\end{codedescribe}
+
+\section{Captions and Labels}\label{outer:captions}
+A caption serves several purposes at once: it explains the table on the page, supplies the entry in a List of Tables, and gives a cross-reference something to point to. These purposes can pull against one another, as wording that suits the page may be too long for a list. \pkg{tabularray} therefore separates them into distinct keys, each of which can be set or withheld independently.
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{caption}
+    \begin{codesyntax}
+        \keyval{caption}{\arg{text}}
+    \end{codesyntax}
+    \key{caption} sets the text of the caption above the table. A \env{talltblr} wraps its caption to the width of the table.
+
+    \begin{codestore}[st=outer:caption]
+        \begin{talltblr}[
+            caption = {A caption, wrapped to the width of this narrow table},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 5cm,
+            }
+            Real & Symbolic
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:caption}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{label}
+    \begin{codesyntax}
+        \keyval{label}{\arg{name} | none}
+    \end{codesyntax}
+    \key{label} sets a label for cross-referencing the table with \tsobj[code, no index]{\ref}. With \val{none}, the table is left unnumbered: the \vrb{table} counter does not step, and the tag and separator before the caption text are dropped.
+
+    \begin{codestore}[st=outer:label]
+        \begin{talltblr}[
+            caption = {Coffee without cream},
+            label = {outer:labelled},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Plain & Coffee
+        \end{talltblr}\quad
+        \begin{talltblr}[
+            caption = {Coffee without milk},
+            label = none,
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Plain & Coffee
+        \end{talltblr}
+
+        See Table~\ref{outer:labelled}.\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:label}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{entry}
+    \begin{codesyntax}
+        \keyval{entry}{\arg{text} | none}
+    \end{codesyntax}
+    \key{entry} sets a short caption for the List of Tables, and leaves the caption above the table as it is. With \val{none}, the table is left out of the list. \vrb{{caption=text, entry=none}} is similar to \tsverb*{\caption[]{text}}, and \vrb{{caption=text, entry=none, label=none}} to \tsverb*{\caption*{text}}.
+
+    \begin{codestore}[st=outer:entry]
+        \begin{talltblr}[
+            caption = {The long caption, which is typeset above the table},
+            entry = {The short caption, for the List of Tables},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 10cm,
+            }
+            Real & Symbolic
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:entry}
+    \end{center}
+\end{codedescribe}
+
+\section{Notes and Remarks}\label{outer:notes}
+Commentary on a table is often too long for its cells, and moving it into the surrounding text separates it from the data it qualifies. Notes and remarks offer a middle course by placing such text in the foot of the table. The difference between them is one of scope.
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{note, remark}
+    \begin{codesyntax}
+        \keysel{note}{tag}[\arg{text}]
+        \keysel{remark}{tag}[\arg{text}]
+    \end{codesyntax}
+    \key{note, remark} add text below the table. A note is tied to a place in the table by \tsobj[code, no index]{\TblrNote}\{\tsmeta{tag}\} in a cell, and a remark applies to the table as a whole. The foot lists every note first, then every remark, each with its \tsmeta{tag}.
+
+    \begin{codestore}[st=outer:note]
+        \begin{talltblr}[
+            caption = {The family of Rostam},
+            note{a} = {Raised by the Simorgh.},
+            note{b} = {A horse.},
+            remark{Note} = {Not a happy family.},
+            remark{Source} = {Ferdowsi, \emph{Shahnameh}.},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 8cm,
+            }
+            Zal\TblrNote{a} & Rostam             \\
+            Sohrab          & Rakhsh\TblrNote{b}
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:note}
+    \end{center}
+    \begin{tsremark}
+        \tsobj[code, no index]{\TblrNote} sets its tag with \tsobj[code, no index]{\TblrOverlap}, an alias of \tsobj[code, no index]{\rlap}, so that the tag takes up no width. A tag can then run into a neighbouring cell. To make tags take up width, redefine \tsobj[code, no index]{\TblrOverlap} to typeset its argument as it is (\issue{198}).
+    \end{tsremark}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{more}
+    \begin{codesyntax}
+        \keysel{more}{name}[\arg{text}]
+    \end{codesyntax}
+    \key{more} stores extra text under \tsmeta{name} for a template to pick up with \tsobj[code, no index]{\InsertTblrMore}\{\tsmeta{name}\}. It has no effect on the output until a template does so, as the theme below does.
+
+    \begin{codestore}[st=outer:more]
+        \NewTblrTheme{checked}{
+            \DeclareTblrTemplate{lastfoot}{default}{
+                Last checked: \InsertTblrMore{checked}
+            }
+        }
+        \begin{talltblr}[
+            theme = checked,
+            more{checked} = {October 2026},
+            caption = {A table with extra text in its foot},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 8cm,
+            }
+            Real & Symbolic
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:more}
+    \end{center}
+\end{codedescribe}
+
+\section{Spacing}\label{outer:spacing}
+A table with a head or foot involves 2 kinds of vertical space, which serve contrary ends. The space inside the table binds the caption and notes to the body, while the space outside sets the table apart from the text. Separate keys allow each to be tuned without disturbing the other.
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{headsep, footsep}
+    \begin{codesyntax}
+        \keyval{headsep}{\arg{dim}}
+        \keyval{footsep}{\arg{dim}}
+    \end{codesyntax}
+    \key{headsep} and \key{footsep} set the vertical space between the table body and its head and foot (default: \val{6pt} each).
+
+    \begin{codestore}[st=outer:headsep]
+        \begin{talltblr}[
+            caption = {The default spacing},
+            note{a} = {Impossible.},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Real\TblrNote{a} & Symbolic
+        \end{talltblr}\quad
+        \begin{talltblr}[
+            caption = {A wider spacing},
+            note{a} = {Impossible.},
+            headsep = 18pt, footsep = 18pt,
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Real\TblrNote{a} & Symbolic
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:headsep}
+    \end{center}
+\end{codedescribe}
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{presep, postsep}
+    \begin{codesyntax}
+        \keyval{presep}{\arg{dim}}
+        \keyval{postsep}{\arg{dim}}
+    \end{codesyntax}
+    \key{presep} and \key{postsep} set the vertical space between a long table and the text above and below it (default: \tsobj[code, no index]{1.5\bigskipamount} each). They only apply to a long table.
+\end{codedescribe}
+
+\begin{codestore}[st=outer:presep]
+    Text above the table.
+    \begin{longtblr}[
+        presep = 2pt,
+        postsep = 3cm,
+        caption = {Close to the text above},
+        ]{hlines, colspec = {X[c]X[c]}, width = 8cm}
+        Real & Symbolic
+    \end{longtblr}
+    Text below the table.\end{codestore}
+\tscode*[tblr]{outer:presep}
+\tsexec{outer:presep}
+
+\section{Themes}\label{outer:themes}
+Repeating the same settings across tables invites inconsistency, and a theme addresses this by defining a design once and applying it by name. This gives a document a single point of revision. It also adds a layer of indirection, since the appearance of a table can no longer be read from its own specification.
+
+\begin{codedescribe}[
+        key,
+        new=2021L
+    ]{theme}
+    \begin{codesyntax}
+        \keyval{theme}{\arg{name}}
+    \end{codesyntax}
+    \key{theme} applies a set of template and style settings defined with \tsobj[code, no index]{\NewTblrTheme}, so that tables can share one look. The settings only reach the table that names the theme.
+
+    \begin{codestore}[st=outer:theme]
+        \NewTblrTheme{fancy}{
+            \SetTblrStyle{caption-tag}{fg=red, font=\bfseries}
+            \SetTblrStyle{note}{fg=blue}
+        }
+        \begin{talltblr}[
+            theme = fancy,
+            caption = {A table with a theme},
+            note{a} = {Impossible.},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Real\TblrNote{a} & Symbolic
+        \end{talltblr}\quad
+        \begin{talltblr}[
+            caption = {A table without one},
+            note{a} = {Impossible.},
+            ]{
+            hlines, colspec = {X[c]X[c]}, width = 6cm,
+            }
+            Real\TblrNote{a} & Symbolic
+        \end{talltblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:theme}
+    \end{center}
+\end{codedescribe}
+
+\section{Expanding Macros}\label{outer:expand}
+Macros are the ordinary means of reuse in \LaTeX{}, yet the way \pkg{tabularray} reads a table limits their use in the table body. The package divides the body into cells before it typesets anything, so a separator inside a macro goes undetected. This keeps every cell addressable by the specification, but it obliges the author to name the macros that should be opened first.
+
+\begin{codedescribe}[
+        key,
+        new=2021M,
+        update=2024A
+    ]{expand, expand+}
+    \begin{codesyntax}
+        \keyval{expand}{\tsmeta{macros}}
+        \keyval{expand+}{\tsmeta{macros}}
+    \end{codesyntax}
+    Unlike \LaTeX's \env*[no index]{tabular}, \pkg{tabularray} needs to see every \tsverb{&} and \tsverb{\\} when it splits the table body, so it cannot find them inside a macro. \key{expand} makes it expand every occurrence of the given macros once, in the given order, before splitting the body. \key{expand+} adds to the current list of macros rather than replacing it.
+
+    \begin{codestore}[st=outer:expand]
+        \newcommand*\tblrrowa{20 & 30 & 40 \\}
+        \newcommand*\tblrrowb{50 & 60 & 70 \\}
+        \begin{tblr}[
+                expand = \tblrrowa,
+                expand+ = \tblrrowb,
+            ]{hlines, colspec = {ccc}}
+            Id   & Ego    & Superego \\
+            \tblrrowa
+            \tblrrowb
+            Need & Demand & Desire
+        \end{tblr}\end{codestore}
+    \begin{center}
+        \tsdemo*[tblr]{outer:expand}
+    \end{center}
+    \begin{tsremark}
+        Commands defined with \tsobj[code, no index]{\NewDocumentCommand} cannot be expanded this way. Commands with optional arguments can be defined with \tsobj[code, no index]{\NewExpandableDocumentCommand} and expanded fully with \tsverb**{expand=\expanded}, protecting any fragile commands inside them with \tsobj[code, no index]{\unexpanded}.
+    \end{tsremark}
+\end{codedescribe}
